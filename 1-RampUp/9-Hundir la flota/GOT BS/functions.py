@@ -1,33 +1,22 @@
+# functions.py
 import random
-from variables import BOARD_SIZE, TILE_WATER, TILE_SHIP, TILE_HIT
-from classes import Ship, Board
+import variables as v
+from classes import Ship
 
 def is_valid_placement(board, x, y, length, orientation):
-    """
-    Checks if a ship of a given length can be placed at (x, y) 
-    with the specified orientation without overlapping or going out of bounds.
-    """
+    """Performs spatial validation verification calculations within 10x10 bounds."""
     coordinates = []
     
     for i in range(length):
-        current_x = x
-        current_y = y
-        
-        if orientation == "N":    # North / Up
-            current_y = y - i
-        elif orientation == "S":  # South / Down
-            current_y = y + i
-        elif orientation == "E":  # East / Right
-            current_x = x + i
-        elif orientation == "W":  # West / Left
-            current_x = x - i
+        current_x = x + (i if orientation == "E" else -i if orientation == "W" else 0)
+        current_y = y + (i if orientation == "S" else -i if orientation == "N" else 0)
             
-        # Check if coordinates are within the 10x10 boundaries
-        if not (0 <= current_x < BOARD_SIZE and 0 <= current_y < BOARD_SIZE):
+        # Bounds constraint filtering
+        if not (0 <= current_x < v.BOARD_SIZE and 0 <= current_y < v.BOARD_SIZE):
             return False, []
             
-        # Check for overlap with existing ships
-        if board.ship_matrix[current_y][current_x] != TILE_WATER:
+        # Overlapping protection checking
+        if board.ship_matrix[current_y][current_x] != v.TILE_WATER:
             return False, []
             
         coordinates.append((current_x, current_y))
@@ -36,76 +25,56 @@ def is_valid_placement(board, x, y, length, orientation):
 
 
 def place_ships_randomly(board, fleet_inventory):
-    """
-    Iterates through the fleet inventory and places each ship randomly
-    on the board, ensuring rules are followed and updating the matrix.
-    """
+    """Algorithmic procedural allocator placing specific fleet components evenly."""
     orientations = ["N", "S", "E", "W"]
     
     for ship_name, length in fleet_inventory.items():
-        # Handle multiple ships of the same type based on rules (e.g., 2 War Galleys)
-        count = 1
-        if ship_name == "War Galley":
-            count = 2
-        elif ship_name == "Winterfell Sailboat":
-            count = 3
-        elif ship_name == "Landing Boat":
-            count = 4
+        # Determine specific multiplier allocations matching bootcamp quantities constraints
+        count = 2 if ship_name == "War Galley" else 3 if ship_name == "Winterfell Sailboat" else 4 if ship_name == "Landing Boat" else 1
             
         for _ in range(count):
             placed = False
             while not placed:
-                # Pick random start coordinates and orientation
-                x = random.randint(0, BOARD_SIZE - 1)
-                y = random.randint(0, BOARD_SIZE - 1)
+                x = random.randint(0, v.BOARD_SIZE - 1)
+                y = random.randint(0, v.BOARD_SIZE - 1)
                 orientation = random.choice(orientations)
                 
-                # Validate selection
                 is_valid, coords = is_valid_placement(board, x, y, length, orientation)
                 
                 if is_valid:
-                    # Create the Ship instance and store its metadata
                     new_ship = Ship(ship_name, length)
                     new_ship.coordinates = coords
                     board.ships_list.append(new_ship)
                     
-                    # Carve the ship onto the logical matrix
                     for cx, cy in coords:
-                        board.ship_matrix[cy][cx] = TILE_SHIP
-                    
+                        board.ship_matrix[cy][cx] = v.TILE_SHIP
                     placed = True
 
 
 def get_lannister_ai_coordinates(human_board):
     """
-    Advanced AI Targeting (Bonus Track 4).
-    Scans the player's board for injured ships to hunt down, 
-    otherwise falls back to a smart random layout shot.
+    High-performance vector hunt algorithm (Bonus Track 4).
+    Scans for injured nodes to execute precision spatial targeting.
     """
     hunting_targets = []
 
-    # 1. Scan the entire board to collect ALL possible smart targets
-    for y in range(BOARD_SIZE):
-        for x in range(BOARD_SIZE):
-            if human_board.ship_matrix[y][x] == TILE_HIT:
-                potential_cross = [(x, y-1), (x, y+1), (x-1, y), (x+1, y)]
+    # Map tactical target opportunities around active injuries zones
+    for y in range(v.BOARD_SIZE):
+        for x in range(v.BOARD_SIZE):
+            if human_board.ship_matrix[y][x] == v.TILE_HIT:
+                cross_vectors = [(x, y-1), (x, y+1), (x-1, y), (x+1, y)]
                 
-                for tx, ty in potential_cross:
-                    if 0 <= tx < BOARD_SIZE and 0 <= ty < BOARD_SIZE:
-                        # If the adjacent cell is pristine water or a hidden ship, we can hunt it
-                        if human_board.ship_matrix[ty][tx] in [TILE_WATER, TILE_SHIP]:
+                for tx, ty in cross_vectors:
+                    if 0 <= tx < v.BOARD_SIZE and 0 <= ty < v.BOARD_SIZE:
+                        if human_board.ship_matrix[ty][tx] in [v.TILE_WATER, v.TILE_SHIP]:
                             hunting_targets.append((tx, ty))
 
-    # If we found active coordinates around ANY injured ship, pick one at random
     if hunting_targets:
         return random.choice(hunting_targets)
 
-    # 2. Fallback: If no wounded hunting targets exist, fire a smart random shot
+    # Smart random fallback execution loop if no active hunt vector is found
     while True:
-        rx = random.randint(0, BOARD_SIZE - 1)
-        ry = random.randint(0, BOARD_SIZE - 1)
-        
-        # Ensure we only return locations that haven't been shot yet
-        if human_board.ship_matrix[ry][rx] in [TILE_WATER, TILE_SHIP]:
+        rx = random.randint(0, v.BOARD_SIZE - 1)
+        ry = random.randint(0, v.BOARD_SIZE - 1)
+        if human_board.ship_matrix[ry][rx] in [v.TILE_WATER, v.TILE_SHIP]:
             return rx, ry
-

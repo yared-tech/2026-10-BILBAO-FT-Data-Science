@@ -1,8 +1,9 @@
-# Board dimensions
-BOARD_SIZE = 10  # 10x10 grid
+# variables.py
 
-# Official fleet inventory (Ship Type Name : Size/Length)
-# Adapted to Game of Thrones and House of the Dragon naval warfare
+# Board technical dimensions
+BOARD_SIZE = 10  # 10x10 matrix layout
+
+# Official fleet inventory configurations (Ship Type Name : Casillas de eslora)
 FLEET_INVENTORY = {
     "Valyrian Dromon": 4,         # 1 ship of 4 positions
     "War Galley": 3,              # 2 ships of 3 positions
@@ -10,17 +11,21 @@ FLEET_INVENTORY = {
     "Landing Boat": 1             # 4 ships of 1 position
 }
 
-# Internal matrix state representations (List of lists)
-TILE_WATER = 0          # Unexplored ocean (The Narrow Sea)
-TILE_SHIP = 1           # Tile occupied by an allied/enemy ship
-TILE_MISS = 2           # Shot fired into the water (Fitted splash)
-TILE_HIT = 3            # Ship struck by the enemy
-TILE_SUNK = 4           # Ship completely destroyed (Dracarys)
+# Core matrix cell states numerical representation
+TILE_WATER = 0          # Unexplored tactical deep ocean
+TILE_SHIP = 1           # Tile containing an intact operational ship segment
+TILE_MISS = 2           # Fired shot that splashed into the water
+TILE_HIT = 3            # Ship segment successfully struck by dragon fire
+TILE_SUNK = 4           # Ship completely carbonized and destroyed (Dracarys)
 
-# RGB Colors for our future Pygame user interface
-COLOR_WATER = (20, 40, 65)          # Dark ocean blue
-COLOR_MISS = (40, 75, 110)          # Light blue with foam
-COLOR_TARGARYEN_SHIP = (40, 40, 40) # Valyrian Black / Red sails
-COLOR_LANNISTER_SHIP = (180, 30, 40)# Crimson Red / Golden details
-COLOR_DRACARYS_FIRE = (255, 69, 0)  # Orange/Red fire for impacts
-COLOR_TEXT = (240, 230, 140)        # Parchment gold for menus and fonts
+# variables.py (Complete updated color list with uniform tropical sea)
+
+# --- VIBRANT, UNIFORM & BRIGHT RGB COLORS (Tropical sea style) ---
+COLOR_WATER = (0, 191, 255)           # Deep Sky Blue (Bright tropical turquoise water)
+COLOR_SEA_BACKGROUND = (0, 191, 255)  # EXACTLY THE SAME BLUE for perfect endless sea continuity
+COLOR_FRAME = (255, 255, 255)         # Pure White for grids and board dividers
+COLOR_MISS = (175, 238, 238)          # Pale Turquoise (Very soft light blue for foam splashes)
+COLOR_TARGARYEN_SHIP = (55, 65, 80)    # Steel Grey / Clean hulls for Team Black
+COLOR_LANNISTER_SHIP = (210, 105, 30)  # Warm Terracotta / Rich bronze for Team Green
+COLOR_DRACARYS_FIRE = (255, 69, 0)    # Blazing high-visibility orange-red for active hits
+COLOR_TEXT = (255, 255, 255)          # Pure white typography tint for clean rendering
