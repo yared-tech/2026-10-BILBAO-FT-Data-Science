@@ -31,15 +31,21 @@ font_sub = pygame.font.SysFont("serif", int(CELL_SIZE * 0.4), italic=True)
 font_ui = pygame.font.SysFont("serif", int(CELL_SIZE * 0.35), bold=True)
 
 # --- CONFIGURACIÓN DE SPRITES (ENCENDIDO FORZADO DIRECTO) ---
+# --- CONFIGURACIÓN DE SPRITES (ACTUALIZADO CON ARSENAL QUEMADO) ---
 USING_SPRITES = True
 USING_OCEAN_SPRITE = False
-USING_SHIPS_SPRITES = True  # Activado permanentemente para renderizar tus imágenes
-USING_FX_SPRITES = False
+USING_SHIPS_SPRITES = True  
 
 img_bg_ocean = None
 TILE_SIZE = 512
+
+# Diccionarios de barcos vivos
 dict_ships_targaryen = {}
 dict_ships_lannister = {}
+
+# Diccionarios de barcos quemados (¡NUEVOS!)
+dict_ships_targaryen_burnt = {}
+dict_ships_lannister_burnt = {}
 
 try:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -51,17 +57,22 @@ try:
         img_bg_ocean = pygame.transform.scale(pygame.image.load(ocean_path).convert_alpha(), (TILE_SIZE, TILE_SIZE))
         USING_OCEAN_SPRITE = True
 
-    # Carga tolerante de barcos del 1 al 4
+    # Carga automática de barcos vivos y quemados del 1 al 4
     for i in range(1, 5):
         p_path = os.path.join(ASSETS_DIR, f"ship_targaryen_{i}.png")
         a_path = os.path.join(ASSETS_DIR, f"ship_lannister_{i}.png")
-        if os.path.exists(p_path):
-            dict_ships_targaryen[i] = pygame.image.load(p_path).convert_alpha()
-        if os.path.exists(a_path):
-            dict_ships_lannister[i] = pygame.image.load(a_path).convert_alpha()
+        p_burnt_path = os.path.join(ASSETS_DIR, f"ship_targaryen_{i}_burnt.png")
+        a_burnt_path = os.path.join(ASSETS_DIR, f"ship_lannister_{i}_burnt.png")
+        
+        # Guardamos vivos
+        if os.path.exists(p_path): dict_ships_targaryen[i] = pygame.image.load(p_path).convert_alpha()
+        if os.path.exists(a_path): dict_ships_lannister[i] = pygame.image.load(a_path).convert_alpha()
+        
+        # Guardamos quemados
+        if os.path.exists(p_burnt_path): dict_ships_targaryen_burnt[i] = pygame.image.load(p_burnt_path).convert_alpha()
+        if os.path.exists(a_burnt_path): dict_ships_lannister_burnt[i] = pygame.image.load(a_burnt_path).convert_alpha()
 except Exception:
     pass
-
 
 def draw_scrolling_ocean(surface):
     if not USING_OCEAN_SPRITE or img_bg_ocean is None:
@@ -74,142 +85,110 @@ def draw_scrolling_ocean(surface):
         for y in range(-TILE_SIZE, surface.get_height() + TILE_SIZE, TILE_SIZE):
             surface.blit(img_bg_ocean, (x + scroll_x, y + scroll_y))
 
-
 def draw_ships_as_single_assets(surface, x_offset, y_offset, board, reveal_ships, is_player):
     """
     Renders the warships dynamically on top of the moving sea backdrop.
-    SOLUCIÓN ANTI-SOLAPAMIENTO DEFINITIVA: El motor de rescate verifica que ninguna de las celdas
-    a ocupar esté en drawn_cells, impidiendo físicamente que dos barcos se solapen en pantalla.
+    REPARACIÓN DE VAIVÉN: Activa la oscilación marina en ambos tableros simultáneamente,
+    haciendo que la IA Lannister flote de forma orgánica y descompasada igual que el jugador.
     """
-    ship_dict = dict_ships_targaryen if is_player else dict_ships_lannister
-    if not USING_SHIPS_SPRITES or not ship_dict:
-        return
+    live_dict = dict_ships_targaryen if is_player else dict_ships_lannister
+    burnt_dict = dict_ships_targaryen_burnt if is_player else dict_ships_lannister_burnt
+    if not live_dict or not burnt_dict: return
     
-    # Clonamos la matriz original para ir tachando las piezas procesadas
     temp_matrix = [[board.ship_matrix[r][c] for c in range(v.BOARD_SIZE)] for r in range(v.BOARD_SIZE)]
     drawn_cells = set()
     time_factor = pygame.time.get_ticks() / 400.0
-
-    # Conjunto de estados válidos que componen el cuerpo físico e histórico de un barco
     valid_ship_tiles = [v.TILE_SHIP, v.TILE_HIT, v.TILE_SUNK]
 
-    # CUPO REGLAMENTARIO RIGUROSO (1 de 4, 2 de 3, 3 de 2, 4 de 1)
-    target_inventory = {4: 1, 3: 2, 2: 3, 1: 4}
-    active_inventory = {4: 0, 3: 0, 2: 0, 1: 0}
+    for row in range(v.BOARD_SIZE):
+        for col in range(v.BOARD_SIZE):
+            if (row, col) in drawn_cells: continue
+            if temp_matrix[row][col] in valid_ship_tiles:
+                
+                h_len = 0
+                while (col + h_len < v.BOARD_SIZE and temp_matrix[row][col + h_len] in valid_ship_tiles and (row, col + h_len) not in drawn_cells): h_len += 1
+                v_len = 0
+                while (row + v_len < v.BOARD_SIZE and temp_matrix[row + v_len][col] in valid_ship_tiles and (row + v_len, col) not in drawn_cells): v_len += 1
 
-    # --- PASADA 1: ESCÁNER DE BLOQUES CONTINUOS CON LÍMITE DE CUPO ---
-    for target_size in range(4, 0, -1):
-        for row in range(v.BOARD_SIZE):
-            for col in range(v.BOARD_SIZE):
-                if temp_matrix[row][col] in valid_ship_tiles:
-                    
-                    # Medimos la longitud continua horizontal incluyendo celdas dañadas
-                    h_len = 0
-                    while (col + h_len < v.BOARD_SIZE and 
-                           temp_matrix[row][col + h_len] in valid_ship_tiles):
-                        h_len += 1
-                    
-                    # Medimos la longitud continua vertical incluyendo celdas dañadas
-                    v_len = 0
-                    while (row + v_len < v.BOARD_SIZE and 
-                           temp_matrix[row + v_len][col] in valid_ship_tiles):
-                        v_len += 1
+                if h_len > v_len and h_len > 1: length, orientation = h_len, "H"
+                elif v_len >= h_len and v_len > 1: length, orientation = v_len, "V"
+                else: length, orientation = 1, "V"
 
-                    orientation = None
-                    if h_len == target_size and h_len > 1:
-                        length, orientation = h_len, "H"
-                    elif v_len == target_size and v_len > 1:
-                        length, orientation = v_len, "V"
-                    elif target_size == 1 and h_len == 1 and v_len == 1:
-                        length, orientation = 1, "V"
+                if orientation == "H" and col > 0 and board.ship_matrix[row][col - 1] in valid_ship_tiles: continue
+                if orientation == "V" and row > 0 and board.ship_matrix[row - 1][col] in valid_ship_tiles: continue
+
+                length = min(4, length)
+                
+                is_damaged = False
+                is_completely_sunk = True 
+                
+                for i in range(length):
+                    r_cell = row + i if orientation == "V" else row
+                    c_cell = col if orientation == "V" else col + i
+                    cell_state = board.ship_matrix[r_cell][c_cell]
+                    if cell_state in [v.TILE_HIT, v.TILE_SUNK]: is_damaged = True
+                    if cell_state != v.TILE_SUNK: is_completely_sunk = False
+
+                for i in range(length):
+                    if orientation == "H": temp_matrix[row][col + i] = 0; drawn_cells.add((row, col + i))
+                    else: temp_matrix[row + i][col] = 0; drawn_cells.add((row + i, col))
+                
+                if is_player or reveal_ships:
+                    current_dict = burnt_dict if is_damaged else live_dict
+                    base_asset = current_dict.get(length, current_dict.get(1))
+                    if base_asset is None: continue
+                    
+                    # --- MOTOR DE ANIMACIÓN DE FUEGO ULTRA-LENTO Y SUTIL (Mantenido a petición) ---
+                    if is_damaged and not is_completely_sunk:
+                        fire_pulse = math.sin(pygame.time.get_ticks() / 250.0) * 0.003
+                        scale_w_factor = 1.0 + fire_pulse
+                        scale_h_factor = 1.0 - fire_pulse
                     else:
-                        continue
+                        scale_w_factor = 1.0
+                        scale_h_factor = 1.0
 
-                    length = min(4, length)
+                    if orientation == "H":
+                        rotated_asset = pygame.transform.rotate(base_asset, 90)
+                        target_w = int(CELL_SIZE * length * scale_w_factor)
+                        target_h = int(CELL_SIZE * scale_h_factor)
+                        final_ship = pygame.transform.scale(rotated_asset, (target_w, target_h))
+                    else:
+                        target_w = int(CELL_SIZE * scale_w_factor)
+                        target_h = int(CELL_SIZE * length * scale_h_factor)
+                        final_ship = pygame.transform.scale(base_asset, (target_w, target_h))
                     
-                    if active_inventory[length] < target_inventory[length]:
-                        active_inventory[length] += 1
-                        
-                        for i in range(length):
-                            if orientation == "H": 
-                                temp_matrix[row][col + i] = 0
-                                drawn_cells.add((row, col + i))
-                            else: 
-                                temp_matrix[row + i][col] = 0
-                                drawn_cells.add((row + i, col))
-                        
-                        if is_player or reveal_ships:
-                            base_asset = ship_dict.get(length)
-                            if base_asset is None: 
-                                continue
-                            tile_x = x_offset + (col * CELL_SIZE)
-                            tile_y = y_offset + (row * CELL_SIZE)
-                            
-                            if orientation == "H":
-                                final_ship = pygame.transform.scale(pygame.transform.rotate(base_asset, 90), (CELL_SIZE * length, CELL_SIZE))
-                            else:
-                                final_ship = pygame.transform.scale(base_asset, (CELL_SIZE, CELL_SIZE * length))
-                            
-                            float_offset = int(math.sin(time_factor + row) * 3.0) if is_player else 0
-                            surface.blit(final_ship, (tile_x, tile_y + float_offset))
+                    if is_completely_sunk:
+                        dark_mask = pygame.Surface(final_ship.get_size(), pygame.SRCALPHA)
+                        dark_mask.fill((0, 0, 0, 110))
+                        final_ship.blit(dark_mask, (0, 0))
 
-    # --- PASADA 2: MOTOR DE RESCATE CALIBRADO ANTI-SOLAPAMIENTO ---
-    for size in range(4, 0, -1):
-        while active_inventory[size] < target_inventory[size]:
-            found_rescue = False
-            for r in range(v.BOARD_SIZE):
-                for c in range(v.BOARD_SIZE):
-                    # Rescatamos celdas que sean barco pero asegurándonos de que NO tengan ya un barco dibujado encima
-                    if board.ship_matrix[r][c] in valid_ship_tiles and (r, c) not in drawn_cells:
-                        length = size
-                        orientation = None
-                        
-                        # FILTRO CRÍTICO: Comprobamos que TODAS las celdas a ocupar estén libres de otros barcos (not in drawn_cells)
-                        if (c + length <= v.BOARD_SIZE and 
-                            all(board.ship_matrix[r][c + i] in valid_ship_tiles for i in range(length)) and
-                            all((r, c + i) not in drawn_cells for i in range(length))):
-                            orientation = "H"
-                        elif (r + length <= v.BOARD_SIZE and 
-                              all(board.ship_matrix[r + i][c] in valid_ship_tiles for i in range(length)) and
-                              all((r + i, c) not in drawn_cells for i in range(length))):
-                            orientation = "V"
-                        
-                        if orientation is None:
-                            continue
+                    offset_x = (CELL_SIZE * length - target_w) // 2 if orientation == "H" else (CELL_SIZE - target_w) // 2
+                    offset_y = (CELL_SIZE - target_h) // 2 if orientation == "H" else (CELL_SIZE * length - target_h) // 2
 
-                        # Bloqueamos el espacio ocupado para que nadie más lo pise
-                        for i in range(length):
-                            drawn_cells.add((r, c + i) if orientation == "H" else (r + i, c))
-                        
-                        active_inventory[size] += 1
-                        found_rescue = True
-                        
-                        if is_player or reveal_ships:
-                            base_asset = ship_dict.get(length)
-                            if base_asset is not None:
-                                tile_x = x_offset + (c * CELL_SIZE)
-                                tile_y = y_offset + (r * CELL_SIZE)
-                                if orientation == "H":
-                                    final_ship = pygame.transform.scale(pygame.transform.rotate(base_asset, 90), (CELL_SIZE * length, CELL_SIZE))
-                                else:
-                                    final_ship = pygame.transform.scale(base_asset, (CELL_SIZE, CELL_SIZE * length))
-                                float_offset = int(math.sin(time_factor + r) * 3.0) if is_player else 0
-                                surface.blit(final_ship, (tile_x, tile_y + float_offset))
-                        break
-                if found_rescue: 
-                    break
-            if not found_rescue:
-                active_inventory[size] += 1
+                    tile_x = x_offset + (col * CELL_SIZE) + offset_x
+                    tile_y = y_offset + (row * CELL_SIZE) + offset_y
+                    
+                    # CORRECCIÓN DE OLEAJE GLOBAL: Quitamos 'if is_player' para que afecte a ambos bandos.
+                    # Añadimos '+ col' para romper la sincronía y que el movimiento del océano se vea natural.
+                    float_offset = int(math.sin(time_factor + row + col) * 3.0) if not is_completely_sunk else 0
+                    
+                    surface.blit(final_ship, (tile_x, tile_y + float_offset))
+
 
 
 def draw_grid(surface, x_offset, y_offset, board, reveal_ships=False, is_player=False):
-    """Renders the tactical grid layers with absolute mathematical alignment."""
+    """
+    Renders the tactical transparent grid and game states layer by layer with absolute alignment.
+    FILTRO ALFA TRANSLÚCIDO: Aplica una capa naranja transparente sobre las celdas TILE_HIT
+    para marcar el impacto táctico permitiendo ver las llamas y el humo del barco por debajo.
+    """
     time_factor = pygame.time.get_ticks() / 400.0
     
-    # --- CAPA 1: Renderizado de los barcos en sus coordenadas reales ---
+    # --- CAPA 1: Renderizado de los sprites de los barcos de fondo ---
     if USING_SHIPS_SPRITES:
         draw_ships_as_single_assets(surface, x_offset, y_offset, board, reveal_ships, is_player)
     else:
+        # Modo fallback antiguo: Solo si los sprites están apagados pintamos los bloques de la flota intacta
         for row in range(v.BOARD_SIZE):
             for col in range(v.BOARD_SIZE):
                 tile_x = x_offset + (col * CELL_SIZE)
@@ -219,22 +198,36 @@ def draw_grid(surface, x_offset, y_offset, board, reveal_ships=False, is_player=
                     pygame.draw.rect(surface, v.COLOR_TARGARYEN_SHIP if is_player else v.COLOR_LANNISTER_SHIP, 
                                      pygame.Rect(tile_x + 4, tile_y + 4 + float_y, CELL_SIZE - 8, CELL_SIZE - 8))
 
-    # --- CAPA 2: Superposición de estados de combate (Sincronización milimétrica) ---
+    # --- CAPA 2: Superposición de impactos con transparencias premium (Canal Alfa) ---
     for row in range(v.BOARD_SIZE):
         for col in range(v.BOARD_SIZE):
             tile_x = x_offset + (col * CELL_SIZE)
             tile_y = y_offset + (row * CELL_SIZE)
             tile_state = board.ship_matrix[row][col]
             
-            # Disparo al agua fallado
+            # Disparo al agua: Círculo de agua fallada original
             if tile_state == v.TILE_MISS:
                 pygame.draw.circle(surface, v.COLOR_MISS, (tile_x + CELL_SIZE//2, tile_y + CELL_SIZE//2), CELL_SIZE//4)
             
-            # Impacto real (Tocado o Hundido) -> Se dibuja encima de la misma celda de datos
-            elif tile_state in [v.TILE_HIT, v.TILE_SUNK]:
-                tile_color = v.COLOR_DRACARYS_FIRE if tile_state == v.TILE_HIT else (60, 60, 60)
-                rect_impacto = pygame.Rect(tile_x, tile_y, CELL_SIZE, CELL_SIZE)
-                pygame.draw.rect(surface, tile_color, rect_impacto)
+            # NUEVO EFECTO TÁCTICO: Celda Tocada (TILE_HIT) -> Capa Naranja Transparente
+            elif tile_state == v.TILE_HIT:
+                # Creamos una superficie del tamaño exacto de la casilla con soporte Alpha
+                hit_overlay = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA)
+                
+                # Desempaquetamos tu color de fuego original (v.COLOR_DRACARYS_FIRE) 
+                # y le añadimos un valor alfa de 125 (escala de 0 a 255, 125 es un 50% de transparencia)
+                r, g, b = v.COLOR_DRACARYS_FIRE
+                hit_overlay.fill((r, g, b, 125)) 
+                
+                # Volcamos el filtro naranja encima del barco visual
+                surface.blit(hit_overlay, (tile_x, tile_y))
+                
+            # Celda Hundida (TILE_SUNK) -> Capa Gris/Negra Oscura Transparente
+            elif tile_state == v.TILE_SUNK:
+                sunk_overlay = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA)
+                # Filtro gris oscuro quemado con un 55% de transparencia (140) para marcar que ya no opera
+                sunk_overlay.fill((40, 40, 40, 140)) 
+                surface.blit(sunk_overlay, (tile_x, tile_y))
 
     # --- CAPA 3: Rejilla blanca premium transparente ---
     grid_overlay = pygame.Surface((BOARD_WIDTH + 4, BOARD_WIDTH + 4), pygame.SRCALPHA)

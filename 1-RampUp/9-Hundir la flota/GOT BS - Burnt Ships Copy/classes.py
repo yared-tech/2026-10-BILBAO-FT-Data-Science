@@ -1,4 +1,4 @@
-# classes.py
+# classes.py# classes.py
 import variables as v
 
 class Ship:
@@ -30,35 +30,27 @@ class Board:
         self.ships_list = []  # Collection storing local Ship instances
 
     def receive_shot(self, x, y):
-        """
-        Processes offensive coordinates.
-        Returns a tuple string indicator and a turn repetition boolean flag.
-        """
-        # Prevention filter checking if target was already selected
+        """Processes offensive coordinates."""
         if self.ship_matrix[y][x] in [v.TILE_MISS, v.TILE_HIT, v.TILE_SUNK]:
             return "ALREADY_SHOT", True
 
-        # Case 1: Missed calculation splashing into ocean water
         if self.ship_matrix[y][x] == v.TILE_WATER:
             self.ship_matrix[y][x] = v.TILE_MISS
             return "MISS", False
 
-        # Case 2: Hit registered successfully on an active vessel segment
         if self.ship_matrix[y][x] == v.TILE_SHIP:
             self.ship_matrix[y][x] = v.TILE_HIT
             
-            # Target identification algorithm lookup
             for ship in self.ships_list:
                 if (x, y) in ship.coordinates:
                     ship.hits += 1
                     
                     if ship.is_sunk:
-                        # Update all corresponding ship grids to catastrophic SUNK status
                         for bx, by in ship.coordinates:
                             self.ship_matrix[by][bx] = v.TILE_SUNK
-                        return f"SUNK! {ship.name} destroyed", True
+                        return "SUNK", True
                     
-                    return f"HIT! Strike on {ship.name}", True
+                    return "HIT", True
                     
         return "ERROR", False
 
@@ -74,4 +66,3 @@ class Board:
     def has_ships_alive(self):
         """Boolean check tracking global operational fleet state."""
         return any(not ship.is_sunk for ship in self.ships_list)
-
