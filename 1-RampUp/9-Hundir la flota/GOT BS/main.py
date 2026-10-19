@@ -1,3 +1,4 @@
+# main.py - PARTE 1
 import pygame
 import sys
 import math
@@ -30,8 +31,7 @@ font_title = pygame.font.SysFont("serif", int(CELL_SIZE * 0.7), bold=True)
 font_sub = pygame.font.SysFont("serif", int(CELL_SIZE * 0.4), italic=True)
 font_ui = pygame.font.SysFont("serif", int(CELL_SIZE * 0.35), bold=True)
 
-# --- CONFIGURACIÓN DE SPRITES (ENCENDIDO FORZADO DIRECTO) ---
-# --- CONFIGURACIÓN DE SPRITES (ACTUALIZADO CON ARSENAL QUEMADO) ---
+# --- CONFIGURACIÓN DE SPRITES PREMIUM ---
 USING_SPRITES = True
 USING_OCEAN_SPRITE = False
 USING_SHIPS_SPRITES = True  
@@ -39,40 +39,69 @@ USING_SHIPS_SPRITES = True
 img_bg_ocean = None
 TILE_SIZE = 512
 
-# Diccionarios de barcos vivos
 dict_ships_targaryen = {}
 dict_ships_lannister = {}
-
-# Diccionarios de barcos quemados (¡NUEVOS!)
 dict_ships_targaryen_burnt = {}
 dict_ships_lannister_burnt = {}
+
+# LISTA PARA LOS 12 FRAMES INDEPENDIENTES DE DROGON
+LIST_DROGON_FRAMES = []
 
 try:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     ASSETS_DIR = os.path.join(BASE_DIR, "assets", "images")
     
-    # Carga de mar de ChatGPT
     ocean_path = os.path.join(ASSETS_DIR, "background_ocean.png")
     if os.path.exists(ocean_path):
         img_bg_ocean = pygame.transform.scale(pygame.image.load(ocean_path).convert_alpha(), (TILE_SIZE, TILE_SIZE))
         USING_OCEAN_SPRITE = True
 
-    # Carga automática de barcos vivos y quemados del 1 al 4
     for i in range(1, 5):
         p_path = os.path.join(ASSETS_DIR, f"ship_targaryen_{i}.png")
         a_path = os.path.join(ASSETS_DIR, f"ship_lannister_{i}.png")
         p_burnt_path = os.path.join(ASSETS_DIR, f"ship_targaryen_{i}_burnt.png")
         a_burnt_path = os.path.join(ASSETS_DIR, f"ship_lannister_{i}_burnt.png")
         
-        # Guardamos vivos
         if os.path.exists(p_path): dict_ships_targaryen[i] = pygame.image.load(p_path).convert_alpha()
         if os.path.exists(a_path): dict_ships_lannister[i] = pygame.image.load(a_path).convert_alpha()
-        
-        # Guardamos quemados
         if os.path.exists(p_burnt_path): dict_ships_targaryen_burnt[i] = pygame.image.load(p_burnt_path).convert_alpha()
         if os.path.exists(a_burnt_path): dict_ships_lannister_burnt[i] = pygame.image.load(a_burnt_path).convert_alpha()
+
+    # Carga de tus 12 archivos HD transparentes de la cinemática
+    for i in range(1, 13):
+        drogon_path = os.path.join(ASSETS_DIR, f"drogon_{i}.png")
+        if os.path.exists(drogon_path):
+            LIST_DROGON_FRAMES.append(pygame.image.load(drogon_path).convert_alpha())
 except Exception:
     pass
+
+# --- CONTROLADOR COMPLETO SIN AVISOS DE TIPADO ---
+class DragonAnimationController:
+    def __init__(self):
+        self.is_active = False
+        self.current_x = 0.0
+        self.current_y = 0.0
+        self.target_px_x = 0.0
+        self.target_px_y = 0.0
+        self.vx = 0.0  
+        self.vy = 0.0  
+        self.angle_deg = 0.0      
+        self.escape_phase = False  
+        self.speed = 7             # Tu velocidad pausada y majestuosa elegida
+        self.frame_index = 0
+        self.fire_triggered = False
+        self.direction = "L_TO_R"
+        self.step_timer = 0
+        
+        # Atributos de quema diferida para draw_grid
+        self.burn_col = 0
+        self.burn_row = 0
+        self.active_board = None
+        self.burned_done = False
+
+dragon_cinema = DragonAnimationController()
+
+# main.py - PARTE 2
 
 def draw_scrolling_ocean(surface):
     if not USING_OCEAN_SPRITE or img_bg_ocean is None:
@@ -85,12 +114,8 @@ def draw_scrolling_ocean(surface):
         for y in range(-TILE_SIZE, surface.get_height() + TILE_SIZE, TILE_SIZE):
             surface.blit(img_bg_ocean, (x + scroll_x, y + scroll_y))
 
+
 def draw_ships_as_single_assets(surface, x_offset, y_offset, board, reveal_ships, is_player):
-    """
-    Renders the warships dynamically on top of the moving sea backdrop.
-    REPARACIÓN DE VAIVÉN: Activa la oscilación marina en ambos tableros simultáneamente,
-    haciendo que la IA Lannister flote de forma orgánica y descompasada igual que el jugador.
-    """
     live_dict = dict_ships_targaryen if is_player else dict_ships_lannister
     burnt_dict = dict_ships_targaryen_burnt if is_player else dict_ships_lannister_burnt
     if not live_dict or not burnt_dict: return
@@ -129,6 +154,16 @@ def draw_ships_as_single_assets(surface, x_offset, y_offset, board, reveal_ships
                     if cell_state in [v.TILE_HIT, v.TILE_SUNK]: is_damaged = True
                     if cell_state != v.TILE_SUNK: is_completely_sunk = False
 
+                # --- FILTRO ANTI-TRANSPARENCIA PREMATURA (NUEVO) ---
+                # Si Drogon está volando sobre este tablero y todavía no ha dado el gatillo de quema,
+                # saboteamos temporalmente la variable para que el sprite NO reciba la capa oscura.
+                if is_completely_sunk and dragon_cinema.is_active and dragon_cinema.active_board == board:
+                    if not dragon_cinema.burned_done:
+                        for ship in board.ships_list:
+                            if (dragon_cinema.burn_col, dragon_cinema.burn_row) in ship.coordinates:
+                                if (col, row) in ship.coordinates:
+                                    is_completely_sunk = False
+
                 for i in range(length):
                     if orientation == "H": temp_matrix[row][col + i] = 0; drawn_cells.add((row, col + i))
                     else: temp_matrix[row + i][col] = 0; drawn_cells.add((row + i, col))
@@ -138,7 +173,6 @@ def draw_ships_as_single_assets(surface, x_offset, y_offset, board, reveal_ships
                     base_asset = current_dict.get(length, current_dict.get(1))
                     if base_asset is None: continue
                     
-                    # --- MOTOR DE ANIMACIÓN DE FUEGO ULTRA-LENTO Y SUTIL (Mantenido a petición) ---
                     if is_damaged and not is_completely_sunk:
                         fire_pulse = math.sin(pygame.time.get_ticks() / 250.0) * 0.003
                         scale_w_factor = 1.0 + fire_pulse
@@ -168,27 +202,17 @@ def draw_ships_as_single_assets(surface, x_offset, y_offset, board, reveal_ships
                     tile_x = x_offset + (col * CELL_SIZE) + offset_x
                     tile_y = y_offset + (row * CELL_SIZE) + offset_y
                     
-                    # CORRECCIÓN DE OLEAJE GLOBAL: Quitamos 'if is_player' para que afecte a ambos bandos.
-                    # Añadimos '+ col' para romper la sincronía y que el movimiento del océano se vea natural.
                     float_offset = int(math.sin(time_factor + row + col) * 3.0) if not is_completely_sunk else 0
-                    
                     surface.blit(final_ship, (tile_x, tile_y + float_offset))
 
 
 
 def draw_grid(surface, x_offset, y_offset, board, reveal_ships=False, is_player=False):
-    """
-    Renders the tactical transparent grid and game states layer by layer with absolute alignment.
-    FILTRO ALFA TRANSLÚCIDO: Aplica una capa naranja transparente sobre las celdas TILE_HIT
-    para marcar el impacto táctico permitiendo ver las llamas y el humo del barco por debajo.
-    """
     time_factor = pygame.time.get_ticks() / 400.0
     
-    # --- CAPA 1: Renderizado de los sprites de los barcos de fondo ---
     if USING_SHIPS_SPRITES:
         draw_ships_as_single_assets(surface, x_offset, y_offset, board, reveal_ships, is_player)
     else:
-        # Modo fallback antiguo: Solo si los sprites están apagados pintamos los bloques de la flota intacta
         for row in range(v.BOARD_SIZE):
             for col in range(v.BOARD_SIZE):
                 tile_x = x_offset + (col * CELL_SIZE)
@@ -198,43 +222,159 @@ def draw_grid(surface, x_offset, y_offset, board, reveal_ships=False, is_player=
                     pygame.draw.rect(surface, v.COLOR_TARGARYEN_SHIP if is_player else v.COLOR_LANNISTER_SHIP, 
                                      pygame.Rect(tile_x + 4, tile_y + 4 + float_y, CELL_SIZE - 8, CELL_SIZE - 8))
 
-    # --- CAPA 2: Superposición de impactos con transparencias premium (Canal Alfa) ---
     for row in range(v.BOARD_SIZE):
         for col in range(v.BOARD_SIZE):
             tile_x = x_offset + (col * CELL_SIZE)
             tile_y = y_offset + (row * CELL_SIZE)
             tile_state = board.ship_matrix[row][col]
             
-            # Disparo al agua: Círculo de agua fallada original
+            # --- MÁSCARA CINEMÁTICA PREMIUM: OCULTACIÓN TOTAL DE MARCAS EN EL ATAQUE ---
+            # Si el dragón está activo atacando este tablero específico y aún no ha terminado de quemarlo...
+            if dragon_cinema.is_active and dragon_cinema.active_board == board and not dragon_cinema.burned_done:
+                # Escaneamos si la celda actual (col, row) pertenece al barco que está sufriendo el Dracarys
+                for ship in board.ships_list:
+                    if (dragon_cinema.burn_col, dragon_cinema.burn_row) in ship.coordinates:
+                        if (col, row) in ship.coordinates:
+                            # ¡AQUÍ ESTÁ LA MAGIA!: Forzamos que la celda ignore el estado HIT o SUNK.
+                            # Visualmente se verá el barco limpio flotando y ardiendo sin capas de color encima.
+                            if tile_state in [v.TILE_HIT, v.TILE_SUNK]:
+                                tile_state = v.TILE_WATER
+
             if tile_state == v.TILE_MISS:
                 pygame.draw.circle(surface, v.COLOR_MISS, (tile_x + CELL_SIZE//2, tile_y + CELL_SIZE//2), CELL_SIZE//4)
-            
-            # NUEVO EFECTO TÁCTICO: Celda Tocada (TILE_HIT) -> Capa Naranja Transparente
             elif tile_state == v.TILE_HIT:
-                # Creamos una superficie del tamaño exacto de la casilla con soporte Alpha
                 hit_overlay = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA)
-                
-                # Desempaquetamos tu color de fuego original (v.COLOR_DRACARYS_FIRE) 
-                # y le añadimos un valor alfa de 125 (escala de 0 a 255, 125 es un 50% de transparencia)
                 r, g, b = v.COLOR_DRACARYS_FIRE
                 hit_overlay.fill((r, g, b, 125)) 
-                
-                # Volcamos el filtro naranja encima del barco visual
                 surface.blit(hit_overlay, (tile_x, tile_y))
-                
-            # Celda Hundida (TILE_SUNK) -> Capa Gris/Negra Oscura Transparente
             elif tile_state == v.TILE_SUNK:
                 sunk_overlay = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA)
-                # Filtro gris oscuro quemado con un 55% de transparencia (140) para marcar que ya no opera
                 sunk_overlay.fill((40, 40, 40, 140)) 
                 surface.blit(sunk_overlay, (tile_x, tile_y))
 
-    # --- CAPA 3: Rejilla blanca premium transparente ---
     grid_overlay = pygame.Surface((BOARD_WIDTH + 4, BOARD_WIDTH + 4), pygame.SRCALPHA)
     for i in range(v.BOARD_SIZE + 1):
         pygame.draw.line(grid_overlay, (255, 255, 255, 120), (i * CELL_SIZE, 0), (i * CELL_SIZE, BOARD_WIDTH), 3)
         pygame.draw.line(grid_overlay, (255, 255, 255, 120), (0, i * CELL_SIZE), (BOARD_WIDTH, i * CELL_SIZE), 3)
     surface.blit(grid_overlay, (x_offset, y_offset))
+
+
+# main.py - PARTE 3 REPARADA (CUELLO CORRECTO, SALIDA INFINITA Y QUEMA RETRASADA BAJO EL FUEGO)
+
+
+def update_and_draw_dragon_cinematic(surface):
+    if not dragon_cinema.is_active or not LIST_DROGON_FRAMES: return
+
+    dragon_cinema.step_timer += 1
+    
+    # 1. AVANCE VECTORIAL EN LÍNEA RECTA ABSOLUTA HACIA SU DIANA (vx/vy constantes)
+    dragon_cinema.current_x += dragon_cinema.vx
+    dragon_cinema.current_y += dragon_cinema.vy
+
+    # 2. LOGÍSTICA DE DISTANCIA PARA EL GATILLO DEL FUEGO
+    dx_target = dragon_cinema.target_px_x - dragon_cinema.current_x
+    dy_target = dragon_cinema.target_px_y - dragon_cinema.current_y
+    distance_to_target = math.sqrt(dx_target**2 + dy_target**2)
+
+    # 3. CONTROL DE FOTOGRAMAS ESTRICTO DE 3 FASES
+    if not dragon_cinema.fire_triggered:
+        if dragon_cinema.step_timer % 6 == 0:
+            dragon_cinema.frame_index = (dragon_cinema.frame_index + 1) % 4
+        if distance_to_target < 260:
+            dragon_cinema.fire_triggered = True
+            dragon_cinema.frame_index = 4  
+            dragon_cinema.escape_phase = False 
+            
+    elif dragon_cinema.fire_triggered and not dragon_cinema.escape_phase:
+        if dragon_cinema.step_timer % 5 == 0:
+            if dragon_cinema.frame_index < 11:
+                dragon_cinema.frame_index += 1
+            else:
+                dragon_cinema.escape_phase = True
+                dragon_cinema.frame_index = 2 
+                
+        # --- GATILLO VISUAL DE QUEMA EN PLENA PASADA ---
+        if distance_to_target < 60 and not dragon_cinema.burned_done:
+            dragon_cinema.burned_done = True     
+    else:
+        # FASE 3: Huida majestuosa batiendo alas con ritmo pausado premium (% 18)
+        if dragon_cinema.step_timer % 18 == 0:
+            if dragon_cinema.frame_index == 2: 
+                dragon_cinema.frame_index = 1 
+            else:
+                dragon_cinema.frame_index = (dragon_cinema.frame_index + 1) % 4 
+
+    # 4. COMPENSADOR DE ESCALA QUIRÚRGICO SEGÚN EL FRAME
+    raw_sprite = LIST_DROGON_FRAMES[dragon_cinema.frame_index]
+    if 4 <= dragon_cinema.frame_index <= 11:
+        target_size = int(CELL_SIZE * 7.5)
+    else:
+        target_size = int(CELL_SIZE * 3.8)
+
+    scaled_dragon = pygame.transform.scale(raw_sprite, (target_size, target_size))
+    
+    # 5. ENFOQUE MATEMÁTICO REAL DE LA TEXTURA (MIRA SIEMPRE HACIA ADELANTE)
+    # Como tu dibujo original mira al Sur, sumamos 90 grados al ángulo invertido.
+    # Esto alinea la cabeza del dibujo de forma milimétrica con la dirección real del vector vx/vy.
+    # Ya viaje a la izquierda o a la derecha, la cabeza mirará estrictamente al frente del vuelo.
+    movement_angle = math.atan2(dragon_cinema.vy, dragon_cinema.vx)
+    angle_degrees = math.degrees(-movement_angle) + 90.0
+    
+    rotated_dragon = pygame.transform.rotate(scaled_dragon, angle_degrees)
+
+    # Anclaje central rígido para destruir cualquier vibración o parpadeo lateral
+    dragon_rect = rotated_dragon.get_rect()
+    dragon_rect.center = (int(dragon_cinema.current_x), int(dragon_cinema.current_y))
+    surface.blit(rotated_dragon, dragon_rect)
+
+    if (dragon_cinema.current_x < -500 or dragon_cinema.current_x > surface.get_width() + 500 or
+        dragon_cinema.current_y < -500 or dragon_cinema.current_y > surface.get_height() + 500):
+        dragon_cinema.is_active = False
+
+
+def trigger_dragon_strike(target_col, target_row, target_is_ai, target_board):
+    """
+    Inicializa el vector de movimiento de Drogon de lado a lado.
+    Sale SIEMPRE del medio vertical exacto de la pantalla y apunta recto a la diana.
+    """
+    offset_x = (START_X + BOARD_WIDTH + TACTICAL_GAP) if target_is_ai else START_X
+    px_x = offset_x + (target_col * CELL_SIZE) + (CELL_SIZE // 2)
+    px_y = START_Y + (target_row * CELL_SIZE) + (CELL_SIZE // 2)
+
+    dragon_cinema.is_active = True
+    dragon_cinema.target_px_x = px_x
+    dragon_cinema.target_px_y = px_y
+    dragon_cinema.fire_triggered = False
+    dragon_cinema.escape_phase = False
+    dragon_cinema.frame_index = 0
+    dragon_cinema.step_timer = 0
+    
+    dragon_cinema.burn_col = target_col
+    dragon_cinema.burn_row = target_row
+    dragon_cinema.active_board = target_board
+    dragon_cinema.burned_done = False 
+
+    # SPAWN RIGIDAMENTE CENTRADO: Nace siempre estrictamente en la mitad del lateral de la pantalla
+    medio_pantalla_y = float(screen_max_height // 2)
+
+    if target_is_ai:
+        dragon_cinema.direction = "L_TO_R"
+        dragon_cinema.current_x = -250.0
+        dragon_cinema.current_y = medio_pantalla_y
+    else:
+        dragon_cinema.direction = "R_TO_L"
+        dragon_cinema.current_x = float(screen_max_width + 250)
+        dragon_cinema.current_y = medio_pantalla_y
+
+    # TRAYECTORIA LINEAL PURA: Calculamos el ángulo real y fijo directo hacia la celda del barco
+    dx = px_x - dragon_cinema.current_x
+    dy = px_y - dragon_cinema.current_y
+    angle = math.atan2(dy, dx)
+    
+    # Guardamos los componentes fijos vx y vy de forma constante para el tiro rectilíneo
+    dragon_cinema.vx = math.cos(angle) * dragon_cinema.speed
+    dragon_cinema.vy = math.sin(angle) * dragon_cinema.speed
+
 
 def main():
     game_state = "MENU"
@@ -244,6 +384,8 @@ def main():
     place_ships_randomly(ai_board, v.FLEET_INVENTORY)
     player_turn, game_over, cheat_mode = True, False, False
     winner_text = ""
+
+    ai_scheduled_shot = None
 
     while True:
         screen.fill(v.COLOR_SEA_BACKGROUND)
@@ -277,7 +419,7 @@ def main():
             draw_grid(screen, START_X, START_Y, player_board, is_player=True)
             draw_grid(screen, START_X + BOARD_WIDTH + TACTICAL_GAP, START_Y, ai_board, reveal_ships=cheat_mode, is_player=False)
             
-            if game_over:
+            if game_over and not dragon_cinema.is_active:
                 msg = "VICTORY! THE IRON THRONE BELONGS TO THE TARGARYENS!" if winner_text == "PLAYER" else "DEFEAT... A LANNISTER ALWAYS PAYS HIS DEBTS!"
                 end_banner = font_ui.render(msg, True, (255, 215, 0) if winner_text == "PLAYER" else (220, 20, 60))
                 screen.blit(end_banner, end_banner.get_rect(center=(screen.get_width() // 2, screen.get_height() - 45)))
@@ -288,25 +430,41 @@ def main():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_k:
                     cheat_mode = not cheat_mode
                     
-                if event.type == pygame.MOUSEBUTTONDOWN and player_turn and not game_over:
+                if event.type == pygame.MOUSEBUTTONDOWN and player_turn and not game_over and not dragon_cinema.is_active:
                     mx, my = event.pos
                     ai_x_offset = START_X + BOARD_WIDTH + TACTICAL_GAP
                     if ai_x_offset <= mx < ai_x_offset + BOARD_WIDTH and START_Y <= my < START_Y + BOARD_WIDTH:
                         target_x = int((mx - ai_x_offset) // CELL_SIZE)
                         target_y = int((my - START_Y) // CELL_SIZE)
                         shot_result, repeat_turn = ai_board.receive_shot(target_x, target_y)
+                        
                         if shot_result != "ALREADY_SHOT":
                             player_board.register_own_shot(target_x, target_y, shot_result)
+                            
+                            if shot_result == "SUNK":
+                                trigger_dragon_strike(target_x, target_y, True, ai_board)
+                                
                             if not ai_board.has_ships_alive(): game_over, winner_text = True, "PLAYER"
                             player_turn = repeat_turn
 
-            if not player_turn and not game_over:
-                pygame.time.wait(600)
-                ai_x, ai_y = get_lannister_ai_coordinates(player_board)
-                shot_result, repeat_turn = player_board.receive_shot(ai_x, ai_y)
-                ai_board.register_own_shot(ai_x, ai_y, shot_result)
-                if not player_board.has_ships_alive(): game_over, winner_text = True, "LANNISTER"
-                player_turn = not repeat_turn
+            if not player_turn and not game_over and not dragon_cinema.is_active:
+                if ai_scheduled_shot is None:
+                    ai_scheduled_shot = pygame.time.get_ticks() + 600
+                
+                if pygame.time.get_ticks() >= ai_scheduled_shot:
+                    ai_x, ai_y = get_lannister_ai_coordinates(player_board)
+                    shot_result, repeat_turn = player_board.receive_shot(ai_x, ai_y)
+                    ai_board.register_own_shot(ai_x, ai_y, shot_result)
+                    
+                    if shot_result == "SUNK":
+                        trigger_dragon_strike(ai_x, ai_y, False, player_board)
+                        
+                    if not player_board.has_ships_alive(): game_over, winner_text = True, "LANNISTER"
+                    player_turn = not repeat_turn
+                    ai_scheduled_shot = None
+
+            if dragon_cinema.is_active:
+                update_and_draw_dragon_cinematic(screen)
 
         pygame.display.flip()
         clock.tick(60)

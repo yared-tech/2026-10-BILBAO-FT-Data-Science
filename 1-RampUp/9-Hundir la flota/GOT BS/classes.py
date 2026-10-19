@@ -1,4 +1,4 @@
-# classes.py# classes.py
+# classes.py
 import variables as v
 
 class Ship:
