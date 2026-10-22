@@ -639,94 +639,119 @@ def draw_grid(surface, x_offset, y_offset, board, reveal_ships=False, is_player=
 
 
 def update_and_draw_fireball_cinematic(surface):
-    # Si la animación de la bola de fuego no está activa, salimos de la función
+    # Si la animación de la bola de fuego no está activa en el controlador, salimos inmediatamente de la función
     if not fireball_cinema.is_active: return
 
-    # --- CONTROL DE AUDIO NATIVO DURANTE EL VUELO ---
-    global sound_fireball, sound_explosion
-    # Si el sonido de lanzamiento está cargado en memoria
-    if sound_fireball:
-        # Fijamos el volumen del canal 1 al máximo (1.0)
-        pygame.mixer.Channel(1).set_volume(1.0)
-        # Si el canal 1 está libre, reproducimos el sonido del vuelo
-        if not pygame.mixer.Channel(1).get_busy():
-            pygame.mixer.Channel(1).play(sound_fireball)
+    # --- CONTROL DE PARADA ACÚSTICA POR PARCHE DE SEGURIDAD (CORREGIDO) ---
+    # Recuperamos la referencia global del sonido de explosión para poder activarlo justo en el momento del impacto
+    global sound_explosion
 
-    # Incrementamos el contador de fotogramas interno de la bola de fuego
+    # Incrementamos el contador de fotogramas interno de la bola de fuego para controlar el ritmo de la animación
     fireball_cinema.step_timer += 1
     
-    # Avanzamos la posición del proyectil según su velocidad calculada
+    # Avanzamos la posición horizontal en píxeles del proyectil sumándole su velocidad vx calculada por frame
     fireball_cinema.current_x += fireball_cinema.vx
+    # Incrementamos la posición vertical en píxeles del proyectil sumándole su velocidad constante vy en el aire
     fireball_cinema.current_y += fireball_cinema.vy
 
-    # Calculamos la distancia restante hasta la celda diana de impacto
+    # Calculamos la distancia horizontal restante que le falta al proyectil para llegar a la celda diana
     dx_target = fireball_cinema.target_px_x - fireball_cinema.current_x
+    # Calculamos la distancia vertical que le falta al proyectil para tocar el centro de la casilla objetivo
     dy_target = fireball_cinema.target_px_y - fireball_cinema.current_y
+    # Hallamos la distancia geométrica real restante en línea recta utilizando el teorema matemático de Pitágoras
     distance_to_target = math.sqrt(dx_target**2 + dy_target**2)
 
-    # Calculamos el porcentaje de trayectoria recorrido (entre 0.0 y 1.0)
+    # Calculamos el porcentaje decimal de trayectoria completado comparando el recorrido actual con la distancia total inicial
     pct_travelled = 1.0 - (distance_to_target / fireball_cinema.initial_distance)
+    # Forzamos mediante max y min a que el porcentaje decimal se mantenga estrictamente atrapado entre los límites de 0.0 y 1.0
     pct_travelled = max(0.0, min(1.0, pct_travelled))
     
-    # Parábola invertida pura: aumenta el tamaño en el cénit para simular altura
+    # Parábola invertida pura: aplicamos el seno del porcentaje para aumentar de tamaño en el cénit y simular altura 3D
     height_factor = 1.0 + (math.sin(pct_travelled * math.pi) * 2.2)
     
-    # Controlamos los fotogramas de la animación de la llama del proyectil
+    # Controlamos de forma fluida los fotogramas secuenciales de la animación de las llamas del proyectil
     if LIST_FIREBALL_FRAMES:
+        # Calculamos el índice del frame dividiendo los pasos del reloj entre 5 para ralentizar la velocidad de la llama
         frame_idx = (fireball_cinema.step_timer // 5) % len(LIST_FIREBALL_FRAMES)
+        # Extraemos de la lista estructurada el fotograma de fuego correspondiente al índice exacto calculado
         img_ball_raw = LIST_FIREBALL_FRAMES[frame_idx]
     else:
+        # Trazamos la ruta del archivo gráfico alternativo en caso de que la lista en memoria estuviera completamente vacía
         img_logo_path = os.path.join(ASSETS_DIR, "fireball_1.png")
+        # Cargamos el recurso gráfico de emergencia desde el disco aplicando optimización de transparencia por canal alfa
         img_ball_raw = pygame.image.load(img_logo_path).convert_alpha() if os.path.exists(img_logo_path) else None
 
-    # Si la textura es válida, la escalamos aplicando el factor de altura
+    # Si la textura cargada en memoria es válida y no ha dado ningún fallo de lectura en el almacenamiento
     if img_ball_raw is not None:
+        # Calculamos la relación de escala base comparando el tamaño de celda y el ancho original de la imagen cruda
         scale_ratio = (CELL_SIZE * 0.9 / img_ball_raw.get_width()) * height_factor
+        # Hallamos el ancho final en píxeles multiplicando el tamaño original por la escala proporcional de altura
         target_w = int(img_ball_raw.get_width() * scale_ratio)
+        # Hallamos el alto final en píxeles multiplicando el tamaño original por la escala proporcional de altura
         target_h = int(img_ball_raw.get_height() * scale_ratio)
+        # Redimensionamos de forma definitiva la imagen del proyectil aplicando las dimensiones en píxeles obtenidas
         final_fireball = pygame.transform.scale(img_ball_raw, (target_w, target_h))
 
-        # Centramos el dibujo en la coordenada de vuelo actual
+        # Obtenemos el rectángulo contenedor de la textura escalada para poder gestionar su posicionamiento
         fireball_rect = final_fireball.get_rect()
+        # Alineamos de forma matemática el centro geométrico del rectángulo con la coordenada de vuelo actual del proyectil
         fireball_rect.center = (int(fireball_cinema.current_x), int(fireball_cinema.current_y))
+        # Volcamos la textura animada de la bola de fuego sobre el lienzo de juego utilizando su rectángulo de posición
         surface.blit(final_fireball, fireball_rect)
     else:
-        # Círculo plano de auxilio si fallan las imágenes en el disco
+        # Círculo plano de auxilio en color sólido si fallan los ficheros de imágenes en el disco duro del ordenador
         base_size = int(CELL_SIZE * 0.5)
+        # Ajustamos el diámetro del círculo multiplicándolo por el factor de parábola de altura calculado anteriormente
         target_size = int(base_size * height_factor)
+        # Dibujamos un círculo de color rojo anaranjado fuerte justo en la ubicación de píxeles que ocupa el proyectil
         pygame.draw.circle(surface, (255, 69, 0), (int(fireball_cinema.current_x), int(fireball_cinema.current_y)), target_size // 2)
 
     # --- DETECCION DEL IMPACTO EN LA CELDA OBJETIVO ---
+    # Si la distancia al centro de la casilla es menor a 12 píxeles de margen de seguridad, se procesa la colisión
     if distance_to_target < 12:
-        # Desactivamos el vuelo en el controlador lógico
+        # Desactivamos por completo el vuelo del proyectil en el controlador lógico para liberar los procesos de dibujo
         fireball_cinema.is_active = False
         
-        # Paramos de inmediato el audio de vuelo en el canal 1
-        if sound_fireball:
-            pygame.mixer.Channel(1).stop()
+        # --- APAGADO INMEDIATO DEL CANAL DE VUELO (REUBICADO) ---
+        # Cortamos en seco la reproducción continuada del canal número 1 para que no ensucie la detonación del impacto
+        pygame.mixer.Channel(1).stop()
 
         # ACTIVACIÓN DEL SONIDO DE EXPLOSIÓN EN EL IMPACTO
         if sound_explosion:
+            # Reproducimos el efecto de sonido de la detonación de la artillería justo en este fotograma de colisión
             sound_explosion.play()
         
-        # Tiñamos la celda afectada de forma definitiva como TOCADO (TILE_HIT)
+        # Tiñamos la celda afectada de forma definitiva como TOCADO (TILE_HIT) en la matriz de juego
         if fireball_cinema.active_board:
+            # Extraemos la fila y columna exactas de la cuadrícula guardadas previamente al iniciar el disparo
             row, col = fireball_cinema.burn_row, fireball_cinema.burn_col
+            # Asignamos de forma oficial el estado de casilla TOCADA en la matriz interna del tablero que sufrió el ataque
             fireball_cinema.active_board.ship_matrix[row][col] = v.TILE_HIT
         
-        # Generamos las 20 partículas de la explosión visual
+        # Generamos las 20 partículas dinámicas que componen el efecto visual expansivo de la explosión
         for _ in range(20):
+            # Elegimos un ángulo de dispersión completamente aleatorio en radianes cubriendo los 360 grados de un círculo
             angle = random.uniform(0, math.pi * 2)
+            # Asignamos una velocidad de expansión inicial aleatoria para la dispersión de las chispas de fuego
             speed = random.uniform(2.0, 5.5)
+            # Estructuramos el diccionario con todas las propiedades físicas, cinemáticas y estéticas de la partícula
             particle = {
+                # Fijamos la coordenada X de nacimiento de la partícula en el punto horizontal donde estalló el proyectil
                 "x": fireball_cinema.target_px_x,
+                # Fijamos la coordenada Y de nacimiento de la partícula en el punto vertical donde estalló el proyectil
                 "y": fireball_cinema.target_px_y,
+                # Calculamos el vector de velocidad horizontal proyectando el coseno del ángulo por la velocidad aleatoria
                 "vx": math.cos(angle) * speed,
+                # Calculamos el vector de velocidad vertical proyectando el seno del ángulo por la velocidad aleatoria
                 "vy": math.sin(angle) * speed,
+                # Elegimos un radio base inicial aleatorio entre 6 y 12 píxeles para simular fragmentos desiguales
                 "radius": random.uniform(6.0, 12.0),
+                # Clavamos la opacidad alfa inicial a 255 para que nazca siendo completamente sólida y visible
                 "alpha": 255,
+                # Seleccionamos al azar uno de los tres colores RGB de fuego de la lista para dar variedad cromática
                 "color": random.choice([(255, 69, 0), (255, 140, 0), (255, 215, 0)])
             }
+            # Incorporamos la estructura de la partícula creada dentro de la lista dinámica global de explosiones activas
             LIST_ACTIVE_EXPLOSIONS.append(particle)
 
 
@@ -887,7 +912,7 @@ def trigger_dragon_strike(target_col, target_row, target_is_ai, target_board):
     Inicializa el vector de movimiento de Drogon de lado a lado.
     Sale SIEMPRE del medio vertical exacto de la pantalla y calcula la distancia inicial.
     """
-    # Determinamos el desplazamiento horizontal en píxeles dependiendo de si se ataca a la IA o al humano
+    # Determinamos el de desplazamiento horizontal en píxeles dependiendo de si se ataca a la IA o al humano
     offset_x = (START_X + BOARD_WIDTH + TACTICAL_GAP) if target_is_ai else START_X
     # Hallamos la coordenada X exacta en píxeles del centro de la casilla que va a ser atacada
     px_x = offset_x + (target_col * CELL_SIZE) + (CELL_SIZE // 2)
@@ -896,17 +921,26 @@ def trigger_dragon_strike(target_col, target_row, target_is_ai, target_board):
 
     # Activamos el controlador lógico del dragón y restablecemos sus estados de animación a cero
     dragon_cinema.is_active = True
+    # Guardamos la posición X final en píxeles que debe alcanzar el dragón para escupir su llamarada
     dragon_cinema.target_px_x = px_x
+    # Guardamos la posición Y final en píxeles que debe alcanzar el dragón para escupir su llamarada
     dragon_cinema.target_px_y = px_y
+    # Desactivamos el gatillo de fuego inicial para que empiece en modo de planeo majestuoso
     dragon_cinema.fire_triggered = False
+    # Desactivamos la fase de escape para asegurar que realice toda la aproximación reglamentaria
     dragon_cinema.escape_phase = False
+    # Clavamos el índice de la animación en cero para que empiece con las alas extendidas de fábrica
     dragon_cinema.frame_index = 0
+    # Ponemos a cero el contador de ciclos de reloj internos para regular los batidos de alas
     dragon_cinema.step_timer = 0
     
     # Registramos las coordenadas de la celda y el tablero concreto para aplicar los daños retrasados
     dragon_cinema.burn_col = target_col
+    # Almacenamos de forma persistente la fila de la matriz que sufrirá la quema del Dracarys
     dragon_cinema.burn_row = target_row
+    # Guardamos la referencia de memoria directa del tablero que se encuentra bajo ataque aéreo
     dragon_cinema.active_board = target_board
+    # Ponemos en falso el estado de daño ejecutado para retrasar el impacto hasta que llegue el fuego
     dragon_cinema.burned_done = False
 
     # SPAWN RIGIDAMENTE CENTRADO: Nace siempre estrictamente en la mitad del lateral de la pantalla
@@ -915,17 +949,24 @@ def trigger_dragon_strike(target_col, target_row, target_is_ai, target_board):
 
     # Si el ataque va hacia el mapa de la IA, el dragón emerge por la izquierda; si va al humano, por la derecha
     if target_is_ai:
+        # Establecemos la dirección lógica de vuelo de izquierda a derecha para el jugador humano
         dragon_cinema.direction = "L_TO_R"
+        # Colocamos el nacimiento en -250 píxeles, un margen seguro que no activa el límite de -500
         dragon_cinema.current_x = -250.0
+        # Alineamos la altura inicial del dragón en la mitad vertical exacta de la pantalla de juego
         dragon_cinema.current_y = medio_pantalla_y
     else:
+        # Establecemos la dirección de vuelo de derecha a izquierda cuando ataca la computadora (IA)
         dragon_cinema.direction = "R_TO_L"
-        dragon_cinema.current_x = float(screen_max_width + 250)
+        # CORRECCIÓN DE AUDIO: Nacimiento ajustado a +350 píxeles para evitar que el parche de seguridad a +500 apague los canales en el frame 1
+        dragon_cinema.current_x = float(screen_max_width + 350)
+        # Alineamos la altura inicial del dragón en la mitad vertical exacta de la pantalla de juego
         dragon_cinema.current_y = medio_pantalla_y
 
     # TRAYECTORIA LINEAL PURA: Calculamos el ángulo real y fijo directo hacia la celda del barco
     # Restamos las posiciones actuales a las posiciones de destino para hallar los catetos del triángulo
     dx = px_x - dragon_cinema.current_x
+    # Calculamos la distancia vertical cateto Y entre el punto de origen de spawn y la diana del barco
     dy = px_y - dragon_cinema.current_y
     # Aplicamos el arcotangente matemático para obtener el ángulo de inclinación de la trayectoria de vuelo
     angle = math.atan2(dy, dx)
@@ -942,6 +983,10 @@ def trigger_dragon_strike(target_col, target_row, target_is_ai, target_board):
 
 
 def trigger_fireball_strike(target_col, target_row, target_is_ai, target_board):
+    # --- RECUPERAMOS EL SONIDO GLOBAL DEL PROYECTIL (AÑADIDO) ---
+    # Declaramos la variable global del sonido de vuelo para poder reproducirla desde aquí
+    global sound_fireball
+    
     # Calculamos la coordenada X de la celda en píxeles basándonos en si el disparo va al mapa de la IA o no
     offset_x = (START_X + BOARD_WIDTH + TACTICAL_GAP) if target_is_ai else START_X
     # Hallamos el centro en píxeles horizontal de la casilla objetivo del tiro
@@ -951,30 +996,49 @@ def trigger_fireball_strike(target_col, target_row, target_is_ai, target_board):
 
     # Activamos el controlador de la bola de fuego y ponemos su reloj interno a cero
     fireball_cinema.is_active = True
+    # Guardamos la posición X final en píxeles que debe alcanzar el proyectil en la pantalla
     fireball_cinema.target_px_x = px_x
+    # Guardamos la posición Y final en píxeles que debe alcanzar el proyectil en la pantalla
     fireball_cinema.target_px_y = px_y
+    # Reiniciamos el temporizador interno de pasos de la animación balística
     fireball_cinema.step_timer = 0
     
     # --- ASIGNAMOS LOS DATOS DE QUEMA ---
     # Guardamos la columna, la fila y la referencia del tablero para teñir la casilla al impactar
     fireball_cinema.burn_col = target_col
+    # Almacenamos la fila de la cuadrícula donde impactará de forma definitiva el proyectil
     fireball_cinema.burn_row = target_row
+    # Retenemos la referencia exacta de memoria del tablero que va a recibir el impacto de fuego
     fireball_cinema.active_board = target_board
 
     # El proyectil se genera fijado verticalmente en el centro de la pantalla y en los extremos horizontales
     medio_pantalla_y = float(screen_max_height // 2)
+    # Si ataca a la IA nace en la izquierda (-250px); si ataca al humano nace en la derecha de la pantalla
     fireball_cinema.current_x = -250.0 if target_is_ai else float(screen_max_width + 250)
+    # Fijamos la altura inicial del disparo exactamente en la mitad vertical del monitor
     fireball_cinema.current_y = medio_pantalla_y
 
     # Calculamos la inclinación angular directa hacia la casilla diana usando el arcotangente
     dx = px_x - fireball_cinema.current_x
+    # Calculamos la distancia vertical cateto Y entre el punto de origen y el objetivo
     dy = px_y - fireball_cinema.current_y
+    # Aplicamos el arcotangente trigonométrico para obtener el ángulo exacto de la trayectoria de vuelo
     angle = math.atan2(dy, dx)
     
     # Registramos la distancia inicial y descomponemos la velocidad constante en los componentes vx y vy
     fireball_cinema.initial_distance = math.sqrt(dx**2 + dy**2)
+    # Multiplicamos el coseno del ángulo por la velocidad fija para hallar el avance por frame en el eje X
     fireball_cinema.vx = math.cos(angle) * fireball_cinema.speed
+    # Multiplicamos el seno del ángulo por la velocidad fija para hallar el avance por frame en el eje Y
     fireball_cinema.vy = math.sin(angle) * fireball_cinema.speed
+
+    # --- REPRODUCIR EL SONIDO DE VUELO INMEDIATAMENTE AL LANZAR (AÑADIDO) ---
+    # Si el recurso de audio de la bola de fuego se encuentra cargado correctamente en memoria
+    if sound_fireball:
+        # Fijamos de forma directa el volumen del canal número 1 al máximo de su potencia (1.0)
+        pygame.mixer.Channel(1).set_volume(1.0)
+        # Forzamos la reproducción única del sonido de lanzamiento en el canal asignado al despegar
+        pygame.mixer.Channel(1).play(sound_fireball)
 
 
 def check_any_ship_burning(board1, board2):
@@ -1207,20 +1271,25 @@ def main():
             # Dibujamos el mapa de la IA aplicando los trucos para ocultar o desvelar sus barcos
             draw_grid(screen, START_X + BOARD_WIDTH + TACTICAL_GAP, START_Y, ai_board, reveal_ships=cheat_mode, is_player=False)
 
-            # --- NUEVO CONTROLLER: GESTIÓN DE AUDIO DE BARCOS ARDIENDO EN TIEMPO REAL ---
+            # --- NUEVO CONTROLLER: GESTIÓN DE AUDIO DE BARCOS ARDIENDO EN TIEMPO REAL (REPARADO) ---
+            # Recuperamos la referencia global del sonido de incendios para administrar sus estados de reproducción
             global sound_burning
-            # Si el archivo de audio para los incendios está correctamente cargado en memoria
+            # Si el archivo de audio para las galeras en llamas se encuentra cargado correctamente en memoria
             if sound_burning:
-                # Comprobamos frame a frame si hay alguna galera en llamas en cualquiera de los dos mapas
+                # Comprobamos si existe al menos una celda marcada en estado TOCADO en cualquiera de los mapas
                 if check_any_ship_burning(player_board, ai_board):
-                    # Fijamos el volumen del canal número 6 (fuegos activos) al máximo (1.0)
+                    # Fijamos la potencia del canal número 6 al máximo de su volumen para ambientar el incendio
                     pygame.mixer.Channel(6).set_volume(1.0)
-                    # Si hay barcos ardiendo y el canal está libre, disparamos en bucle continuo (loops=-1)
+                    # Si el canal número 6 no está ocupado reproduciendo actualmente el sonido de las llamas
                     if not pygame.mixer.Channel(6).get_busy():
+                        # Disparamos el sonido de quemado configurando loops=-1 para que se repita de forma infinita
                         pygame.mixer.Channel(6).play(sound_burning, loops=-1)
                 else:
-                    # En el frame exacto en que ya no quede ningún TILE_HIT activo, apagamos el fuego de inmediato
-                    pygame.mixer.Channel(6).stop()
+                    # REPARADO: Solo llamamos a stop() si el canal está realmente activo para no machacar el mezclador a 60 FPS
+                    if pygame.mixer.Channel(6).get_busy():
+                        # Apagamos el canal de incendios de forma segura al haberse extinguido todos los fuegos
+                        pygame.mixer.Channel(6).stop()
+
 
             # Si la partida ha terminado y no queda ninguna animación de dragón cruzando el cielo
             if game_over and not dragon_cinema.is_active:
