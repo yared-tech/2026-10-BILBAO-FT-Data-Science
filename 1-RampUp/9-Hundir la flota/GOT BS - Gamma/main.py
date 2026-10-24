@@ -221,7 +221,7 @@ except Exception:
     # Capturamos cualquier error en la lectura de ficheros gráficos para impedir el cuelgue prematuro
     pass
 
-# --- CONTROLADOR COMPLETO SIN AVISOS DE TIPADO ---
+
 # Definimos la clase encargada de gobernar todos los estados y datos del vuelo del dragón Drogon
 class DragonAnimationController:
     # Método constructor para iniciar las propiedades de control internas de la animación de la criatura
