@@ -8,7 +8,6 @@ class Ship:
         self.length = length          # Cuántas casillas ocupa de largo
         self.coordinates = []         # Lista de tuplas [(x, y), ...] con su posición en el mapa
         self.hits = 0                 # Contador de veces que ha sido tocado este barco
-        # --- NUEVAS VARIABLES PARA LA ANIMACIÓN DE SINKING PROGRESIVO ---
         self.sunk_time = None         # Registrará el milisegundo exacto en el que se hunde
         
     @property

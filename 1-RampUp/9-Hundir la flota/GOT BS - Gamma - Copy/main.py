@@ -141,12 +141,10 @@ dict_ships_targaryen_burnt = {}
 # Diccionario para las imágenes de los barcos Lannister dañados o parcialmente quemados
 dict_ships_lannister_burnt = {}
 
-# LISTA PARA LOS 12 FRAMES INDEPENDIENTES DE DROGON
 # Lista ordenada para almacenar los 12 fotogramas individuales de la animación del dragón
 LIST_DROGON_FRAMES = []
 # Lista para guardar las imágenes secuenciales que componen la animación del logotipo del menú
 LIST_TITLE_FRAMES = []
-# --- LISTA PARA LA ANIMACIÓN REAL DE LA BOLA DE FUEGO ---
 # Lista dedicada a almacenar las 4 imágenes consecutivas del proyectil balístico normal de fuego
 LIST_FIREBALL_FRAMES = []
 # Lista dinámica para registrar y actualizar las partículas activas de las explosiones comunes
@@ -221,7 +219,7 @@ except Exception:
     # Capturamos cualquier error en la lectura de ficheros gráficos para impedir el cuelgue prematuro
     pass
 
-# --- CONTROLADOR COMPLETO SIN AVISOS DE TIPADO ---
+
 # Definimos la clase encargada de gobernar todos los estados y datos del vuelo del dragón Drogon
 class DragonAnimationController:
     # Método constructor para iniciar las propiedades de control internas de la animación de la criatura
@@ -254,11 +252,8 @@ class DragonAnimationController:
         self.direction = "L_TO_R"
         # Temporizador incremental de ciclos de reloj para regular la velocidad del batido de las alas
         self.step_timer = 0
-        
-        # --- NUEVA VARIABLE DE CONTROL DE PLANEO ---
         # Guarda la distancia geométrica original en píxeles desde el spawn hasta la casilla diana
         self.initial_distance = 0.0
-        
         # Almacena de forma fija la columna exacta del tablero que el dragón va a carbonizar
         self.burn_col = 0
         # Almacena de forma fija la fila exacta del tablero que el dragón va a carbonizar
@@ -269,7 +264,6 @@ class DragonAnimationController:
         self.burned_done = False
 
 
-# --- CONTROLADOR COMPLETO PARA LA BOLA DE FUEGO DE ARTILLERÍA ---
 # Definimos la clase encargada de gestionar los tiros parabólicos en impactos comunes (TOCADO)
 class FireballAnimationController:
     # Método constructor para iniciar los atributos de control internos de la bola de fuego
@@ -642,7 +636,6 @@ def update_and_draw_fireball_cinematic(surface):
     # Si la animación de la bola de fuego no está activa en el controlador, salimos inmediatamente de la función
     if not fireball_cinema.is_active: return
 
-    # --- CONTROL DE PARADA ACÚSTICA POR PARCHE DE SEGURIDAD (CORREGIDO) ---
     # Recuperamos la referencia global del sonido de explosión para poder activarlo justo en el momento del impacto
     global sound_explosion
 
@@ -760,20 +753,16 @@ def update_and_draw_dragon_cinematic(surface):
     # Si la animación del dragón no está activa o faltan los fotogramas, salimos de la función
     if not dragon_cinema.is_active or not LIST_DROGON_FRAMES: return
 
-    # --- DECLARACIÓN GLOBAL EN LA PRIMERA LÍNEA (AÑADIDO SOUND_INTRO) ---
     global sound_dracarys, sound_fly, sound_intro
-    # --------------------------------------------------------------------------
 
     # Incrementamos el contador de fotogramas interno para llevar el ritmo de las alas
     dragon_cinema.step_timer += 1
     
-    # 1. AVANCE VECTORIAL EN LÍNEA RECTA ABSOLUTA HACIA SU DIANA
     # Avanzamos la posición horizontal del dragón sumándole su velocidad vx constante
     dragon_cinema.current_x += dragon_cinema.vx
     # Avanzamos la posición vertical del dragón sumándole su velocidad vy constante
     dragon_cinema.current_y += dragon_cinema.vy
 
-    # 2. LOGÍSTICA DE DISTANCIA PARA EL GATILLO DEL FUEGO Y AUDIO
     # Calculamos la distancia horizontal restante restando la posición actual a la del píxel objetivo
     dx_target = dragon_cinema.target_px_x - dragon_cinema.current_x
     # Calculamos la distancia vertical restante restando la posición actual a la del píxel objetivo
@@ -983,7 +972,6 @@ def trigger_dragon_strike(target_col, target_row, target_is_ai, target_board):
 
 
 def trigger_fireball_strike(target_col, target_row, target_is_ai, target_board):
-    # --- RECUPERAMOS EL SONIDO GLOBAL DEL PROYECTIL (AÑADIDO) ---
     # Declaramos la variable global del sonido de vuelo para poder reproducirla desde aquí
     global sound_fireball
     
@@ -1032,7 +1020,7 @@ def trigger_fireball_strike(target_col, target_row, target_is_ai, target_board):
     # Multiplicamos el seno del ángulo por la velocidad fija para hallar el avance por frame en el eje Y
     fireball_cinema.vy = math.sin(angle) * fireball_cinema.speed
 
-    # --- REPRODUCIR EL SONIDO DE VUELO INMEDIATAMENTE AL LANZAR (AÑADIDO) ---
+    # --- REPRODUCIR EL SONIDO DE VUELO INMEDIATAMENTE AL LANZAR ---
     # Si el recurso de audio de la bola de fuego se encuentra cargado correctamente en memoria
     if sound_fireball:
         # Fijamos de forma directa el volumen del canal número 1 al máximo de su potencia (1.0)
@@ -1156,7 +1144,6 @@ def main():
                 # Dibujamos de manera definitiva la imagen final del logotipo animado en el lienzo
                 screen.blit(img_final_logo, logo_rect)
 
-            # --- INTERFAZ DE BOTONERA INTERNACIONAL AJUSTADA ---
             # Capturamos las coordenadas X e Y en píxeles de la posición del puntero del ratón
             mouse_pos = pygame.mouse.get_pos()
             # Almacenamos el centro horizontal absoluto de la pantalla
@@ -1271,7 +1258,7 @@ def main():
             # Dibujamos el mapa de la IA aplicando los trucos para ocultar o desvelar sus barcos
             draw_grid(screen, START_X + BOARD_WIDTH + TACTICAL_GAP, START_Y, ai_board, reveal_ships=cheat_mode, is_player=False)
 
-            # --- NUEVO CONTROLLER: GESTIÓN DE AUDIO DE BARCOS ARDIENDO EN TIEMPO REAL (REPARADO) ---
+            # --- CONTROLLER: GESTIÓN DE AUDIO DE BARCOS ARDIENDO EN TIEMPO REAL  ---
             # Recuperamos la referencia global del sonido de incendios para administrar sus estados de reproducción
             global sound_burning
             # Si el archivo de audio para las galeras en llamas se encuentra cargado correctamente en memoria
@@ -1285,7 +1272,7 @@ def main():
                         # Disparamos el sonido de quemado configurando loops=-1 para que se repita de forma infinita
                         pygame.mixer.Channel(6).play(sound_burning, loops=-1)
                 else:
-                    # REPARADO: Solo llamamos a stop() si el canal está realmente activo para no machacar el mezclador a 60 FPS
+                    # Solo llamamos a stop() si el canal está realmente activo para no machacar el mezclador a 60 FPS
                     if pygame.mixer.Channel(6).get_busy():
                         # Apagamos el canal de incendios de forma segura al haberse extinguido todos los fuegos
                         pygame.mixer.Channel(6).stop()
@@ -1333,7 +1320,6 @@ def main():
                     # Alternamos el valor booleano de cheat_mode para desvelar u ocultar los barcos rivales
                     cheat_mode = not cheat_mode
                     
-                # CONTROL DE CLICS DEL JUGADOR HUMAN
                 # Si hay un clic del ratón, es el turno del jugador y no hay ninguna cinemática o proyectil volando
                 if event.type == pygame.MOUSEBUTTONDOWN and player_turn and not game_over and not dragon_cinema.is_active and not fireball_cinema.is_active:
                     # Capturamos las posiciones X e Y en píxeles del punto exacto donde se pulsó con el ratón
@@ -1405,7 +1391,7 @@ def main():
                             # Asignamos el turno basándonos en si el disparo permite repetir por haber acertado
                             player_turn = repeat_turn
 
-            # --- LÓGICA DEL TURNO DE LA INTELIGENCIA ARTIFICIAL (REPARADO Y SINCRONIZADO) ---
+            # --- LÓGICA DEL TURNO DE LA INTELIGENCIA ARTIFICIAL ---
             # Si es el turno de la máquina, no es fin de juego y no hay animaciones activas en la pantalla
             if not player_turn and not game_over and not dragon_cinema.is_active and not fireball_cinema.is_active:
                 # Si no hay ningún disparo planificado aún, programamos uno añadiendo un retraso de 600 milisegundos
@@ -1421,14 +1407,11 @@ def main():
                     # Registramos el impacto en la matriz de tiros efectuados por la inteligencia artificial
                     ai_board.register_own_shot(ai_x, ai_y, shot_result)
 
-                    # --- CORRECCIÓN UNIVERSAL: REPRODUCCIÓN EN CANALES SIMULTÁNEOS (IA) ---
                     # Si el disparo de la máquina falla y cae al agua, y el sonido existe
                     if shot_result == "MISS" and sound_splash:
                         # Hacemos sonar de forma libre la salpicadura en el océano del mar turquesa
                         sound_splash.play()  # <-- Usa play() directo para mezclar los sonidos
-                    # ----------------------------------------------------------------------
 
-                    # --- CAPTURA DE GATILLOS CINEMÁTICOS DE LA IA ---
                     # Si el impacto provocado por el oponente electrónico hunde un barco del humano por completo
                     if shot_result == "SUNK":
                         # --- MOTOR CINEMÁTICO DE CENTRADO FLOTANTE DE PÍXELES (IA) ---
@@ -1448,7 +1431,7 @@ def main():
                             xs = [x for (x, y) in target_ship.coordinates]
                             ys = [y for (x, y) in target_ship.coordinates]
                             
-                            # CÁLCULO FLOTANTE PURO: Hallamos el punto medio exacto de la eslora (ej: 1.5)
+                            # CÁLCULO FLOTANTE PURO: Hallamos el punto medio exacto de la eslora
                             center_col = (min(xs) + max(xs)) / 2.0
                             center_row = (min(ys) + max(ys)) / 2.0
                             
@@ -1461,7 +1444,6 @@ def main():
                         else:
                             trigger_dragon_strike(ai_x, ai_y, False, player_board)
 
-                    # CONECTADO: La IA te lanza una bola de fuego compacta a tus galeras
                     elif shot_result == "HIT":
                         # Invocamos el proyectil balístico en parábola para que impacte la cuadrícula del humano
                         trigger_fireball_strike(ai_x, ai_y, False, player_board)
@@ -1517,7 +1499,6 @@ def main():
         # Clavamos de forma rígida la tasa de refresco a un máximo de 60 fotogramas por segundo
         clock.tick(60)
 
-# --- EL GANCHO DE ARRANQUE MAESTRO DEL PROYECTO ---
 # Verificación estándar de Python para iniciar la función principal si el script se arranca de forma directa
 if __name__ == "__main__":
     main()
