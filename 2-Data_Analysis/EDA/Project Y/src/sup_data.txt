@@ -1,0 +1,63 @@
+Las proporciones de ascendencia por bootstrapping (o remuestreo) son una técnica estadística muy utilizada en genética de poblaciones para calcular qué porcentaje del ADN de un individuo procede de diferentes poblaciones antiguas o de referencia, midiendo al mismo tiempo el grado de seguridad o incertidumbre de ese cálculo.
+
+Para entenderlo paso a paso de forma sencilla:
+
+¿Qué es la ascendencia genética?
+Imagina que analizamos el ADN de un vikingo antiguo. Los científicos quieren saber cuánto de su genoma proviene de grupos ancestrales conocidos (por ejemplo, cazadores-recolectores, agricultores de Anatolia, o poblaciones antiguas de Suecia, Dinamarca, Gran Bretaña o el sur de Europa). Mediante algoritmos matemáticos, el programa calcula qué porcentaje de su ADN encaja con cada región.
+
+¿Por qué se usa el "bootstrapping" (remuestreo)?
+El ADN no es homogéneo; está formado por miles de bloques de información (marcadores genéticos o SNPs). Al hacer cálculos con ADN antiguo (que suele estar fragmentado o degradado), pueden producirse pequeños errores o sesgos debidos a que falten algunas piezas en zonas concretas.
+Para solucionar esto, la técnica del bootstrapping hace lo siguiente:
+
+Divide el genoma en miles de pequeños fragmentos.
+
+Simula cientos de combinaciones aleatorias cogiendo esos fragmentos y repitiendo el cálculo del porcentaje de ascendencia una y otra vez.
+
+Si en todas las simulaciones aleatorias el resultado da siempre muy parecido (por ejemplo, siempre ronda un 40% de ascendencia británica), los científicos saben que el dato es muy fiable. Si el resultado baila mucho de una simulación a otra, sabrán que hay margen de error.
+
+En resumen, en tu proyecto de EDA (las columnas que ves en la Table S6 del Excel), estas proporciones te dicen qué porcentaje del ADN de cada vikingo pertenece a cada región de Europa, habiendo pasado por un filtro estadístico de validación (bootstrapping) para garantizar que los porcentajes son sólidos y estadísticamente fiables.
+
+
+-------------------
+
+Un contraste empírico es simplemente comprobar si una teoría, mito o creencia es verdad utilizando datos reales y medibles (hechos contrastables), en lugar de fiarnos de lo que se dice popularmente o de suposiciones.
+
+En tu proyecto se aplica perfectamente:
+
+La teoría/mito: Creer que los vikingos eran una raza pura, aislada y homogénea de personas rubias y de ojos claros.
+
+El contraste empírico: Coger los datos científicos de ADN antiguo (analizando los huesos reales en el laboratorio) y calcular los porcentajes de mezcla genética. Como los datos muestran que más del 56% de los vikingos escandinavos tienen más de un 30% de ADN extranjero, demuestras empíricamente que el mito es falso basándote en pruebas físicas y matemáticas.
+
+----------------------
+
+Los modelos de mezcla geográfica (en el contexto de la genómica y de tu proyecto, conocidos técnicamente como modelos de ascendencia o mezcla de poblaciones como qpAdm y f4) son herramientas estadísticas que sirven para calcular de qué regiones geográficas y en qué proporciones exacta proviene el ADN de una población.
+
+Para entenderlo de forma muy sencilla:
+
+El problema que resuelven:
+Imagina que analizas el ADN de un grupo de vikingos en una isla o en un puerto comercial y descubres que no son 100% nativos de Escandinavia, sino que su genoma es una "mezcla". La pregunta que surge es: ¿Qué parte exacta de su ADN viene de los nativos escandinavos, qué parte viene de agricultores de Anatolia, qué parte de celtas británicos o qué parte de poblaciones del este de Europa?
+
+Cómo funciona el modelo:
+
+El modelo coge poblaciones fuente de referencia (por ejemplo, genomas antiguos puramente locales de la Edad del Hierro en Britania, genomas del Báltico o genomas de Escandinavia).
+
+Mediante fórmulas matemáticas y estadísticas basadas en la frecuencia de variantes genéticas (SNPs), el modelo calcula la combinación matemática perfecta.
+
+Te devuelve un resultado en forma de porcentajes (por ejemplo: "este grupo vikingo tiene un modelo de mezcla de 60% de ascendencia escandinava y un 40% de ascendencia británica").
+
+En resumen: un modelo de mezcla geográfica es un cálculo matemático que te permite descomponer el ADN de una población mixta en un "cóctel" de porcentajes que indican cuánto ADN heredaron de cada región geográfica del mapa.
+
+----------------------
+
+Eso significa que la tabla recopila información genética muy específica sobre cómo se hereda el ADN a través de las líneas familiares directas (madre a hijos, y padre a hijos varones), dividiéndolo en dos tipos de herencia:
+
+Haplogrupos mitocondriales maternos:
+El ADN mitocondrial se encuentra dentro de las mitocondrias de las células y se hereda exclusivamente de la madre a todos sus hijos (tanto hombres como mujeres), sin mezclarse con el del padre. Saber el haplogrupo mitocondrial de un vikingo antiguo permite rastrear su línea materna ancestral a través de los milenios.
+
+Haplogrupos del cromosoma Y paternos:
+El cromosoma Y es el que determina el sexo biológico masculino. Por lo tanto, solo lo tienen los hombres y se hereda directamente de padre a hijos varones (de generación en generación). Conocer este haplogrupo permite rastrear la línea familiar paterna directa.
+
+En resumen: la tabla sirve para saber de qué linajes familiares exactos (por parte de madre y de padre) descendía cada uno de los vikingos analizados en el estudio.
+
+---------------
+
