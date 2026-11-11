@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Hipótesis Secundaria 3 - Género, Linajes y Parentesco (3 Filas)</title>
+<script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+<script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<style>
+  html, body {
+    background-color: #0e1117;
+    color: #f0f6fc;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .main-wrapper {
+    width: 94vw;
+    max-width: 1450px;
+    margin: 14px auto 28px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .chart-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  }
+  .card-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 6px;
+    padding: 0 6px;
+  }
+  .badge-note {
+    font-size: 12.5px;
+    color: #8b949e;
+  }
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-toggle {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-toggle:hover {
+    background: #30363d;
+    color: #ffffff;
+  }
+  .btn-toggle.active {
+    background: rgba(236, 72, 153, 0.20);
+    color: #f472b6;
+    border-color: #ec4899;
+  }
+  /* Smooth hover focus animation on bars and boxes */
+  .plotly g.trace.bars path {
+    transition: opacity 0.22s ease, filter 0.22s ease, stroke-width 0.22s ease;
+  }
+  .plotly g.trace.bars:hover path {
+    opacity: 0.55;
+  }
+  .plotly g.trace.bars path:hover {
+    opacity: 1.0 !important;
+    filter: brightness(1.25) drop-shadow(0 0 8px rgba(88, 166, 255, 0.85));
+    stroke: #ffffff !important;
+    stroke-width: 2px !important;
+    cursor: pointer;
+  }
+  .main-wrapper.solo-mode {
+    min-height: calc(100vh - 28px);
+    justify-content: center;
+    margin: 10px auto;
+  }
+  .chart-card.hidden-card {
+    display: none !important;
+  }
+  .solo-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-solo {
+    background: rgba(56, 139, 253, 0.14);
+    color: #58a6ff;
+    border: 1px solid rgba(88, 166, 255, 0.45);
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-solo:hover {
+    background: rgba(56, 139, 253, 0.28);
+    color: #ffffff;
+    border-color: #58a6ff;
+  }
+  .btn-solo.back-btn {
+    background: rgba(234, 179, 8, 0.18);
+    color: #fde047;
+    border-color: #eab308;
+  }
+  .btn-solo.back-btn:hover {
+    background: rgba(234, 179, 8, 0.32);
+    color: #ffffff;
+  }
+  .solo-nav-pill {
+    display: none;
+    background: #21262d;
+    color: #8b949e;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .solo-nav-pill:hover {
+    color: #ffffff;
+    border-color: #58a6ff;
+  }
+  .solo-nav-pill.active-pill {
+    background: rgba(236, 72, 153, 0.22);
+    color: #f472b6;
+    border-color: #ec4899;
+  }
+  .main-wrapper.solo-mode .solo-nav-pill {
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+  <div class="main-wrapper" id="main_wrapper">
+    <!-- FILA 1: GRÁFICA ORIGINAL INTACTA (Asimetría Sexual por Yacimiento) -->
+    <div class="chart-card" id="card_0">
+      <div class="card-header-bar">
+        <span class="badge-note">
+          ⚖️ <b>4A. Proporción por Sexo Genético (n=194 en 8 yacimientos):</b> Contraste entre expediciones militares (100% varones) y colonias estables (~50% mujeres).
+        </span>
+        <div class="solo-controls">
+          <button class="solo-nav-pill active-pill" onclick="toggleSolo(0)">4A</button>
+          <button class="solo-nav-pill" onclick="toggleSolo(1)">4B</button>
+          <button class="solo-nav-pill" onclick="toggleSolo(2)">4C</button>
+          <button id="solo_btn_0" class="btn-solo" onclick="toggleSolo(0)">🔍 Ver sola a pantalla completa</button>
+        </div>
+      </div>
+      <div id="grafica4_fila1" class="plotly-graph-div" style="height:600px; width:100%;"></div>
+    </div>
+
+    <!-- FILA 2: BRECHA DE DIVERSIDAD DE LINAJES: CLADOS PATERNOS (Y) VS. CLADOS MATERNOS (mtDNA) -->
+    <div class="chart-card" id="card_1">
+      <div class="card-header-bar">
+        <span class="badge-note">
+          🧬 <b>Cuello de Botella Paterno vs. Explosión Materna:</b> Compara el nº de clados paternos distintos (azul <code>#3b82f6</code>) frente a los clados maternos distintos (rosa <code>#ec4899</code>) en los mismos 8 yacimientos.
+        </span>
+        <div class="btn-group" style="align-items:center;">
+          <button id="btn_lin_dumbbell" class="btn-toggle active" onclick="renderFila2('dumbbell')">
+            Vista 4B-1: Gráfico Dumbbell de Brecha Genética (Y vs. mtDNA)
+          </button>
+          <button id="btn_lin_bars" class="btn-toggle" onclick="renderFila2('grouped')">
+            Vista 4B-2: Barras Agrupadas + Ratio mtDNA / Y
+          </button>
+          <div class="solo-controls" style="margin-left:4px;">
+            <button class="solo-nav-pill" onclick="toggleSolo(0)">4A</button>
+            <button class="solo-nav-pill active-pill" onclick="toggleSolo(1)">4B</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(2)">4C</button>
+            <button id="solo_btn_1" class="btn-solo" onclick="toggleSolo(1)">🔍 Ver sola a pantalla completa</button>
+          </div>
+        </div>
+      </div>
+      <div id="grafica4_fila2" class="plotly-graph-div" style="height:500px; width:100%;"></div>
+    </div>
+
+    <!-- FILA 3: RADIOGRAFÍA INDIVIDUAL DE LOS 194 INDIVIDUOS (CLANES FAMILIARES, SEXO Y MESTIZAJE) -->
+    <div class="chart-card" id="card_2">
+      <div class="card-header-bar">
+        <span class="badge-note">
+          ⚔️ <b>Trazabilidad Individual y Parentesco (n=194):</b> Visualiza los 194 genomas con los <b>4 hermanos de Salme</b> y clanes familiares en dorado (<code>#eab308</code>), o su % de ADN foráneo por sexo (n=132 con ChromoPainter).
+        </span>
+        <div class="btn-group" style="align-items:center;">
+          <button id="btn_ind_kin" class="btn-toggle active" onclick="renderFila3('kinship_all')">
+            Vista 4C-1: Matriz de los 194 Individuos y Clanes Familiares (Salme, Oxford, Feroe, Islandia)
+          </button>
+          <button id="btn_ind_anc" class="btn-toggle" onclick="renderFila3('ancestry_sex')">
+            Vista 4C-2: % ADN Foráneo por Sexo y Parentesco (n=132 con ChromoPainter)
+          </button>
+          <div class="solo-controls" style="margin-left:4px;">
+            <button class="solo-nav-pill" onclick="toggleSolo(0)">4A</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(1)">4B</button>
+            <button class="solo-nav-pill active-pill" onclick="toggleSolo(2)">4C</button>
+            <button id="solo_btn_2" class="btn-solo" onclick="toggleSolo(2)">🔍 Ver sola a pantalla completa</button>
+          </div>
+        </div>
+      </div>
+      <div id="grafica4_fila3" class="plotly-graph-div" style="height:540px; width:100%;"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    const ySites = [
+      "Salme (Estonia) [Barco Guerra]",
+      "Oxford (Inglaterra) [Fosa Masacre]",
+      "Dorset (Inglaterra) [Fosa Ejecución]",
+      "Skara (Suecia) [Guarnición/Ciudad]",
+      "Islas Feroe [Pioneros Atlántico]",
+      "Groenlandia [Colonia Estable]",
+      "Islandia (Hofstaðir) [Colonia Estable]",
+      "Gotland (Suecia) [Puerto Comercial]"
+    ];
+
+    const customOrig = [[34,3,13],[22,4,15],[10,3,7],[31,8,16],[17,2,8],[15,5,8],[14,3,9],[51,7,22]];
+    const lineageData = [{"site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "n": 34, "y_clades": 3, "mt_clades": 13, "ratio": 4.33, "top_y": "I1a2 (9), R1a1 (7), N1a1 (7), I1a1 (7)", "top_mt": "H16 (4), U4a (2), H1a (2), H6a (2), H1b (2)", "rel_str": "VK485↔1d_rel_VK483; VK490↔1d_rel_VK483;3d_rel_VK555; VK497↔1d_rel_VK483"}, {"site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "n": 22, "y_clades": 4, "mt_clades": 15, "ratio": 3.75, "top_y": "R1b1 (8), I1 (5), I1a1 (3), R1a1 (2)", "top_mt": "H1a (2), H1+ (2), H4a (2), U5b (1), U4b (1)", "rel_str": "VK144↔2d_rel_VK279; VK167↔2d_rel_VK168"}, {"site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "n": 10, "y_clades": 3, "mt_clades": 7, "ratio": 2.33, "top_y": "R1b1 (4), R1a1 (3), I1a1 (1), Q1b (1)", "top_mt": "K1a (2), H1c (1), H5a (1), I2 (1), H1e (1)", "rel_str": "Sin parentesco de 1er/2º grado"}, {"site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "n": 31, "y_clades": 8, "mt_clades": 16, "ratio": 2.0, "top_y": "R1b1 (10), R1a1 (5), N1a1 (3), I1 (2)", "top_mt": "K1a (6), T2b (3), H1c (2), J1b (1), U3a (1)", "rel_str": "VK33↔1d_rel_VK406"}, {"site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "n": 17, "y_clades": 2, "mt_clades": 8, "ratio": 4.0, "top_y": "R1b1 (7), R1a1 (6), I1 (1)", "top_mt": "H3a (8), H5 (2), J1b (1), U5a (1), J2a (1)", "rel_str": "VK44↔2d_rel_VK25; VK45↔2d_rel_VK46; VK234↔1d_rel_VK25; VK236↔1d_rel_VK25"}, {"site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "n": 15, "y_clades": 5, "mt_clades": 8, "ratio": 1.6, "top_y": "I1 (3), R1a1 (2), IJ (1), I (1)", "top_mt": "J1c (5), T2a (2), H4a (2), K1a (1), H2a (1)", "rel_str": "VK183↔3d_rel_VK179;3d_rel_VK187"}, {"site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "n": 14, "y_clades": 3, "mt_clades": 9, "ratio": 3.0, "top_y": "R1b1 (3), I1a1 (2), R2a2 (1), R1a1 (1)", "top_mt": "H10 (3), T2b (2), J1c (2), H6a (1), I2a (1)", "rel_str": "VK110↔1d_rel_VK230; VK111↔1d_rel_VK230"}, {"site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "n": 51, "y_clades": 7, "mt_clades": 22, "ratio": 3.14, "top_y": "R1a1 (9), R1b1 (5), N1a1 (3), I1a1 (2)", "top_mt": "H1a (4), I1a (3), U5b (3), J1c (3), N1a (2)", "rel_str": "VK56↔outlier"}];
+    const indivG4 = [{"id": "VK480", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a2a", "mt_hap": "U4a2a1", "rel": "Sin parentesco directo detectado", "depth": 0.87, "has_cp": true, "scand": 75.1, "foraneo": 24.9, "NO": 0.6, "UK": 0.9, "DK": 0.1, "SE": 74.4, "PL": 8.1, "FI": 15.4, "IT": 0.5, "pos_in_site": 4, "is_kin": false}, {"id": "VK481", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "T2a1a", "rel": "Sin parentesco directo detectado", "depth": 1.42, "has_cp": true, "scand": 54.3, "foraneo": 45.7, "NO": 0.4, "UK": 0.0, "DK": 0.6, "SE": 53.3, "PL": 1.7, "FI": 42.7, "IT": 1.3, "pos_in_site": 5, "is_kin": false}, {"id": "VK482", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1", "mt_hap": "H1a", "rel": "Sin parentesco directo detectado", "depth": 1.08, "has_cp": true, "scand": 99.7, "foraneo": 0.2, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 99.7, "PL": 0.0, "FI": 0.2, "IT": 0.0, "pos_in_site": 6, "is_kin": false}, {"id": "VK483", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a", "mt_hap": "H16", "rel": "Hermano 1er grado de VK485, VK490 y VK497 (Los 4 hermanos de Salme)", "depth": 1.78, "has_cp": true, "scand": 88.4, "foraneo": 11.6, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 88.4, "PL": 0.0, "FI": 11.6, "IT": 0.0, "pos_in_site": 7, "is_kin": true}, {"id": "VK484", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a2b3a", "mt_hap": "H6a1a", "rel": "Sin parentesco directo detectado", "depth": 1.21, "has_cp": true, "scand": 93.6, "foraneo": 6.3, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 93.6, "PL": 1.2, "FI": 5.0, "IT": 0.1, "pos_in_site": 8, "is_kin": false}, {"id": "VK485", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a", "mt_hap": "H16", "rel": "Hermano 1er grado de VK483, VK490 y VK497 (Los 4 hermanos de Salme)", "depth": 0.71, "has_cp": true, "scand": 72.9, "foraneo": 27.1, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 72.9, "PL": 0.4, "FI": 26.7, "IT": 0.0, "pos_in_site": 1, "is_kin": true}, {"id": "VK486", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a2b3a", "mt_hap": "U4a2a", "rel": "Sin parentesco directo detectado", "depth": 1.78, "has_cp": true, "scand": 85.7, "foraneo": 14.3, "NO": 2.0, "UK": 1.3, "DK": 0.0, "SE": 83.7, "PL": 0.2, "FI": 12.1, "IT": 0.7, "pos_in_site": 9, "is_kin": false}, {"id": "VK487", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b ", "mt_hap": "H17a2", "rel": "Sin parentesco directo detectado", "depth": 1.93, "has_cp": true, "scand": 86.0, "foraneo": 14.0, "NO": 0.9, "UK": 0.0, "DK": 0.2, "SE": 84.9, "PL": 0.0, "FI": 13.9, "IT": 0.1, "pos_in_site": 10, "is_kin": false}, {"id": "VK488", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1", "mt_hap": "H5c", "rel": "Sin parentesco directo detectado", "depth": 0.9, "has_cp": true, "scand": 85.5, "foraneo": 14.5, "NO": 0.0, "UK": 0.0, "DK": 0.2, "SE": 85.3, "PL": 0.0, "FI": 14.3, "IT": 0.2, "pos_in_site": 11, "is_kin": false}, {"id": "VK489", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "T2e1", "rel": "Sin parentesco directo detectado", "depth": 1.6, "has_cp": true, "scand": 99.2, "foraneo": 0.8, "NO": 1.2, "UK": 0.0, "DK": 1.3, "SE": 96.7, "PL": 0.2, "FI": 0.1, "IT": 0.5, "pos_in_site": 12, "is_kin": false}, {"id": "VK490", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a1a", "mt_hap": "H16", "rel": "Hermano 1er grado de VK483, VK485 y VK497; 3er grado de VK555 (Salme)", "depth": 0.95, "has_cp": true, "scand": 85.7, "foraneo": 14.3, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 85.7, "PL": 0.0, "FI": 14.3, "IT": 0.0, "pos_in_site": 2, "is_kin": true}, {"id": "VK491", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a1a", "mt_hap": "H6a1a", "rel": "Sin parentesco directo detectado", "depth": 1.43, "has_cp": true, "scand": 65.2, "foraneo": 34.8, "NO": 0.2, "UK": 0.8, "DK": 0.2, "SE": 64.8, "PL": 0.3, "FI": 33.6, "IT": 0.1, "pos_in_site": 13, "is_kin": false}, {"id": "VK492", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a", "mt_hap": "H1b5", "rel": "Sin parentesco directo detectado", "depth": 1.01, "has_cp": true, "scand": 86.0, "foraneo": 14.0, "NO": 0.0, "UK": 0.1, "DK": 0.1, "SE": 85.9, "PL": 0.4, "FI": 12.1, "IT": 1.4, "pos_in_site": 14, "is_kin": false}, {"id": "VK493", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1", "mt_hap": "H2a2a1", "rel": "Sin parentesco directo detectado", "depth": 1.83, "has_cp": true, "scand": 82.2, "foraneo": 18.0, "NO": 0.3, "UK": 0.3, "DK": 1.1, "SE": 80.8, "PL": 2.7, "FI": 11.7, "IT": 3.3, "pos_in_site": 15, "is_kin": false}, {"id": "VK495", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a", "mt_hap": "H1b", "rel": "Sin parentesco directo detectado", "depth": 1.14, "has_cp": true, "scand": 53.4, "foraneo": 46.6, "NO": 0.3, "UK": 1.9, "DK": 4.0, "SE": 49.1, "PL": 3.4, "FI": 41.2, "IT": 0.1, "pos_in_site": 16, "is_kin": false}, {"id": "VK496", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a2a", "mt_hap": "H1a", "rel": "Sin parentesco directo detectado", "depth": 1.98, "has_cp": true, "scand": 89.4, "foraneo": 10.6, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 89.4, "PL": 0.3, "FI": 10.3, "IT": 0.0, "pos_in_site": 17, "is_kin": false}, {"id": "VK497", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a1a", "mt_hap": "H16", "rel": "Hermano 1er grado de VK483, VK485 y VK490 (Los 4 hermanos de Salme)", "depth": 1.45, "has_cp": true, "scand": 70.8, "foraneo": 29.1, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 70.8, "PL": 0.0, "FI": 29.1, "IT": 0.0, "pos_in_site": 3, "is_kin": true}, {"id": "VK498", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a3a2a1", "mt_hap": "H1q", "rel": "Sin parentesco directo detectado", "depth": 1.22, "has_cp": true, "scand": 89.4, "foraneo": 10.6, "NO": 0.0, "UK": 0.6, "DK": 1.5, "SE": 87.9, "PL": 1.6, "FI": 5.7, "IT": 2.7, "pos_in_site": 18, "is_kin": false}, {"id": "VK504", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "N1a1a1a1a1a", "mt_hap": "H28a", "rel": "Sin parentesco directo detectado", "depth": 0.86, "has_cp": true, "scand": 60.7, "foraneo": 39.3, "NO": 1.2, "UK": 0.5, "DK": 0.0, "SE": 59.5, "PL": 28.4, "FI": 9.8, "IT": 0.6, "pos_in_site": 19, "is_kin": false}, {"id": "VK505", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "J1b1a1b", "rel": "Sin parentesco directo detectado", "depth": 1.14, "has_cp": true, "scand": 83.0, "foraneo": 16.9, "NO": 0.6, "UK": 1.4, "DK": 1.2, "SE": 81.2, "PL": 1.6, "FI": 7.2, "IT": 6.7, "pos_in_site": 20, "is_kin": false}, {"id": "VK506", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a", "mt_hap": "J1c2", "rel": "Sin parentesco directo detectado", "depth": 1.23, "has_cp": true, "scand": 89.2, "foraneo": 10.8, "NO": 0.0, "UK": 0.1, "DK": 0.2, "SE": 89.0, "PL": 2.8, "FI": 7.8, "IT": 0.1, "pos_in_site": 21, "is_kin": false}, {"id": "VK507", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1", "mt_hap": "HV6", "rel": "Sin parentesco directo detectado", "depth": 0.82, "has_cp": true, "scand": 83.5, "foraneo": 16.7, "NO": 14.2, "UK": 0.1, "DK": 0.2, "SE": 69.1, "PL": 0.5, "FI": 15.4, "IT": 0.7, "pos_in_site": 22, "is_kin": false}, {"id": "VK508", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "J1c5", "rel": "Sin parentesco directo detectado", "depth": 1.72, "has_cp": true, "scand": 75.8, "foraneo": 24.3, "NO": 0.7, "UK": 1.9, "DK": 0.1, "SE": 75.0, "PL": 2.0, "FI": 18.8, "IT": 1.6, "pos_in_site": 23, "is_kin": false}, {"id": "VK509", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1", "mt_hap": "H1n+146", "rel": "Sin parentesco directo detectado", "depth": 1.33, "has_cp": true, "scand": 64.6, "foraneo": 35.5, "NO": 5.3, "UK": 2.6, "DK": 0.4, "SE": 58.9, "PL": 4.5, "FI": 9.9, "IT": 18.5, "pos_in_site": 24, "is_kin": false}, {"id": "VK510", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1", "mt_hap": "H10e", "rel": "Sin parentesco directo detectado", "depth": 1.52, "has_cp": true, "scand": 96.8, "foraneo": 3.2, "NO": 0.4, "UK": 0.2, "DK": 2.7, "SE": 93.7, "PL": 1.0, "FI": 1.6, "IT": 0.4, "pos_in_site": 25, "is_kin": false}, {"id": "VK511", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1a1", "mt_hap": "T2a1a", "rel": "Sin parentesco directo detectado", "depth": 1.7, "has_cp": true, "scand": 85.7, "foraneo": 14.1, "NO": 0.2, "UK": 0.9, "DK": 0.4, "SE": 85.1, "PL": 2.5, "FI": 9.8, "IT": 0.9, "pos_in_site": 26, "is_kin": false}, {"id": "VK512", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "H2a2b1", "rel": "Sin parentesco directo detectado", "depth": 1.8, "has_cp": true, "scand": 99.5, "foraneo": 0.4, "NO": 2.7, "UK": 0.0, "DK": 7.5, "SE": 89.3, "PL": 0.4, "FI": 0.0, "IT": 0.0, "pos_in_site": 27, "is_kin": false}, {"id": "VK549", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1", "mt_hap": "T2b5a", "rel": "Sin parentesco directo detectado", "depth": 1.68, "has_cp": true, "scand": 99.2, "foraneo": 0.8, "NO": 11.3, "UK": 0.0, "DK": 0.5, "SE": 87.4, "PL": 0.2, "FI": 0.0, "IT": 0.6, "pos_in_site": 28, "is_kin": false}, {"id": "VK550", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "N1a1a1a1a1a1a1b", "mt_hap": "V", "rel": "Sin parentesco directo detectado", "depth": 1.78, "has_cp": true, "scand": 68.7, "foraneo": 31.3, "NO": 0.9, "UK": 0.0, "DK": 0.6, "SE": 67.2, "PL": 2.1, "FI": 29.1, "IT": 0.1, "pos_in_site": 29, "is_kin": false}, {"id": "VK551", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a3a1", "mt_hap": "J2a1a1a2", "rel": "Sin parentesco directo detectado", "depth": 2.31, "has_cp": true, "scand": 80.9, "foraneo": 19.2, "NO": 4.4, "UK": 1.0, "DK": 8.7, "SE": 67.8, "PL": 3.2, "FI": 15.0, "IT": 0.0, "pos_in_site": 30, "is_kin": false}, {"id": "VK552", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d", "mt_hap": "H10e", "rel": "Sin parentesco directo detectado", "depth": 1.38, "has_cp": true, "scand": 97.6, "foraneo": 2.5, "NO": 29.2, "UK": 0.0, "DK": 41.3, "SE": 27.1, "PL": 0.0, "FI": 2.2, "IT": 0.3, "pos_in_site": 31, "is_kin": false}, {"id": "VK553", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1", "mt_hap": "K1c1h", "rel": "Sin parentesco directo detectado", "depth": 1.26, "has_cp": true, "scand": 97.2, "foraneo": 2.8, "NO": 1.3, "UK": 1.8, "DK": 11.7, "SE": 84.2, "PL": 0.0, "FI": 0.9, "IT": 0.1, "pos_in_site": 32, "is_kin": false}, {"id": "VK554", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1", "mt_hap": "W6a", "rel": "Sin parentesco directo detectado", "depth": 0.93, "has_cp": true, "scand": 75.9, "foraneo": 24.3, "NO": 4.7, "UK": 0.9, "DK": 1.2, "SE": 70.0, "PL": 8.7, "FI": 10.9, "IT": 3.8, "pos_in_site": 33, "is_kin": false}, {"id": "VK555", "site_idx": 0, "site": "Salme (Estonia) [Barco Guerra]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a", "mt_hap": "U3b1b", "rel": "Pariente de 3er grado del clan de hermanos VK490 (Salme)", "depth": 1.1, "has_cp": true, "scand": 82.9, "foraneo": 17.2, "NO": 1.3, "UK": 0.7, "DK": 2.3, "SE": 79.3, "PL": 7.5, "FI": 8.6, "IT": 0.4, "pos_in_site": 34, "is_kin": true}, {"id": "VK143", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a1c1a2b", "mt_hap": "U5b1b1+@16192", "rel": "Sin parentesco directo detectado", "depth": 1.04, "has_cp": true, "scand": 76.7, "foraneo": 23.3, "NO": 9.5, "UK": 12.4, "DK": 67.2, "SE": 0.0, "PL": 2.2, "FI": 8.7, "IT": 0.0, "pos_in_site": 3, "is_kin": false}, {"id": "VK144", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1", "mt_hap": "V1a1", "rel": "Pariente de 2º grado de VK279 (Fosa de Oxford / Galgedil)", "depth": 0.16, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 1, "is_kin": true}, {"id": "VK145", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b", "mt_hap": "H17", "rel": "Sin parentesco directo detectado", "depth": 1.11, "has_cp": true, "scand": 52.5, "foraneo": 47.4, "NO": 3.9, "UK": 0.3, "DK": 45.5, "SE": 3.1, "PL": 11.2, "FI": 23.7, "IT": 12.2, "pos_in_site": 4, "is_kin": false}, {"id": "VK146", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a1a1d1a", "mt_hap": "J1c3e1", "rel": "Sin parentesco directo detectado", "depth": 1.18, "has_cp": true, "scand": 23.7, "foraneo": 76.3, "NO": 3.4, "UK": 22.1, "DK": 14.5, "SE": 5.8, "PL": 2.6, "FI": 0.7, "IT": 50.9, "pos_in_site": 5, "is_kin": false}, {"id": "VK147", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a2", "mt_hap": "T1a1q", "rel": "Sin parentesco directo detectado", "depth": 0.82, "has_cp": true, "scand": 73.3, "foraneo": 26.6, "NO": 17.6, "UK": 9.6, "DK": 48.3, "SE": 7.4, "PL": 6.8, "FI": 1.5, "IT": 8.7, "pos_in_site": 6, "is_kin": false}, {"id": "VK148", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1", "mt_hap": "H6a1a", "rel": "Sin parentesco directo detectado", "depth": 0.04, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 7, "is_kin": false}, {"id": "VK149", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1", "mt_hap": "H1a1", "rel": "Sin parentesco directo detectado", "depth": 0.01, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 8, "is_kin": false}, {"id": "VK150", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I2a1b1a2b1a2", "mt_hap": "H1+16239", "rel": "Sin parentesco directo detectado", "depth": 1.03, "has_cp": true, "scand": 43.5, "foraneo": 56.4, "NO": 9.2, "UK": 25.6, "DK": 34.2, "SE": 0.1, "PL": 0.6, "FI": 0.0, "IT": 30.2, "pos_in_site": 9, "is_kin": false}, {"id": "VK151", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1", "mt_hap": "T2b4+152", "rel": "Sin parentesco directo detectado", "depth": 1.14, "has_cp": true, "scand": 82.9, "foraneo": 17.3, "NO": 10.7, "UK": 0.1, "DK": 45.3, "SE": 26.9, "PL": 0.3, "FI": 0.9, "IT": 16.0, "pos_in_site": 10, "is_kin": false}, {"id": "VK163", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1", "mt_hap": "U2e2a1a1", "rel": "Sin parentesco directo detectado", "depth": 0.02, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 11, "is_kin": false}, {"id": "VK164", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "BT", "mt_hap": "I3a1", "rel": "Sin parentesco directo detectado", "depth": 0.0, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 12, "is_kin": false}, {"id": "VK165", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1", "mt_hap": "U4b1b1", "rel": "Sin parentesco directo detectado", "depth": 1.1, "has_cp": true, "scand": 96.9, "foraneo": 3.1, "NO": 2.4, "UK": 0.3, "DK": 88.0, "SE": 6.5, "PL": 0.3, "FI": 0.2, "IT": 2.3, "pos_in_site": 13, "is_kin": false}, {"id": "VK166", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a2a1b1a1", "mt_hap": "H3ag", "rel": "Sin parentesco directo detectado", "depth": 4.5, "has_cp": true, "scand": 35.0, "foraneo": 65.0, "NO": 0.0, "UK": 23.5, "DK": 26.8, "SE": 8.2, "PL": 0.3, "FI": 9.2, "IT": 32.0, "pos_in_site": 14, "is_kin": false}, {"id": "VK167", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1", "mt_hap": "H4a1a4b", "rel": "Pariente de 2º grado de VK168 (Compañeros en la fosa de Oxford)", "depth": 0.9, "has_cp": true, "scand": 91.8, "foraneo": 8.0, "NO": 10.6, "UK": 0.0, "DK": 66.1, "SE": 15.1, "PL": 0.0, "FI": 4.4, "IT": 3.6, "pos_in_site": 2, "is_kin": true}, {"id": "VK168", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a1b", "mt_hap": "H4a1a4b", "rel": "Pariente de 2º grado de VK167 (Compañeros en la fosa de Oxford)", "depth": 1.19, "has_cp": true, "scand": 81.8, "foraneo": 18.2, "NO": 2.7, "UK": 1.4, "DK": 52.4, "SE": 26.7, "PL": 0.5, "FI": 0.5, "IT": 15.8, "pos_in_site": 15, "is_kin": true}, {"id": "VK172", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a3a1", "mt_hap": "I1a1e", "rel": "Sin parentesco directo detectado", "depth": 1.19, "has_cp": true, "scand": 79.5, "foraneo": 20.4, "NO": 76.3, "UK": 17.9, "DK": 0.8, "SE": 2.4, "PL": 0.9, "FI": 1.2, "IT": 0.4, "pos_in_site": 16, "is_kin": false}, {"id": "VK173", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I2a1b1a1a1", "mt_hap": "U5a1b+16362", "rel": "Sin parentesco directo detectado", "depth": 1.23, "has_cp": true, "scand": 51.4, "foraneo": 48.6, "NO": 0.2, "UK": 33.3, "DK": 51.2, "SE": 0.0, "PL": 1.0, "FI": 0.8, "IT": 13.5, "pos_in_site": 17, "is_kin": false}, {"id": "VK174", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a1c2b2a1b1b1a", "mt_hap": "H1+16239", "rel": "Sin parentesco directo detectado", "depth": 0.94, "has_cp": true, "scand": 79.4, "foraneo": 20.6, "NO": 0.8, "UK": 0.5, "DK": 17.2, "SE": 61.4, "PL": 7.9, "FI": 1.3, "IT": 10.9, "pos_in_site": 18, "is_kin": false}, {"id": "VK175", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1", "mt_hap": "H1a1", "rel": "Sin parentesco directo detectado", "depth": 0.91, "has_cp": true, "scand": 78.9, "foraneo": 21.1, "NO": 0.2, "UK": 0.3, "DK": 47.5, "SE": 31.2, "PL": 8.1, "FI": 12.2, "IT": 0.5, "pos_in_site": 19, "is_kin": false}, {"id": "VK176", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1b1a1", "mt_hap": "H10", "rel": "Sin parentesco directo detectado", "depth": 2.42, "has_cp": true, "scand": 89.5, "foraneo": 10.5, "NO": 23.8, "UK": 0.3, "DK": 44.1, "SE": 21.6, "PL": 3.4, "FI": 5.4, "IT": 1.4, "pos_in_site": 20, "is_kin": false}, {"id": "VK177", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a2b", "mt_hap": "H82", "rel": "Sin parentesco directo detectado", "depth": 1.06, "has_cp": true, "scand": 38.8, "foraneo": 61.3, "NO": 2.3, "UK": 27.7, "DK": 35.6, "SE": 0.9, "PL": 0.8, "FI": 0.3, "IT": 32.5, "pos_in_site": 21, "is_kin": false}, {"id": "VK178", "site_idx": 1, "site": "Oxford (Inglaterra) [Fosa Masacre]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a1c2b2b", "mt_hap": "K2a5", "rel": "Sin parentesco directo detectado", "depth": 0.89, "has_cp": true, "scand": 49.6, "foraneo": 50.3, "NO": 0.1, "UK": 32.6, "DK": 49.5, "SE": 0.0, "PL": 2.8, "FI": 0.3, "IT": 14.6, "pos_in_site": 22, "is_kin": false}, {"id": "VK256", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a3a1", "mt_hap": "H1c7", "rel": "Sin parentesco directo detectado", "depth": 1.36, "has_cp": true, "scand": 57.6, "foraneo": 42.3, "NO": 24.4, "UK": 32.1, "DK": 32.4, "SE": 0.8, "PL": 0.7, "FI": 0.0, "IT": 9.5, "pos_in_site": 1, "is_kin": false}, {"id": "VK257", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a1", "mt_hap": "H5a1c1a", "rel": "Sin parentesco directo detectado", "depth": 1.02, "has_cp": true, "scand": 38.1, "foraneo": 62.0, "NO": 34.6, "UK": 33.0, "DK": 3.2, "SE": 0.3, "PL": 2.8, "FI": 11.6, "IT": 14.6, "pos_in_site": 2, "is_kin": false}, {"id": "VK258", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a3a", "mt_hap": "K1a4a1", "rel": "Sin parentesco directo detectado", "depth": 1.02, "has_cp": true, "scand": 32.5, "foraneo": 67.6, "NO": 14.7, "UK": 62.5, "DK": 12.6, "SE": 5.2, "PL": 0.1, "FI": 1.5, "IT": 3.5, "pos_in_site": 3, "is_kin": false}, {"id": "VK259", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a1b1a", "mt_hap": "I2", "rel": "Sin parentesco directo detectado", "depth": 1.18, "has_cp": true, "scand": 32.7, "foraneo": 67.3, "NO": 31.3, "UK": 48.0, "DK": 1.1, "SE": 0.3, "PL": 2.0, "FI": 11.0, "IT": 6.3, "pos_in_site": 4, "is_kin": false}, {"id": "VK260", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "Q1b", "mt_hap": "H1e1a", "rel": "Sin parentesco directo detectado", "depth": 0.9, "has_cp": true, "scand": 39.5, "foraneo": 60.5, "NO": 9.4, "UK": 25.8, "DK": 22.1, "SE": 8.0, "PL": 0.9, "FI": 1.6, "IT": 32.2, "pos_in_site": 5, "is_kin": false}, {"id": "VK261", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a2", "mt_hap": "H52", "rel": "Sin parentesco directo detectado", "depth": 1.05, "has_cp": true, "scand": 36.5, "foraneo": 63.5, "NO": 3.9, "UK": 35.4, "DK": 32.1, "SE": 0.5, "PL": 2.6, "FI": 0.9, "IT": 24.6, "pos_in_site": 6, "is_kin": false}, {"id": "VK262", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "I1a2a", "mt_hap": "J1c4", "rel": "Sin parentesco directo detectado", "depth": 1.22, "has_cp": true, "scand": 45.1, "foraneo": 54.8, "NO": 15.1, "UK": 30.5, "DK": 24.6, "SE": 5.4, "PL": 1.7, "FI": 4.3, "IT": 18.3, "pos_in_site": 7, "is_kin": false}, {"id": "VK263", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a2c1a2b2b", "mt_hap": "K1a4d", "rel": "Sin parentesco directo detectado", "depth": 1.37, "has_cp": true, "scand": 47.5, "foraneo": 52.5, "NO": 38.3, "UK": 35.5, "DK": 5.6, "SE": 3.6, "PL": 5.1, "FI": 1.9, "IT": 10.0, "pos_in_site": 8, "is_kin": false}, {"id": "VK264", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1a1a1b1a3a", "mt_hap": "N1a1a1a2", "rel": "Sin parentesco directo detectado", "depth": 0.99, "has_cp": true, "scand": 65.7, "foraneo": 34.3, "NO": 24.4, "UK": 11.7, "DK": 26.7, "SE": 14.6, "PL": 1.0, "FI": 0.6, "IT": 21.0, "pos_in_site": 9, "is_kin": false}, {"id": "VK449", "site_idx": 2, "site": "Dorset (Inglaterra) [Fosa Ejecución]", "cat": "Incursión / Guerra", "sex": "Male", "y_hap": "R1b1a1b1a1a1b", "mt_hap": "H6a2a", "rel": "Sin parentesco directo detectado", "depth": 1.43, "has_cp": true, "scand": 58.0, "foraneo": 42.0, "NO": 23.1, "UK": 37.8, "DK": 24.6, "SE": 10.3, "PL": 2.7, "FI": 0.4, "IT": 1.1, "pos_in_site": 10, "is_kin": false}, {"id": "VK29", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "I1", "mt_hap": "T2b3b", "rel": "Sin parentesco directo detectado", "depth": 3.21, "has_cp": true, "scand": 75.4, "foraneo": 24.6, "NO": 9.9, "UK": 16.3, "DK": 37.4, "SE": 28.1, "PL": 0.3, "FI": 7.2, "IT": 0.8, "pos_in_site": 1, "is_kin": false}, {"id": "VK30", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1a1a1", "mt_hap": "U5b1c2b", "rel": "Sin parentesco directo detectado", "depth": 0.57, "has_cp": true, "scand": 75.3, "foraneo": 24.7, "NO": 0.6, "UK": 10.2, "DK": 74.6, "SE": 0.1, "PL": 1.4, "FI": 0.0, "IT": 13.1, "pos_in_site": 2, "is_kin": false}, {"id": "VK31", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a2c1", "mt_hap": "I4a", "rel": "Sin parentesco directo detectado", "depth": 0.38, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 7, "is_kin": false}, {"id": "VK33", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "K1a4a1", "rel": "Pariente de 1er grado de VK406 (Skara, Varnhem)", "depth": 0.94, "has_cp": true, "scand": 75.2, "foraneo": 24.8, "NO": 4.8, "UK": 4.4, "DK": 26.5, "SE": 43.9, "PL": 2.5, "FI": 10.3, "IT": 7.6, "pos_in_site": 29, "is_kin": true}, {"id": "VK34", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a1c2b2a1b1a4b1", "mt_hap": "HV+16311", "rel": "Sin parentesco directo detectado", "depth": 1.19, "has_cp": true, "scand": 89.5, "foraneo": 10.4, "NO": 0.0, "UK": 5.9, "DK": 89.5, "SE": 0.0, "PL": 0.7, "FI": 0.1, "IT": 3.7, "pos_in_site": 8, "is_kin": false}, {"id": "VK35", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1a1a1b1a3a", "mt_hap": "T2f1a1", "rel": "Sin parentesco directo detectado", "depth": 1.11, "has_cp": true, "scand": 96.0, "foraneo": 4.0, "NO": 18.7, "UK": 0.7, "DK": 72.3, "SE": 5.0, "PL": 0.1, "FI": 1.5, "IT": 1.7, "pos_in_site": 9, "is_kin": false}, {"id": "VK39", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "G2a2b2a1a1b1a", "mt_hap": "T2b4b", "rel": "Sin parentesco directo detectado", "depth": 0.16, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 10, "is_kin": false}, {"id": "VK40", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a2b1c1b", "mt_hap": "T1a1", "rel": "Sin parentesco directo detectado", "depth": 1.87, "has_cp": true, "scand": 73.8, "foraneo": 26.1, "NO": 3.2, "UK": 20.5, "DK": 66.8, "SE": 3.8, "PL": 0.1, "FI": 0.0, "IT": 5.5, "pos_in_site": 16, "is_kin": false}, {"id": "VK42", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "J2a1a1b2a1b1", "mt_hap": "T2b11", "rel": "Sin parentesco directo detectado", "depth": 9.25, "has_cp": true, "scand": 56.5, "foraneo": 43.5, "NO": 3.0, "UK": 23.5, "DK": 53.3, "SE": 0.2, "PL": 0.2, "FI": 0.1, "IT": 19.7, "pos_in_site": 24, "is_kin": false}, {"id": "VK303", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "T2a1b1a1", "rel": "Sin parentesco directo detectado", "depth": 2.5, "has_cp": true, "scand": 69.6, "foraneo": 30.5, "NO": 25.6, "UK": 13.4, "DK": 17.9, "SE": 26.1, "PL": 1.5, "FI": 0.3, "IT": 15.3, "pos_in_site": 30, "is_kin": false}, {"id": "VK304", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "F", "mt_hap": "K1a1b1e", "rel": "Sin parentesco directo detectado", "depth": 0.01, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 3, "is_kin": false}, {"id": "VK306", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "I1a", "mt_hap": "H15a1", "rel": "Sin parentesco directo detectado", "depth": 1.05, "has_cp": true, "scand": 84.0, "foraneo": 15.9, "NO": 1.7, "UK": 1.8, "DK": 46.4, "SE": 35.9, "PL": 0.5, "FI": 10.0, "IT": 3.6, "pos_in_site": 4, "is_kin": false}, {"id": "VK308", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a1b1a1", "mt_hap": "H1c", "rel": "Sin parentesco directo detectado", "depth": 1.46, "has_cp": true, "scand": 81.2, "foraneo": 18.7, "NO": 27.4, "UK": 6.9, "DK": 47.2, "SE": 6.6, "PL": 0.3, "FI": 0.0, "IT": 11.5, "pos_in_site": 5, "is_kin": false}, {"id": "VK309", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1a1a", "mt_hap": "K1b1c", "rel": "Sin parentesco directo detectado", "depth": 0.3, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 6, "is_kin": false}, {"id": "VK395", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "N1a1a1a1a1a2a1a2", "mt_hap": "X2c1", "rel": "Sin parentesco directo detectado", "depth": 1.44, "has_cp": true, "scand": 0.1, "foraneo": 99.9, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.1, "PL": 15.4, "FI": 84.5, "IT": 0.0, "pos_in_site": 11, "is_kin": false}, {"id": "VK396", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a1c1a1", "mt_hap": "J1c2t", "rel": "Sin parentesco directo detectado", "depth": 1.19, "has_cp": true, "scand": 42.0, "foraneo": 58.0, "NO": 0.5, "UK": 18.7, "DK": 41.2, "SE": 0.3, "PL": 0.0, "FI": 0.2, "IT": 39.1, "pos_in_site": 12, "is_kin": false}, {"id": "VK397", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1a1a1b1a3a", "mt_hap": "J1b1a1", "rel": "Sin parentesco directo detectado", "depth": 1.37, "has_cp": true, "scand": 34.4, "foraneo": 65.5, "NO": 0.0, "UK": 0.0, "DK": 19.6, "SE": 14.8, "PL": 64.8, "FI": 0.6, "IT": 0.1, "pos_in_site": 13, "is_kin": false}, {"id": "VK398", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "T1a2b1", "mt_hap": "H1b1+16362", "rel": "Sin parentesco directo detectado", "depth": 1.29, "has_cp": true, "scand": 38.2, "foraneo": 61.9, "NO": 4.4, "UK": 12.3, "DK": 33.5, "SE": 0.3, "PL": 8.0, "FI": 3.0, "IT": 38.6, "pos_in_site": 14, "is_kin": false}, {"id": "VK399", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "H4a1a1a", "rel": "Sin parentesco directo detectado", "depth": 1.71, "has_cp": true, "scand": 81.6, "foraneo": 18.5, "NO": 6.9, "UK": 0.0, "DK": 5.5, "SE": 69.2, "PL": 6.1, "FI": 5.3, "IT": 7.1, "pos_in_site": 15, "is_kin": false}, {"id": "VK400", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "I1a1b", "mt_hap": "H1+16239", "rel": "Sin parentesco directo detectado", "depth": 1.07, "has_cp": true, "scand": 71.9, "foraneo": 28.1, "NO": 71.5, "UK": 18.6, "DK": 0.4, "SE": 0.0, "PL": 0.8, "FI": 1.2, "IT": 7.5, "pos_in_site": 17, "is_kin": false}, {"id": "VK401", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1a1a1b1a3a2", "mt_hap": "H2a2b", "rel": "Sin parentesco directo detectado", "depth": 1.26, "has_cp": true, "scand": 77.8, "foraneo": 22.2, "NO": 48.5, "UK": 6.4, "DK": 28.4, "SE": 0.9, "PL": 0.2, "FI": 9.6, "IT": 6.0, "pos_in_site": 18, "is_kin": false}, {"id": "VK402", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "J2a1a1", "rel": "Sin parentesco directo detectado", "depth": 1.53, "has_cp": true, "scand": 48.4, "foraneo": 51.6, "NO": 11.8, "UK": 28.6, "DK": 36.2, "SE": 0.4, "PL": 1.1, "FI": 0.2, "IT": 21.7, "pos_in_site": 31, "is_kin": false}, {"id": "VK403", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a2a1b1a", "mt_hap": "K1a4a1a2b", "rel": "Sin parentesco directo detectado", "depth": 1.49, "has_cp": true, "scand": 31.0, "foraneo": 69.0, "NO": 17.6, "UK": 36.7, "DK": 10.1, "SE": 3.3, "PL": 0.1, "FI": 0.1, "IT": 32.1, "pos_in_site": 19, "is_kin": false}, {"id": "VK404", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "I1a1b", "mt_hap": "U4a2", "rel": "Sin parentesco directo detectado", "depth": 1.43, "has_cp": true, "scand": 65.4, "foraneo": 34.6, "NO": 13.9, "UK": 2.4, "DK": 4.0, "SE": 47.5, "PL": 10.4, "FI": 20.0, "IT": 1.8, "pos_in_site": 20, "is_kin": false}, {"id": "VK405", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a2c1", "mt_hap": "K1a10", "rel": "Sin parentesco directo detectado", "depth": 1.03, "has_cp": true, "scand": 17.0, "foraneo": 83.0, "NO": 10.3, "UK": 80.0, "DK": 4.9, "SE": 1.8, "PL": 0.9, "FI": 1.3, "IT": 0.8, "pos_in_site": 21, "is_kin": false}, {"id": "VK406", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "K1a4a1", "rel": "Pariente de 1er grado de VK33 (Skara, Varnhem)", "depth": 1.3, "has_cp": true, "scand": 78.0, "foraneo": 21.9, "NO": 22.1, "UK": 1.6, "DK": 5.1, "SE": 50.8, "PL": 0.2, "FI": 6.2, "IT": 13.9, "pos_in_site": 22, "is_kin": true}, {"id": "VK407", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "I1", "mt_hap": "H1c21", "rel": "Sin parentesco directo detectado", "depth": 0.23, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 23, "is_kin": false}, {"id": "VK424", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a1c2b1", "mt_hap": "K2b1a1", "rel": "Sin parentesco directo detectado", "depth": 0.14, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 25, "is_kin": false}, {"id": "VK425", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b1a1a1c2b2b", "mt_hap": "U3a1", "rel": "Sin parentesco directo detectado", "depth": 0.12, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 26, "is_kin": false}, {"id": "VK426", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "R1b1a1b", "mt_hap": "U6a1a1", "rel": "Sin parentesco directo detectado", "depth": 0.12, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 27, "is_kin": false}, {"id": "VK427", "site_idx": 3, "site": "Skara (Suecia) [Guarnición/Ciudad]", "cat": "Guarnición / Ciudad", "sex": "Male", "y_hap": "I2a1b1a", "mt_hap": "K1a4", "rel": "Sin parentesco directo detectado", "depth": 0.11, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 28, "is_kin": false}, {"id": "VK24", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1", "mt_hap": "J1b1a1a", "rel": "Sin parentesco directo detectado", "depth": 0.19, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 10, "is_kin": false}, {"id": "VK25", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a3b1a", "mt_hap": "H3a1a", "rel": "Patriarca / Pariente de 1er y 2º grado de VK234, VK236, VK44, VK237 (Clan Feroe)", "depth": 1.89, "has_cp": true, "scand": 44.5, "foraneo": 55.6, "NO": 2.3, "UK": 48.2, "DK": 28.6, "SE": 13.6, "PL": 0.8, "FI": 2.7, "IT": 3.9, "pos_in_site": 12, "is_kin": true}, {"id": "VK27", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a2c1a2", "mt_hap": "U5a1g1", "rel": "Sin parentesco directo detectado", "depth": 0.25, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 13, "is_kin": false}, {"id": "VK44", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a2c1a1a1a1a1a", "mt_hap": "H3a1a", "rel": "Pariente de 2º grado de VK25 (Clan Feroe)", "depth": 0.45, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 6, "is_kin": true}, {"id": "VK45", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a3a", "mt_hap": "H3a1", "rel": "Pariente de 2º grado de VK46 (Clan Feroe)", "depth": 0.11, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 7, "is_kin": true}, {"id": "VK46", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a3a2b1a", "mt_hap": "H5", "rel": "Pariente de 2º grado de VK45 y VK244 (Clan Feroe)", "depth": 4.33, "has_cp": true, "scand": 49.4, "foraneo": 50.6, "NO": 45.9, "UK": 41.8, "DK": 1.7, "SE": 1.8, "PL": 0.0, "FI": 0.0, "IT": 8.8, "pos_in_site": 14, "is_kin": true}, {"id": "VK234", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a3b1a", "mt_hap": "H3a1a", "rel": "Pariente de 1er grado de VK25 (Clan Feroe)", "depth": 0.71, "has_cp": true, "scand": 52.5, "foraneo": 47.5, "NO": 11.4, "UK": 31.2, "DK": 40.8, "SE": 0.3, "PL": 0.2, "FI": 5.9, "IT": 10.2, "pos_in_site": 1, "is_kin": true}, {"id": "VK236", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H3a1a", "rel": "Pariente de 1er grado de VK25 (Clan Feroe)", "depth": 1.45, "has_cp": true, "scand": 55.6, "foraneo": 44.4, "NO": 6.6, "UK": 30.0, "DK": 44.9, "SE": 4.1, "PL": 0.1, "FI": 2.9, "IT": 11.4, "pos_in_site": 15, "is_kin": true}, {"id": "VK237", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a", "mt_hap": "J2a2c", "rel": "Pariente de 2º grado de VK25 y 3er grado de VK242 (Clan Feroe)", "depth": 1.64, "has_cp": true, "scand": 46.8, "foraneo": 53.2, "NO": 26.5, "UK": 41.1, "DK": 19.1, "SE": 1.2, "PL": 0.1, "FI": 1.6, "IT": 10.4, "pos_in_site": 8, "is_kin": true}, {"id": "VK238", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a3a2a", "mt_hap": "H3a1a", "rel": "Pariente de 2º grado de VK25 (Clan Feroe)", "depth": 1.35, "has_cp": true, "scand": 68.1, "foraneo": 31.8, "NO": 13.0, "UK": 13.5, "DK": 55.1, "SE": 0.0, "PL": 4.1, "FI": 0.2, "IT": 14.0, "pos_in_site": 2, "is_kin": true}, {"id": "VK239", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b", "mt_hap": "H5", "rel": "Sin parentesco directo detectado", "depth": 0.03, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 9, "is_kin": false}, {"id": "VK240", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H1ap1", "rel": "Sin parentesco directo detectado", "depth": 0.73, "has_cp": true, "scand": 63.2, "foraneo": 36.9, "NO": 18.7, "UK": 8.6, "DK": 44.5, "SE": 0.0, "PL": 0.7, "FI": 0.8, "IT": 26.8, "pos_in_site": 16, "is_kin": false}, {"id": "VK241", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H17", "rel": "Sin parentesco directo detectado", "depth": 0.77, "has_cp": true, "scand": 31.3, "foraneo": 68.7, "NO": 23.4, "UK": 45.0, "DK": 7.8, "SE": 0.1, "PL": 1.0, "FI": 0.0, "IT": 22.7, "pos_in_site": 17, "is_kin": false}, {"id": "VK242", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a2c1a1f1", "mt_hap": "H3a1a", "rel": "Pariente de 3er grado de VK237 (Clan Feroe)", "depth": 0.59, "has_cp": true, "scand": 35.8, "foraneo": 64.1, "NO": 29.7, "UK": 33.5, "DK": 4.8, "SE": 1.3, "PL": 0.1, "FI": 0.1, "IT": 30.4, "pos_in_site": 3, "is_kin": true}, {"id": "VK244", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a3a1", "mt_hap": "H2a2a2", "rel": "Pariente de 2º grado de VK46 (Clan Feroe)", "depth": 0.54, "has_cp": true, "scand": 44.3, "foraneo": 55.6, "NO": 31.6, "UK": 33.2, "DK": 10.9, "SE": 1.8, "PL": 2.5, "FI": 2.1, "IT": 17.8, "pos_in_site": 4, "is_kin": true}, {"id": "VK245", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a3a2b1a", "mt_hap": "H3a1", "rel": "2d_rel_VK46", "depth": 1.08, "has_cp": true, "scand": 49.6, "foraneo": 50.5, "NO": 38.1, "UK": 34.4, "DK": 10.8, "SE": 0.7, "PL": 4.6, "FI": 4.8, "IT": 6.7, "pos_in_site": 5, "is_kin": true}, {"id": "VK248", "site_idx": 4, "site": "Islas Feroe [Pioneros Atlántico]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "I1", "mt_hap": "H49a", "rel": "Sin parentesco directo detectado", "depth": 0.08, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 11, "is_kin": false}, {"id": "VK1", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "J1c3g", "rel": "Sin parentesco directo detectado", "depth": 11.77, "has_cp": true, "scand": 69.9, "foraneo": 30.1, "NO": 69.9, "UK": 26.8, "DK": 0.0, "SE": 0.0, "PL": 0.6, "FI": 0.2, "IT": 2.5, "pos_in_site": 9, "is_kin": false}, {"id": "VK6", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "T2a1a", "rel": "Sin parentesco directo detectado", "depth": 2.97, "has_cp": true, "scand": 76.3, "foraneo": 23.6, "NO": 0.1, "UK": 7.0, "DK": 75.5, "SE": 0.7, "PL": 0.7, "FI": 0.2, "IT": 15.7, "pos_in_site": 14, "is_kin": false}, {"id": "VK9", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "J1c3g", "rel": "Sin parentesco directo detectado", "depth": 0.1, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 15, "is_kin": false}, {"id": "VK11", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "J1c3g", "rel": "Sin parentesco directo detectado", "depth": 0.08, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 10, "is_kin": false}, {"id": "VK179", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "I1", "mt_hap": "K1a3a", "rel": "Pariente de 3er grado de VK183 (Colonia de Groenlandia)", "depth": 1.84, "has_cp": true, "scand": 71.5, "foraneo": 28.4, "NO": 61.2, "UK": 20.5, "DK": 6.5, "SE": 3.8, "PL": 3.7, "FI": 2.1, "IT": 2.1, "pos_in_site": 2, "is_kin": true}, {"id": "VK180", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "IJ", "mt_hap": "J1c3b", "rel": "Sin parentesco directo detectado", "depth": 0.01, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 3, "is_kin": false}, {"id": "VK182", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "I", "mt_hap": "H2a1", "rel": "Sin parentesco directo detectado", "depth": 0.01, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 4, "is_kin": false}, {"id": "VK183", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "I1", "mt_hap": "T2b21", "rel": "Pariente de 3er grado de VK179 y VK187 (Colonia de Groenlandia)", "depth": 0.54, "has_cp": true, "scand": 46.0, "foraneo": 54.1, "NO": 39.5, "UK": 38.0, "DK": 5.5, "SE": 1.0, "PL": 0.9, "FI": 2.0, "IT": 13.2, "pos_in_site": 1, "is_kin": true}, {"id": "VK184", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a3a1", "mt_hap": "H4a1a4b", "rel": "Sin parentesco directo detectado", "depth": 1.31, "has_cp": true, "scand": 83.1, "foraneo": 16.9, "NO": 83.0, "UK": 3.5, "DK": 0.1, "SE": 0.0, "PL": 0.2, "FI": 4.4, "IT": 8.8, "pos_in_site": 5, "is_kin": false}, {"id": "VK185", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "CT", "mt_hap": "H4a1a1", "rel": "Sin parentesco directo detectado", "depth": 0.0, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 6, "is_kin": false}, {"id": "VK186", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "I1", "mt_hap": "H1ao", "rel": "Sin parentesco directo detectado", "depth": 0.81, "has_cp": true, "scand": 45.3, "foraneo": 54.7, "NO": 38.2, "UK": 41.7, "DK": 4.7, "SE": 2.4, "PL": 0.1, "FI": 2.7, "IT": 10.2, "pos_in_site": 7, "is_kin": false}, {"id": "VK187", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "T2a1a", "rel": "Pariente de 3er grado de VK183 (Colonia de Groenlandia)", "depth": 0.91, "has_cp": true, "scand": 57.9, "foraneo": 42.2, "NO": 48.4, "UK": 10.1, "DK": 9.4, "SE": 0.1, "PL": 7.8, "FI": 3.7, "IT": 20.6, "pos_in_site": 11, "is_kin": true}, {"id": "VK193", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "U3a1", "rel": "Sin parentesco directo detectado", "depth": 0.05, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 12, "is_kin": false}, {"id": "VK196", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "U5b1e1", "rel": "Sin parentesco directo detectado", "depth": 0.05, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 13, "is_kin": false}, {"id": "VK513", "site_idx": 5, "site": "Groenlandia [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1", "mt_hap": "J1c1b", "rel": "Sin parentesco directo detectado", "depth": 2.26, "has_cp": true, "scand": 92.7, "foraneo": 7.4, "NO": 92.6, "UK": 7.2, "DK": 0.1, "SE": 0.0, "PL": 0.0, "FI": 0.0, "IT": 0.2, "pos_in_site": 8, "is_kin": false}, {"id": "VK95", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a2c1a1a1a1a1a", "mt_hap": "H6a1a3a", "rel": "Sin parentesco directo detectado", "depth": 1.32, "has_cp": true, "scand": 17.7, "foraneo": 82.4, "NO": 0.4, "UK": 74.0, "DK": 11.9, "SE": 5.4, "PL": 3.2, "FI": 3.8, "IT": 1.4, "pos_in_site": 6, "is_kin": false}, {"id": "VK98", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "I1a1b1a4a2", "mt_hap": "T2b3b", "rel": "Sin parentesco directo detectado", "depth": 2.49, "has_cp": true, "scand": 77.1, "foraneo": 22.9, "NO": 71.4, "UK": 19.2, "DK": 3.9, "SE": 1.8, "PL": 0.4, "FI": 0.6, "IT": 2.7, "pos_in_site": 7, "is_kin": false}, {"id": "VK99", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "I2a1", "rel": "Sin parentesco directo detectado", "depth": 0.73, "has_cp": true, "scand": 32.6, "foraneo": 67.5, "NO": 28.7, "UK": 50.1, "DK": 0.1, "SE": 3.8, "PL": 0.0, "FI": 3.8, "IT": 13.6, "pos_in_site": 14, "is_kin": false}, {"id": "VK101", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a2d1a1", "mt_hap": "U5b1g", "rel": "Sin parentesco directo detectado", "depth": 1.93, "has_cp": true, "scand": 51.4, "foraneo": 48.5, "NO": 50.6, "UK": 40.3, "DK": 0.6, "SE": 0.2, "PL": 1.4, "FI": 0.2, "IT": 6.6, "pos_in_site": 2, "is_kin": false}, {"id": "VK102", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1b1a1b1a1a1 ", "mt_hap": "J1c3f", "rel": "Sin parentesco directo detectado", "depth": 4.16, "has_cp": true, "scand": 56.8, "foraneo": 43.1, "NO": 44.6, "UK": 36.5, "DK": 9.9, "SE": 2.3, "PL": 0.4, "FI": 1.4, "IT": 4.8, "pos_in_site": 3, "is_kin": false}, {"id": "VK110", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "I1a1b1a1", "mt_hap": "H10+(16093)", "rel": "Pariente de 1er grado de VK230 y VK111 (Familia de Hofstaðir, Islandia)", "depth": 1.79, "has_cp": true, "scand": 31.0, "foraneo": 69.0, "NO": 23.5, "UK": 63.3, "DK": 1.5, "SE": 6.0, "PL": 0.4, "FI": 3.1, "IT": 2.2, "pos_in_site": 1, "is_kin": true}, {"id": "VK111", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H10+(16093)", "rel": "Pariente de 1er grado de VK230 y VK110 (Familia de Hofstaðir, Islandia)", "depth": 1.08, "has_cp": true, "scand": 2.2, "foraneo": 97.8, "NO": 0.0, "UK": 78.7, "DK": 2.2, "SE": 0.0, "PL": 1.4, "FI": 3.2, "IT": 14.5, "pos_in_site": 8, "is_kin": true}, {"id": "VK122", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H24a", "rel": "Sin parentesco directo detectado", "depth": 1.31, "has_cp": true, "scand": 75.8, "foraneo": 24.2, "NO": 75.6, "UK": 22.3, "DK": 0.1, "SE": 0.1, "PL": 0.2, "FI": 0.1, "IT": 1.6, "pos_in_site": 9, "is_kin": false}, {"id": "VK123", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R2a2b1", "mt_hap": "J1c9", "rel": "Sin parentesco directo detectado", "depth": 1.15, "has_cp": true, "scand": 19.6, "foraneo": 80.6, "NO": 4.6, "UK": 61.2, "DK": 14.3, "SE": 0.7, "PL": 2.0, "FI": 0.3, "IT": 17.1, "pos_in_site": 4, "is_kin": false}, {"id": "VK225", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Male", "y_hap": "R1a1a1b1a3a2b", "mt_hap": "H3v+16093", "rel": "Sin parentesco directo detectado", "depth": 0.59, "has_cp": true, "scand": 66.4, "foraneo": 33.7, "NO": 33.4, "UK": 9.0, "DK": 33.0, "SE": 0.0, "PL": 2.2, "FI": 0.5, "IT": 22.0, "pos_in_site": 5, "is_kin": false}, {"id": "VK226", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H3a1a", "rel": "Sin parentesco directo detectado", "depth": 0.04, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 10, "is_kin": false}, {"id": "VK227", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "K1b2a2", "rel": "Sin parentesco directo detectado", "depth": 0.54, "has_cp": true, "scand": 51.2, "foraneo": 48.7, "NO": 51.0, "UK": 20.4, "DK": 0.2, "SE": 0.0, "PL": 4.4, "FI": 0.9, "IT": 23.0, "pos_in_site": 11, "is_kin": false}, {"id": "VK228", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "T2b4", "rel": "Sin parentesco directo detectado", "depth": 0.05, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 12, "is_kin": false}, {"id": "VK230", "site_idx": 6, "site": "Islandia (Hofstaðir) [Colonia Estable]", "cat": "Pioneros / Colonia", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H10+(16093)", "rel": "Madre/Hermana (1er grado) de VK110 y VK111 (Familia de Hofstaðir, Islandia)", "depth": 2.51, "has_cp": true, "scand": 30.6, "foraneo": 69.3, "NO": 30.2, "UK": 60.0, "DK": 0.4, "SE": 0.0, "PL": 0.4, "FI": 0.3, "IT": 8.6, "pos_in_site": 13, "is_kin": true}, {"id": "VK48", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1b1a3a1a1a", "mt_hap": "H10e", "rel": "Sin parentesco directo detectado", "depth": 0.49, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 18, "is_kin": false}, {"id": "VK50", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "I1a1a1a1a", "mt_hap": "H1+16189", "rel": "Sin parentesco directo detectado", "depth": 6.23, "has_cp": true, "scand": 78.0, "foraneo": 22.0, "NO": 0.2, "UK": 0.0, "DK": 0.0, "SE": 77.8, "PL": 4.0, "FI": 17.9, "IT": 0.1, "pos_in_site": 19, "is_kin": false}, {"id": "VK51", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "N1a1a1a1a1a1a", "mt_hap": "U5b1e1", "rel": "Sin parentesco directo detectado", "depth": 0.62, "has_cp": true, "scand": 0.1, "foraneo": 99.8, "NO": 0.0, "UK": 0.4, "DK": 0.0, "SE": 0.1, "PL": 7.5, "FI": 91.7, "IT": 0.2, "pos_in_site": 20, "is_kin": false}, {"id": "VK53", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "I2a1a2b1a1", "mt_hap": "HV9b", "rel": "Sin parentesco directo detectado", "depth": 0.8, "has_cp": true, "scand": 2.4, "foraneo": 97.6, "NO": 1.8, "UK": 6.6, "DK": 0.2, "SE": 0.4, "PL": 63.5, "FI": 20.7, "IT": 6.8, "pos_in_site": 21, "is_kin": false}, {"id": "VK56", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H6a1a", "rel": "outlier", "depth": 1.06, "has_cp": true, "scand": 0.3, "foraneo": 99.7, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.3, "PL": 0.0, "FI": 99.6, "IT": 0.1, "pos_in_site": 25, "is_kin": false}, {"id": "VK57", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1b1a1b1a1a", "mt_hap": "J1c6", "rel": "Sin parentesco directo detectado", "depth": 0.21, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 22, "is_kin": false}, {"id": "VK58", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "I4a1", "rel": "Sin parentesco directo detectado", "depth": 4.51, "has_cp": true, "scand": 71.5, "foraneo": 28.5, "NO": 3.0, "UK": 22.1, "DK": 67.4, "SE": 1.1, "PL": 4.3, "FI": 0.6, "IT": 1.5, "pos_in_site": 50, "is_kin": false}, {"id": "VK60", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1b1a2b", "mt_hap": "H13a1a1b", "rel": "Sin parentesco directo detectado", "depth": 0.79, "has_cp": true, "scand": 0.0, "foraneo": 100.0, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.0, "PL": 28.5, "FI": 65.7, "IT": 5.8, "pos_in_site": 23, "is_kin": false}, {"id": "VK63", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H56", "rel": "Sin parentesco directo detectado", "depth": 0.19, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 51, "is_kin": false}, {"id": "VK64", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1b1a2a", "mt_hap": "I1a1", "rel": "Sin parentesco directo detectado", "depth": 0.87, "has_cp": true, "scand": 2.1, "foraneo": 98.0, "NO": 0.9, "UK": 23.8, "DK": 0.8, "SE": 0.4, "PL": 24.4, "FI": 46.6, "IT": 3.2, "pos_in_site": 24, "is_kin": false}, {"id": "VK232", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1b1a1b1a1a1 ", "mt_hap": "N1a1a1", "rel": "Sin parentesco directo detectado", "depth": 0.32, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 1, "is_kin": false}, {"id": "VK251", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1", "mt_hap": "U5b1e1", "rel": "Sin parentesco directo detectado", "depth": 0.04, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 2, "is_kin": false}, {"id": "VK428", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "K1a4a1a2b", "rel": "Sin parentesco directo detectado", "depth": 0.18, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 26, "is_kin": false}, {"id": "VK429", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H70", "rel": "Sin parentesco directo detectado", "depth": 2.73, "has_cp": true, "scand": 54.7, "foraneo": 45.4, "NO": 9.6, "UK": 9.5, "DK": 43.8, "SE": 1.3, "PL": 0.9, "FI": 1.6, "IT": 33.4, "pos_in_site": 27, "is_kin": false}, {"id": "VK430", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "N1a1a1a1a1a", "mt_hap": "T1a1b", "rel": "Sin parentesco directo detectado", "depth": 0.18, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 3, "is_kin": false}, {"id": "VK431", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1b1a1b1a1a2", "mt_hap": "H2a1", "rel": "Sin parentesco directo detectado", "depth": 0.25, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 4, "is_kin": false}, {"id": "VK432", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "J1b1a1", "rel": "Sin parentesco directo detectado", "depth": 0.3, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 28, "is_kin": false}, {"id": "VK433", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H5", "rel": "Sin parentesco directo detectado", "depth": 2.21, "has_cp": true, "scand": 73.4, "foraneo": 26.5, "NO": 0.9, "UK": 2.5, "DK": 71.6, "SE": 0.9, "PL": 2.3, "FI": 0.0, "IT": 21.7, "pos_in_site": 29, "is_kin": false}, {"id": "VK434", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "U5b2a2", "rel": "Sin parentesco directo detectado", "depth": 0.26, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 30, "is_kin": false}, {"id": "VK435", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "T1a5a", "rel": "Sin parentesco directo detectado", "depth": 0.06, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 31, "is_kin": false}, {"id": "VK437", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "V", "rel": "Sin parentesco directo detectado", "depth": 0.02, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 32, "is_kin": false}, {"id": "VK438", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1b", "mt_hap": "H1", "rel": "Sin parentesco directo detectado", "depth": 0.21, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 5, "is_kin": false}, {"id": "VK439", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "U4a2a", "rel": "Sin parentesco directo detectado", "depth": 0.16, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 33, "is_kin": false}, {"id": "VK440", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "T2b+152", "rel": "Sin parentesco directo detectado", "depth": 0.07, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 34, "is_kin": false}, {"id": "VK441", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "J1c1b1a", "rel": "Sin parentesco directo detectado", "depth": 0.03, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 35, "is_kin": false}, {"id": "VK450", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "J1c1b1a", "rel": "Sin parentesco directo detectado", "depth": 0.12, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 36, "is_kin": false}, {"id": "VK452", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1b1a", "mt_hap": "T2b", "rel": "Sin parentesco directo detectado", "depth": 0.23, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 6, "is_kin": false}, {"id": "VK453", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1", "mt_hap": "H8c", "rel": "Sin parentesco directo detectado", "depth": 0.17, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 7, "is_kin": false}, {"id": "VK454", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "HV9", "rel": "Sin parentesco directo detectado", "depth": 0.25, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 37, "is_kin": false}, {"id": "VK455", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "U5a2c1", "rel": "Sin parentesco directo detectado", "depth": 1.6, "has_cp": true, "scand": 92.7, "foraneo": 7.3, "NO": 7.5, "UK": 7.3, "DK": 85.2, "SE": 0.0, "PL": 0.0, "FI": 0.0, "IT": 0.0, "pos_in_site": 38, "is_kin": false}, {"id": "VK456", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "I1a1e", "rel": "Sin parentesco directo detectado", "depth": 1.39, "has_cp": true, "scand": 0.4, "foraneo": 99.6, "NO": 0.4, "UK": 95.9, "DK": 0.0, "SE": 0.0, "PL": 0.1, "FI": 0.3, "IT": 3.3, "pos_in_site": 39, "is_kin": false}, {"id": "VK457", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "I5a", "rel": "Sin parentesco directo detectado", "depth": 0.19, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 40, "is_kin": false}, {"id": "VK458", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "I1a1a3", "rel": "Sin parentesco directo detectado", "depth": 0.18, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 41, "is_kin": false}, {"id": "VK459", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "W3a1", "rel": "Sin parentesco directo detectado", "depth": 0.19, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 42, "is_kin": false}, {"id": "VK460", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "I3", "rel": "Sin parentesco directo detectado", "depth": 0.29, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 43, "is_kin": false}, {"id": "VK461", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "N1a1a1a1a1a2a1a", "mt_hap": "H7b", "rel": "Sin parentesco directo detectado", "depth": 0.27, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 8, "is_kin": false}, {"id": "VK462", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H1e1a", "rel": "Sin parentesco directo detectado", "depth": 0.09, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 44, "is_kin": false}, {"id": "VK463", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1b1a2b", "mt_hap": "H1b5", "rel": "Sin parentesco directo detectado", "depth": 0.27, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 9, "is_kin": false}, {"id": "VK464", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H1", "rel": "Sin parentesco directo detectado", "depth": 0.08, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 45, "is_kin": false}, {"id": "VK467", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "CT", "mt_hap": "H1a", "rel": "Sin parentesco directo detectado", "depth": 0.01, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 10, "is_kin": false}, {"id": "VK468", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1b1a1b1a1a1c2b2b1a", "mt_hap": "H1a1", "rel": "Sin parentesco directo detectado", "depth": 2.83, "has_cp": true, "scand": 65.9, "foraneo": 34.2, "NO": 7.8, "UK": 7.8, "DK": 57.4, "SE": 0.7, "PL": 0.7, "FI": 2.2, "IT": 23.5, "pos_in_site": 11, "is_kin": false}, {"id": "VK469", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1b1a1b1a1a1c2b2a1b1a", "mt_hap": "H3ac", "rel": "Sin parentesco directo detectado", "depth": 0.23, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 12, "is_kin": false}, {"id": "VK471", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1", "mt_hap": "H1m", "rel": "Sin parentesco directo detectado", "depth": 0.21, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 13, "is_kin": false}, {"id": "VK472", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H13a1a1b", "rel": "Sin parentesco directo detectado", "depth": 0.06, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 46, "is_kin": false}, {"id": "VK473", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "I1a1b", "mt_hap": "N1a1a1a1", "rel": "Sin parentesco directo detectado", "depth": 1.4, "has_cp": true, "scand": 15.6, "foraneo": 84.4, "NO": 0.2, "UK": 3.1, "DK": 15.3, "SE": 0.1, "PL": 70.6, "FI": 6.2, "IT": 4.5, "pos_in_site": 14, "is_kin": false}, {"id": "VK474", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "E1b1b1b2a1a4", "mt_hap": "J1d", "rel": "Sin parentesco directo detectado", "depth": 1.59, "has_cp": true, "scand": 0.6, "foraneo": 99.2, "NO": 0.0, "UK": 0.0, "DK": 0.6, "SE": 0.0, "PL": 98.4, "FI": 0.2, "IT": 0.6, "pos_in_site": 15, "is_kin": false}, {"id": "VK475", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "R1a1a1b1a2b", "mt_hap": "H1a", "rel": "Sin parentesco directo detectado", "depth": 4.49, "has_cp": true, "scand": 0.1, "foraneo": 99.9, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.1, "PL": 57.7, "FI": 42.2, "IT": 0.0, "pos_in_site": 16, "is_kin": false}, {"id": "VK476", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "X2+225", "rel": "Sin parentesco directo detectado", "depth": 0.12, "has_cp": false, "scand": null, "foraneo": null, "NO": null, "UK": null, "DK": null, "SE": null, "PL": null, "FI": null, "IT": null, "pos_in_site": 47, "is_kin": false}, {"id": "VK477", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H1b1+16362", "rel": "Sin parentesco directo detectado", "depth": 1.17, "has_cp": true, "scand": 48.8, "foraneo": 51.2, "NO": 1.3, "UK": 9.1, "DK": 39.4, "SE": 8.1, "PL": 0.3, "FI": 1.5, "IT": 40.3, "pos_in_site": 48, "is_kin": false}, {"id": "VK478", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Female", "y_hap": "N/A (Mujer)", "mt_hap": "H1m", "rel": "Sin parentesco directo detectado", "depth": 1.58, "has_cp": true, "scand": 0.0, "foraneo": 99.9, "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.0, "PL": 69.3, "FI": 30.6, "IT": 0.0, "pos_in_site": 49, "is_kin": false}, {"id": "VK479", "site_idx": 7, "site": "Gotland (Suecia) [Puerto Comercial]", "cat": "Puerto Comercial", "sex": "Male", "y_hap": "G2a2b2a1a1b1a1a2a1a", "mt_hap": "H1a1", "rel": "Sin parentesco directo detectado", "depth": 1.82, "has_cp": true, "scand": 77.1, "foraneo": 22.8, "NO": 0.4, "UK": 17.8, "DK": 76.7, "SE": 0.0, "PL": 3.3, "FI": 0.2, "IT": 1.5, "pos_in_site": 17, "is_kin": false}];
+
+    // =========================================================================
+    // FILA 1: GRÁFICA ORIGINAL 100% INTACTA
+    // =========================================================================
+    const tracesFila1 = [
+      {
+        type: "bar",
+        orientation: "h",
+        name: "Hombres (Linaje Paterno Y)",
+        x: [100.0, 100.0, 100.0, 90.3, 82.4, 53.3, 50.0, 47.1],
+        y: ySites,
+        text: ["<b>100% H (n=34)</b>","<b>100% H (n=22)</b>","<b>100% H (n=10)</b>","<b>90% H (n=31)</b>","<b>82% H (n=17)</b>","<b>53% H (n=15)</b>","<b>50% H (n=14)</b>","<b>47% H (n=51)</b>"],
+        textposition: "inside",
+        insidetextanchor: "middle",
+        marker: { color: "#3b82f6", line: { color: "rgb(17,17,17)", width: 0.5 } },
+        customdata: customOrig,
+        hovertemplate: "<b>Yacimiento:</b> %{y}<br><b>% Varones:</b> %{x:.1f}% (Muestra total n=%{customdata[0]})<br><b>Clados Paternos (Y) distintos:</b> %{customdata[1]}<extra>Hombres</extra>"
+      },
+      {
+        type: "bar",
+        orientation: "h",
+        name: "Mujeres (Linaje Materno mtDNA)",
+        x: [0.0, 0.0, 0.0, 9.7, 17.6, 46.7, 50.0, 52.9],
+        y: ySites,
+        text: ["","","","","<b>18% M</b>","<b>47% M</b>","<b>50% M</b>","<b>53% M</b>"],
+        textposition: "inside",
+        insidetextanchor: "middle",
+        marker: { color: "#ec4899", line: { color: "rgb(17,17,17)", width: 0.5 } },
+        customdata: customOrig,
+        hovertemplate: "<b>Yacimiento:</b> %{y}<br><b>% Mujeres:</b> %{x:.1f}% (Muestra total n=%{customdata[0]})<br><b>Clados Maternos (mtDNA) distintos:</b> %{customdata[2]}<extra>Mujeres</extra>"
+      }
+    ];
+
+    const layoutFila1 = {
+      barmode: "stack",
+      paper_bgcolor: "#161b22",
+      plot_bgcolor: "#161b22",
+      height: 600,
+      font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+      title: {
+        text: "<b>Hipótesis Secundaria 3: Asimetría Sexual (Incursiones Militares vs. Colonias Estables)</b>",
+        x: 0.04,
+        y: 0.96
+      },
+      xaxis: {
+        range: [0, 100],
+        title: { text: "Porcentaje por Sexo Genético (%)", standoff: 15 },
+        gridcolor: "#283442",
+        linecolor: "#506784",
+        zerolinecolor: "#283442"
+      },
+      yaxis: {
+        autorange: "reversed",
+        automargin: true,
+        gridcolor: "#283442",
+        linecolor: "#506784",
+        zerolinecolor: "#283442"
+      },
+      shapes: [
+        { type: "line", x0: 50, x1: 50, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "#eab308", dash: "dash", width: 2.5 } }
+      ],
+      annotations: [
+        { x: 50, y: 1, xref: "x", yref: "y domain", xanchor: "center", yanchor: "bottom", text: "<b>Paridad (50/50)</b>", showarrow: false, font: { color: "#f2f5fa" } }
+      ],
+      legend: { orientation: "h", yanchor: "bottom", y: 1.03, xanchor: "center", x: 0.5 },
+      margin: { t: 105, b: 60, l: 220, r: 40 },
+      hovermode: "closest",
+      hoverlabel: { font: { size: 13 }, bgcolor: "#1f2937", bordercolor: "#ec4899" }
+    };
+
+    Plotly.newPlot("grafica4_fila1", tracesFila1, layoutFila1, { responsive: true });
+
+    // =========================================================================
+    // FILA 2: DIVERSIDAD DE LINAJES PATERNOS (Y) VS MATERNOS (mtDNA)
+    // =========================================================================
+    function renderFila2(mode) {
+      document.getElementById("btn_lin_dumbbell").classList.toggle("active", mode === "dumbbell");
+      document.getElementById("btn_lin_bars").classList.toggle("active", mode === "grouped");
+
+      const yClades = lineageData.map(d => d.y_clades);
+      const mtClades = lineageData.map(d => d.mt_clades);
+      const customLin = lineageData.map(d => [d.n, d.y_clades, d.mt_clades, d.ratio, d.top_y, d.top_mt, d.rel_str]);
+
+      let traces2 = [];
+      let annotations2 = [];
+
+      if (mode === "dumbbell") {
+        lineageData.forEach(d => {
+          traces2.push({
+            type: "scatter",
+            mode: "lines",
+            x: [d.y_clades, d.mt_clades],
+            y: [d.site, d.site],
+            line: { color: "#64748b", width: 3.5 },
+            hoverinfo: "skip",
+            showlegend: false
+          });
+          annotations2.push({
+            x: (d.y_clades + d.mt_clades) / 2,
+            y: d.site,
+            text: "<b>×" + d.ratio.toFixed(1) + "</b> (+" + (d.mt_clades - d.y_clades) + " linajes)",
+            showarrow: false,
+            yshift: 13,
+            font: { size: 11.5, color: "#cbd5e1" }
+          });
+        });
+
+        traces2.push({
+          type: "scatter",
+          mode: "markers+text",
+          name: "Clados Paternos (Cromosoma Y) distintos",
+          x: yClades,
+          y: ySites,
+          text: yClades.map(v => "<b>" + v + " Y</b>"),
+          textposition: "middle left",
+          textfont: { color: "#93c5fd", size: 12 },
+          customdata: customLin,
+          marker: { color: "#3b82f6", size: 15, line: { color: "#ffffff", width: 2 } },
+          hovertemplate:
+            "<b>Yacimiento:</b> %{y} (n=%{customdata[0]})<br>" +
+            "<b>Clados Paternos (Y) distintos:</b> <b>%{x} clados</b><br>" +
+            "<b>Subclados Y principales:</b> %{customdata[4]}<br>" +
+            "<b>Parentesco detectado:</b> %{customdata[6]}" +
+            "<extra>Linaje Paterno (Y)</extra>"
+        });
+
+        traces2.push({
+          type: "scatter",
+          mode: "markers+text",
+          name: "Clados Maternos (mtDNA) distintos",
+          x: mtClades,
+          y: ySites,
+          text: mtClades.map(v => "<b>" + v + " mtDNA</b>"),
+          textposition: "middle right",
+          textfont: { color: "#f9a8d4", size: 12 },
+          customdata: customLin,
+          marker: { color: "#ec4899", size: 15, line: { color: "#ffffff", width: 2 } },
+          hovertemplate:
+            "<b>Yacimiento:</b> %{y} (n=%{customdata[0]})<br>" +
+            "<b>Clados Maternos (mtDNA) distintos:</b> <b>%{x} clados</b> (Ratio ×%{customdata[3]} vs. Y)<br>" +
+            "<b>Subclados mtDNA principales:</b> %{customdata[5]}<br>" +
+            "<b>Parentesco detectado:</b> %{customdata[6]}" +
+            "<extra>Linaje Materno (mtDNA)</extra>"
+        });
+      } else {
+        traces2 = [
+          {
+            type: "bar",
+            orientation: "h",
+            name: "Clados Paternos (Cromosoma Y) distintos",
+            x: yClades,
+            y: ySites,
+            text: yClades.map(v => "<b>" + v + " clados Y</b>"),
+            textposition: "outside",
+            marker: { color: "#3b82f6", line: { color: "#ffffff", width: 1 } },
+            customdata: customLin,
+            hovertemplate:
+              "<b>Yacimiento:</b> %{y} (n=%{customdata[0]})<br>" +
+              "<b>Clados Paternos (Y) distintos:</b> <b>%{x}</b><br>" +
+              "<b>Subclados Y principales:</b> %{customdata[4]}<extra>Hombres (Y)</extra>"
+          },
+          {
+            type: "bar",
+            orientation: "h",
+            name: "Clados Maternos (mtDNA) distintos",
+            x: mtClades,
+            y: ySites,
+            text: lineageData.map(d => "<b>" + d.mt_clades + " mtDNA (×" + d.ratio.toFixed(1) + ")</b>"),
+            textposition: "outside",
+            marker: { color: "#ec4899", line: { color: "#ffffff", width: 1 } },
+            customdata: customLin,
+            hovertemplate:
+              "<b>Yacimiento:</b> %{y} (n=%{customdata[0]})<br>" +
+              "<b>Clados Maternos (mtDNA) distintos:</b> <b>%{x}</b> (×%{customdata[3]} más diverso que Y)<br>" +
+              "<b>Subclados mtDNA principales:</b> %{customdata[5]}<extra>Mujeres (mtDNA)</extra>"
+          }
+        ];
+      }
+
+      const layout2 = {
+        barmode: "group",
+        paper_bgcolor: "#161b22",
+        plot_bgcolor: "#161b22",
+        height: 500,
+        font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+        title: {
+          text: "<b>4B. Diversidad de Linajes Uniparentales: Homogeneidad de Clanes Paternos (Y) vs. Explosión de Linajes Maternos (mtDNA)</b>",
+          x: 0.03,
+          y: 0.96,
+          font: { size: 15 }
+        },
+        xaxis: {
+          range: [0, 26.5],
+          title: { text: "Número de Clados Genéticos Distintos en el Yacimiento (Y-DNA vs. mtDNA)", standoff: 12 },
+          gridcolor: "#283442",
+          linecolor: "#506784",
+          zerolinecolor: "#283442"
+        },
+        yaxis: {
+          autorange: "reversed",
+          automargin: true,
+          gridcolor: "#283442",
+          linecolor: "#506784",
+          zerolinecolor: "#283442"
+        },
+        annotations: annotations2,
+        legend: { orientation: "h", yanchor: "bottom", y: 1.02, xanchor: "center", x: 0.5 },
+        margin: { t: 90, b: 55, l: 220, r: 45 },
+        hovermode: "closest",
+        hoverlabel: { font: { size: 12.5 }, bgcolor: "#1f2937", bordercolor: "#3b82f6" }
+      };
+
+      Plotly.react("grafica4_fila2", traces2, layout2, { responsive: true });
+    }
+
+    // =========================================================================
+    // FILA 3: RADIOGRAFÍA DE LOS 194 INDIVIDUOS (CLANES FAMILIARES Y MESTIZAJE)
+    // =========================================================================
+    function renderFila3(mode) {
+      document.getElementById("btn_ind_kin").classList.toggle("active", mode === "kinship_all");
+      document.getElementById("btn_ind_anc").classList.toggle("active", mode === "ancestry_sex");
+
+      if (mode === "kinship_all") {
+        // Vista 4C-1: Los 194 genomas individuales alineados por yacimiento (1..N), coloreados por Sexo (#3b82f6 Hombres, #ec4899 Mujeres) y con estrellas diferenciadas por sexo (relleno azul o rosa + borde dorado #eab308) para los miembros de clanes familiares
+        const malesReg = indivG4.filter(d => d.sex === "Male" && !d.is_kin);
+        const femalesReg = indivG4.filter(d => d.sex === "Female" && !d.is_kin);
+        const kinMales = indivG4.filter(d => d.is_kin && d.sex === "Male");
+        const kinFemales = indivG4.filter(d => d.is_kin && d.sex === "Female");
+
+        const formatAnc = d => d.has_cp
+          ? (d.foraneo.toFixed(1) + "% Foráneo | " + d.scand.toFixed(1) + "% Escandinavo (NO:" + d.NO + "% DK:" + d.DK + "% SE:" + d.SE + "% UK:" + d.UK + "%)")
+          : "Cobertura <0.5x (Trazado por ADN uniparental Y / mtDNA)";
+
+        const traces3K = [
+          {
+            type: "scatter",
+            mode: "markers",
+            name: "Hombres sin parentesco cercano (Y-DNA)",
+            x: malesReg.map(d => d.pos_in_site),
+            y: malesReg.map(d => d.site),
+            text: malesReg.map(d => d.id + " (Varón)"),
+            customdata: malesReg.map(d => [d.y_hap, d.mt_hap, d.rel, formatAnc(d)]),
+            marker: { color: "#3b82f6", size: 10.5, symbol: "circle", opacity: 0.9, line: { color: "#ffffff", width: 1 } },
+            hovertemplate:
+              "<b>Individuo:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y} (Individuo #%{x})<br>" +
+              "<b>Haplogrupo Paterno (Y):</b> <b>%{customdata[0]}</b><br>" +
+              "<b>Haplogrupo Materno (mtDNA):</b> <b>%{customdata[1]}</b><br>" +
+              "<b>Mezcla Autosómica:</b> %{customdata[3]}" +
+              "<extra>Varón</extra>"
+          },
+          {
+            type: "scatter",
+            mode: "markers",
+            name: "Mujeres sin parentesco cercano (mtDNA)",
+            x: femalesReg.map(d => d.pos_in_site),
+            y: femalesReg.map(d => d.site),
+            text: femalesReg.map(d => d.id + " (Mujer)"),
+            customdata: femalesReg.map(d => [d.y_hap, d.mt_hap, d.rel, formatAnc(d)]),
+            marker: { color: "#ec4899", size: 10.5, symbol: "circle", opacity: 0.92, line: { color: "#ffffff", width: 1 } },
+            hovertemplate:
+              "<b>Individuo:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y} (Individuo #%{x})<br>" +
+              "<b>Haplogrupo Materno (mtDNA):</b> <b>%{customdata[1]}</b><br>" +
+              "<b>Mezcla Autosómica:</b> %{customdata[3]}" +
+              "<extra>Mujer</extra>"
+          },
+          {
+            type: "scatter",
+            mode: "markers",
+            name: "⭐ Hombres en Clanes Familiares (Estrella Azul + Borde Dorado, n=22)",
+            x: kinMales.map(d => d.pos_in_site),
+            y: kinMales.map(d => d.site),
+            text: kinMales.map(d => d.id + " (Varón — Clan Familiar)"),
+            customdata: kinMales.map(d => [d.y_hap, d.mt_hap, d.rel, formatAnc(d)]),
+            marker: {
+              color: "#3b82f6",
+              size: 15,
+              symbol: "star",
+              line: { color: "#eab308", width: 2.2 }
+            },
+            hovertemplate:
+              "⭐ <b>VARÓN EN CLAN FAMILIAR:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y} (Individuo #%{x})<br>" +
+              "<b>Vínculo Genético:</b> <b style='color:#fde047;'>%{customdata[2]}</b><br>" +
+              "<b>Linajes:</b> Y = <b>%{customdata[0]}</b> | mtDNA = <b>%{customdata[1]}</b><br>" +
+              "<b>Mezcla Autosómica:</b> %{customdata[3]}" +
+              "<extra>Varón Emparentado</extra>"
+          },
+          {
+            type: "scatter",
+            mode: "markers",
+            name: "⭐ Mujeres en Clanes Familiares (Estrella Rosa + Borde Dorado, n=5)",
+            x: kinFemales.map(d => d.pos_in_site),
+            y: kinFemales.map(d => d.site),
+            text: kinFemales.map(d => d.id + " (Mujer — Clan Familiar)"),
+            customdata: kinFemales.map(d => [d.y_hap, d.mt_hap, d.rel, formatAnc(d)]),
+            marker: {
+              color: "#ec4899",
+              size: 15,
+              symbol: "star",
+              line: { color: "#eab308", width: 2.2 }
+            },
+            hovertemplate:
+              "⭐ <b>MUJER EN CLAN FAMILIAR:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y} (Individuo #%{x})<br>" +
+              "<b>Vínculo Genético:</b> <b style='color:#fde047;'>%{customdata[2]}</b><br>" +
+              "<b>Linaje Materno:</b> mtDNA = <b>%{customdata[1]}</b><br>" +
+              "<b>Mezcla Autosómica:</b> %{customdata[3]}" +
+              "<extra>Mujer Emparentada</extra>"
+          }
+        ];
+
+        const layout3K = {
+          paper_bgcolor: "#161b22",
+          plot_bgcolor: "#161b22",
+          height: 540,
+          font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+          title: {
+            text: "<b>4C. Matriz Genómica de los 194 Individuos: Sexo Genético y Clanes Familiares (Estrellas Azules = Hombres | Rosas = Mujeres)</b>",
+            x: 0.03,
+            y: 0.96,
+            font: { size: 15 }
+          },
+          xaxis: {
+            range: [-0.5, 53.5],
+            title: { text: "Individuos Secuenciados en cada Yacimiento (del 1 al N total de la muestra — Pasa el ratón sobre cada individuo)", standoff: 12 },
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zeroline: false
+          },
+          yaxis: {
+            categoryorder: "array",
+            categoryarray: [...ySites].reverse(),
+            automargin: true,
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zerolinecolor: "#283442"
+          },
+          annotations: [
+            {
+              x: 34.8, y: "Salme (Estonia) [Barco Guerra]", xref: "x", yref: "y", xanchor: "left",
+              text: "⭐ <b>4 hermanos varones codo con codo (VK483, VK485, VK490, VK497) + pariente 3er grado</b>",
+              showarrow: false, font: { color: "#93c5fd", size: 11.5 }
+            },
+            {
+              x: 18.0, y: "Islas Feroe [Pioneros Atlántico]", xref: "x", yref: "y", xanchor: "left",
+              text: "⭐ <b>9 de 17 pioneros emparentados (8 H + 1 M en clanes VK25 y VK46)</b>",
+              showarrow: false, font: { color: "#fde047", size: 11.5 }
+            },
+            {
+              x: 15.0, y: "Islandia (Hofstaðir) [Colonia Estable]", xref: "x", yref: "y", xanchor: "left",
+              text: "⭐ <b>Familia de 1er grado (1 H: VK110 + 2 M: VK230, VK111)</b>",
+              showarrow: false, font: { color: "#f9a8d4", size: 11.5 }
+            }
+          ],
+          legend: { orientation: "h", yanchor: "bottom", y: 1.02, xanchor: "center", x: 0.5 },
+          margin: { t: 90, b: 55, l: 220, r: 40 },
+          hovermode: "closest",
+          hoverlabel: { font: { size: 12.5 }, bgcolor: "#1f2937", bordercolor: "#eab308" }
+        };
+
+        Plotly.react("grafica4_fila3", traces3K, layout3K, { responsive: true });
+      } else {
+        // Vista 4C-2: % ADN Foráneo por Sexo Genético (n=132 con ChromoPainter) + Estrellas diferenciadas por sexo en Parientes
+        const cpIndiv = indivG4.filter(d => d.has_cp);
+        const males = cpIndiv.filter(d => d.sex === "Male");
+        const females = cpIndiv.filter(d => d.sex === "Female");
+        const kinMalesCP = cpIndiv.filter(d => d.is_kin && d.sex === "Male");
+        const kinFemalesCP = cpIndiv.filter(d => d.is_kin && d.sex === "Female");
+
+        const traces3A = [
+          {
+            type: "box",
+            orientation: "h",
+            name: "Hombres (n=" + males.length + " con ChromoPainter)",
+            x: males.map(d => d.foraneo),
+            y: males.map(d => d.site),
+            text: males.map(d => d.id + " (Varón)"),
+            customdata: males.map(d => [d.y_hap, d.mt_hap, d.rel, d.scand, d.UK, +(d.PL + d.FI).toFixed(1), d.IT]),
+            boxpoints: "all",
+            pointpos: 0,
+            jitter: 0.35,
+            width: 0.55,
+            fillcolor: "rgba(59, 130, 246, 0.35)",
+            line: { color: "#3b82f6", width: 2 },
+            marker: { color: "#3b82f6", size: 8.5, opacity: 0.9, line: { color: "#ffffff", width: 1 } },
+            hovertemplate:
+              "<b>Individuo:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y}<br>" +
+              "<b>% ADN No Escandinavo:</b> <b>%{x:.1f}%</b> (Nórdico: %{customdata[3]}%)<br>" +
+              "<b>Linajes:</b> Y = %{customdata[0]} | mtDNA = %{customdata[1]}<br>" +
+              "<b>Parentesco:</b> %{customdata[2]}<br>" +
+              "<span style='font-size:11.5px; color:#cbd5e1;'>↳ Desglose Foráneo: UK %{customdata[4]}% | Eslavo/Fin %{customdata[5]}% | Sur Eur %{customdata[6]}%</span>" +
+              "<extra>Hombres</extra>"
+          },
+          {
+            type: "box",
+            orientation: "h",
+            name: "Mujeres (n=" + females.length + " con ChromoPainter)",
+            x: females.map(d => d.foraneo),
+            y: females.map(d => d.site),
+            text: females.map(d => d.id + " (Mujer)"),
+            customdata: females.map(d => [d.y_hap, d.mt_hap, d.rel, d.scand, d.UK, +(d.PL + d.FI).toFixed(1), d.IT]),
+            boxpoints: "all",
+            pointpos: 0,
+            jitter: 0.35,
+            width: 0.55,
+            fillcolor: "rgba(236, 72, 153, 0.35)",
+            line: { color: "#ec4899", width: 2 },
+            marker: { color: "#ec4899", size: 8.5, opacity: 0.95, line: { color: "#ffffff", width: 1 } },
+            hovertemplate:
+              "<b>Individuo:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y}<br>" +
+              "<b>% ADN No Escandinavo:</b> <b>%{x:.1f}%</b> (Nórdico: %{customdata[3]}%)<br>" +
+              "<b>Linaje Materno:</b> mtDNA = %{customdata[1]}<br>" +
+              "<b>Parentesco:</b> %{customdata[2]}<br>" +
+              "<span style='font-size:11.5px; color:#cbd5e1;'>↳ Desglose Foráneo: UK %{customdata[4]}% | Eslavo/Fin %{customdata[5]}% | Sur Eur %{customdata[6]}%</span>" +
+              "<extra>Mujeres</extra>"
+          },
+          {
+            type: "scatter",
+            mode: "markers",
+            name: "⭐ Hombres Emparentados (Estrella Azul + Borde Dorado)",
+            x: kinMalesCP.map(d => d.foraneo),
+            y: kinMalesCP.map(d => d.site),
+            text: kinMalesCP.map(d => d.id + " (Varón — Clan Familiar)"),
+            customdata: kinMalesCP.map(d => [d.y_hap, d.mt_hap, d.rel, d.scand]),
+            marker: { symbol: "star", color: "#3b82f6", size: 14.5, line: { color: "#eab308", width: 2.2 } },
+            hovertemplate:
+              "⭐ <b>VARÓN EN CLAN FAMILIAR:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y}<br>" +
+              "<b>Vínculo Genético:</b> <b style='color:#fde047;'>%{customdata[2]}</b><br>" +
+              "<b>Linajes:</b> Y = %{customdata[0]} | mtDNA = %{customdata[1]}<br>" +
+              "<b>% ADN Foráneo:</b> %{x:.1f}% (Escandinavo: %{customdata[3]}%)" +
+              "<extra>Varón Emparentado</extra>"
+          },
+          {
+            type: "scatter",
+            mode: "markers",
+            name: "⭐ Mujeres Emparentadas (Estrella Rosa + Borde Dorado)",
+            x: kinFemalesCP.map(d => d.foraneo),
+            y: kinFemalesCP.map(d => d.site),
+            text: kinFemalesCP.map(d => d.id + " (Mujer — Clan Familiar)"),
+            customdata: kinFemalesCP.map(d => [d.y_hap, d.mt_hap, d.rel, d.scand]),
+            marker: { symbol: "star", color: "#ec4899", size: 14.5, line: { color: "#eab308", width: 2.2 } },
+            hovertemplate:
+              "⭐ <b>MUJER EN CLAN FAMILIAR:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{y}<br>" +
+              "<b>Vínculo Genético:</b> <b style='color:#fde047;'>%{customdata[2]}</b><br>" +
+              "<b>Linaje Materno:</b> mtDNA = %{customdata[1]}<br>" +
+              "<b>% ADN Foráneo:</b> %{x:.1f}% (Escandinavo: %{customdata[3]}%)" +
+              "<extra>Mujer Emparentada</extra>"
+          }
+        ];
+
+        const layout3A = {
+          boxmode: "overlay",
+          paper_bgcolor: "#161b22",
+          plot_bgcolor: "#161b22",
+          height: 540,
+          font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+          title: {
+            text: "<b>4C. Distribución Individual de Ascendencia Foránea por Sexo y Vínculos de Parentesco (n=132 con ChromoPainter)</b>",
+            x: 0.03,
+            y: 0.96,
+            font: { size: 15 }
+          },
+          xaxis: {
+            range: [-3, 104],
+            title: { text: "% de Ascendencia No Escandinava (UK + Sur de Europa + Eslavo + Finés)", standoff: 12 },
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zerolinecolor: "#283442"
+          },
+          yaxis: {
+            categoryorder: "array",
+            categoryarray: [...ySites].reverse(),
+            automargin: true,
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zerolinecolor: "#283442"
+          },
+          shapes: [
+            { type: "line", x0: 30, x1: 30, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "#eab308", dash: "dash", width: 2 } }
+          ],
+          annotations: [
+            { x: 30.8, y: 0.98, xref: "x", yref: "y domain", xanchor: "left", yanchor: "top", text: "<b>Umbral >30% ADN Foráneo</b> (Salme = Hombres Suecos homogéneos | Islandia/Gotland = Alta mezcla)", showarrow: false, font: { color: "#fde047", size: 11.5 } }
+          ],
+          legend: { orientation: "h", yanchor: "bottom", y: 1.02, xanchor: "center", x: 0.5 },
+          margin: { t: 90, b: 55, l: 220, r: 40 },
+          hovermode: "closest",
+          hoverlabel: { font: { size: 12.5 }, bgcolor: "#1f2937", bordercolor: "#eab308" }
+        };
+
+        Plotly.react("grafica4_fila3", traces3A, layout3A, { responsive: true });
+      }
+    }
+
+    renderFila2("dumbbell");
+    renderFila3("kinship_all");
+
+    let currentSolo = null;
+    const plotIds = ["grafica4_fila1", "grafica4_fila2", "grafica4_fila3"];
+
+    function toggleSolo(idx) {
+      const wrapper = document.getElementById("main_wrapper");
+      if (currentSolo === idx || idx === null) {
+        currentSolo = null;
+        wrapper.classList.remove("solo-mode");
+        [0, 1, 2].forEach(i => {
+          document.getElementById("card_" + i).classList.remove("hidden-card");
+          const btn = document.getElementById("solo_btn_" + i);
+          btn.innerHTML = "🔍 Ver sola a pantalla completa";
+          btn.classList.remove("back-btn");
+          Plotly.Plots.resize(document.getElementById(plotIds[i]));
+        });
+      } else {
+        currentSolo = idx;
+        wrapper.classList.add("solo-mode");
+        [0, 1, 2].forEach(i => {
+          const card = document.getElementById("card_" + i);
+          const btn = document.getElementById("solo_btn_" + i);
+          if (i === idx) {
+            card.classList.remove("hidden-card");
+            btn.innerHTML = "🔙 Volver a ver todas (ESC)";
+            btn.classList.add("back-btn");
+            Plotly.Plots.resize(document.getElementById(plotIds[i]));
+          } else {
+            card.classList.add("hidden-card");
+          }
+        });
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && currentSolo !== null) {
+        e.preventDefault();
+        toggleSolo(null);
+      }
+    });
+  </script>
+</body>
+</html>

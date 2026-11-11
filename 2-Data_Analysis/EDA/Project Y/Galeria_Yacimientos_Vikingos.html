@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galería por Bloques | Presentación EDA Vikingos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    background-color: #0e1117;
+    color: #f0f6fc;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .carousel-track {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    transition: transform 0.42s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+    position: absolute;
+    left: 50%;
+  }
+
+  .block-card {
+    width: 440px;
+    height: 68vh;
+    max-height: 560px;
+    min-height: 360px;
+    background: #161b22;
+    border: 2px solid #30363d;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.75);
+    cursor: pointer;
+    transition: transform 0.42s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.42s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    opacity: 0.42;
+    transform: scale(0.82);
+    flex-shrink: 0;
+  }
+
+  .block-card.active {
+    opacity: 1;
+    transform: scale(1.06);
+    border-color: #58a6ff;
+    box-shadow: 0 25px 65px rgba(88, 166, 255, 0.32);
+    z-index: 20;
+  }
+
+  .block-img-wrap {
+    width: 100%;
+    flex: 1;
+    background: #0d1117;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .block-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+
+  .block-card.active:hover .block-img-wrap img {
+    transform: scale(1.04);
+  }
+
+  .block-footer {
+    padding: 16px 20px;
+    background: #161b22;
+    border-top: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .block-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .block-count {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #58a6ff;
+    background: rgba(56, 139, 253, 0.15);
+    border: 1px solid rgba(88, 166, 255, 0.35);
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(22, 27, 34, 0.9);
+    color: #f0f6fc;
+    border: 1px solid #30363d;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 40;
+    font-size: 20px;
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  }
+  .nav-arrow:hover {
+    background: #30363d;
+    border-color: #58a6ff;
+    color: #58a6ff;
+    transform: translateY(-50%) scale(1.08);
+  }
+  .nav-arrow.left { left: 28px; }
+  .nav-arrow.right { right: 28px; }
+
+  .dots-bar {
+    position: absolute;
+    bottom: 22px;
+    display: flex;
+    gap: 10px;
+    z-index: 30;
+  }
+  .dot-ind {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #30363d;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .dot-ind.active {
+    width: 28px;
+    background: #58a6ff;
+  }
+
+  /* Fullscreen Lightbox Modal */
+  #fs-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 11, 16, 0.97);
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  #fs-modal.open {
+    display: flex;
+  }
+
+  .fs-topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(14,17,23,0.9), transparent);
+    z-index: 10020;
+    pointer-events: none;
+  }
+  .fs-topbar > * {
+    pointer-events: auto;
+  }
+
+  .fs-click-zone {
+    position: absolute;
+    top: 64px;
+    bottom: 0;
+    width: 50%;
+    z-index: 10005;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .fs-click-zone.left {
+    left: 0;
+    justify-content: flex-start;
+    padding-left: 28px;
+  }
+  .fs-click-zone.right {
+    right: 0;
+    justify-content: flex-end;
+    padding-right: 28px;
+  }
+
+  .fs-zone-btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(22, 27, 34, 0.78);
+    border: 1px solid #30363d;
+    color: #f0f6fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    opacity: 0.65;
+    transition: all 0.2s ease;
+  }
+  .fs-click-zone:hover .fs-zone-btn {
+    opacity: 1;
+    border-color: #58a6ff;
+    color: #58a6ff;
+    transform: scale(1.08);
+    background: rgba(33, 38, 45, 0.95);
+  }
+
+  #fs-image {
+    max-width: 90vw;
+    max-height: 84vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.85);
+    z-index: 10001;
+    transition: opacity 0.18s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="carousel-stage">
+    <button class="nav-arrow left" onclick="moveBlock(-1)" title="Bloque Anterior"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="carousel-track" id="blocks-track"></div>
+    <button class="nav-arrow right" onclick="moveBlock(1)" title="Bloque Siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="dots-bar" id="blocks-dots"></div>
+  </div>
+
+  <!-- Fullscreen Modal for the selected block's photos -->
+  <div id="fs-modal">
+    <div class="fs-topbar">
+      <div class="flex items-center gap-3">
+        <span id="fs-block-title" class="text-base md:text-lg font-bold text-white"></span>
+        <span id="fs-photo-counter" class="text-xs font-mono px-2.5 py-1 rounded-full bg-blue-500/20 text-[#58a6ff] border border-blue-500/30"></span>
+      </div>
+      <button onclick="closeFullscreen()" class="w-10 h-10 rounded-full bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-white flex items-center justify-center text-lg transition" title="Cerrar (ESC)">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Left half screen click zone -->
+    <div class="fs-click-zone left" onclick="moveFsPhoto(-1)" title="Foto Anterior (Click o Flecha Izquierda)">
+      <div class="fs-zone-btn"><i class="fa-solid fa-chevron-left"></i></div>
+    </div>
+
+    <!-- Center Fullscreen Image -->
+    <img id="fs-image" src="" alt="Foto del Bloque" />
+
+    <!-- Right half screen click zone -->
+    <div class="fs-click-zone right" onclick="moveFsPhoto(1)" title="Foto Siguiente (Click o Flecha Derecha)">
+      <div class="fs-zone-btn"><i class="fa-solid fa-chevron-right"></i></div>
+    </div>
+  </div>
+
+<script>
+  const GROUPS = [
+    {
+      id: "vikings",
+      title: "Vikings (La Serie)",
+      prefixes: ["vikings", "vikins"],
+      photos: []
+    },
+    {
+      id: "valhalla",
+      title: "Eivor (Assassin's Creed Valhalla)",
+      prefixes: ["valhalla"],
+      photos: []
+    },
+    {
+      id: "salme",
+      title: "Barco Funerario de Salme",
+      prefixes: ["salme"],
+      photos: []
+    },
+    {
+      id: "dorset",
+      title: "Fosa Común de Dorset Hill",
+      prefixes: ["dorset"],
+      photos: []
+    },
+    {
+      id: "spillings",
+      title: "Tesoro de Spillings",
+      prefixes: ["spillings"],
+      photos: []
+    }
+  ];
+
+  const EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif", "JPG", "JPEG", "PNG", "WEBP"];
+  const MAX_INDEX_PROBE = 35;
+
+  const STORAGE_KEY = "viking_eda_gallery_state_v2";
+  let state = {
+    blockIndex: 0,
+    fsOpen: false,
+    photoIndices: { vikings: 0, valhalla: 0, salme: 0, dorset: 0, spillings: 0 }
+  };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && typeof saved === "object") {
+      if (typeof saved.blockIndex === "number" && saved.blockIndex >= 0 && saved.blockIndex < GROUPS.length) {
+        state.blockIndex = saved.blockIndex;
+      }
+      if (typeof saved.fsOpen === "boolean") {
+        state.fsOpen = saved.fsOpen;
+      }
+      if (saved.photoIndices && typeof saved.photoIndices === "object") {
+        state.photoIndices = { ...state.photoIndices, ...saved.photoIndices };
+      }
+    }
+  } catch (e) {}
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function makePlaceholderSvg(title, prefix) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+      <rect width="100%" height="100%" fill="#0d1117"/>
+      <circle cx="400" cy="240" r="54" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+      <text x="400" y="255" text-anchor="middle" fill="#58a6ff" font-family="sans-serif" font-size="38">📷</text>
+      <text x="400" y="345" text-anchor="middle" fill="#f0f6fc" font-family="sans-serif" font-weight="bold" font-size="22">${title}</text>
+      <text x="400" y="385" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="15">Guarda tus fotos como images/${prefix}_1.jpg, ${prefix}_2.jpg...</text>
+    </svg>`;
+    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+  }
+
+  function probeSingleImage(url) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(url);
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  }
+
+  async function findCandidateForIndex(prefixes, indexNum) {
+    const candidates = [];
+    for (const p of prefixes) {
+      for (const ext of EXTENSIONS) {
+        if (indexNum === 0) {
+          candidates.push(`images/${p}.${ext}`);
+          candidates.push(`images/${p}_portada.${ext}`);
+        } else {
+          candidates.push(`images/${p}_${indexNum}.${ext}`);
+          if (indexNum < 10) {
+            candidates.push(`images/${p}_0${indexNum}.${ext}`);
+          }
+          candidates.push(`images/${p}${indexNum}.${ext}`);
+          candidates.push(`images/${p}-${indexNum}.${ext}`);
+        }
+      }
+    }
+    const results = await Promise.all(candidates.map(probeSingleImage));
+    return results.find(r => r !== null) || null;
+  }
+
+  async function discoverGroupPhotos(group) {
+    const indexPromises = [];
+    for (let i = 0; i <= MAX_INDEX_PROBE; i++) {
+      indexPromises.push(findCandidateForIndex(group.prefixes, i).then(url => ({ idx: i, url })));
+    }
+    const found = await Promise.all(indexPromises);
+    const valid = found.filter(item => item.url !== null).sort((a, b) => a.idx - b.idx);
+    const uniqueUrls = [];
+    for (const item of valid) {
+      if (!uniqueUrls.includes(item.url)) {
+        uniqueUrls.push(item.url);
+      }
+    }
+    group.photos = uniqueUrls;
+  }
+
+  const trackEl = document.getElementById("blocks-track");
+  const dotsEl = document.getElementById("blocks-dots");
+
+  function renderCarouselDOM() {
+    trackEl.innerHTML = "";
+    dotsEl.innerHTML = "";
+
+    GROUPS.forEach((g, idx) => {
+      const coverSrc = g.photos.length > 0 ? g.photos[0] : makePlaceholderSvg(g.title, g.prefixes[0]);
+      const countText = g.photos.length > 0 ? `${g.photos.length} foto${g.photos.length === 1 ? "" : "s"}` : `${g.prefixes[0]}_1...`;
+
+      const card = document.createElement("div");
+      card.className = `block-card ${idx === state.blockIndex ? "active" : ""}`;
+      card.onclick = () => {
+        if (state.blockIndex === idx) {
+          openFullscreen(idx);
+        } else {
+          state.blockIndex = idx;
+          saveState();
+          updateCarouselPosition();
+        }
+      };
+
+      card.innerHTML = `
+        <div class="block-img-wrap">
+          <img id="cover-img-${g.id}" src="${coverSrc}" alt="${g.title}">
+        </div>
+        <div class="block-footer">
+          <h3 class="block-title">${g.title}</h3>
+          <span class="block-count" id="count-badge-${g.id}">${countText}</span>
+        </div>
+      `;
+      trackEl.appendChild(card);
+
+      const dot = document.createElement("div");
+      dot.className = `dot-ind ${idx === state.blockIndex ? "active" : ""}`;
+      dot.onclick = () => {
+        state.blockIndex = idx;
+        saveState();
+        updateCarouselPosition();
+      };
+      dotsEl.appendChild(dot);
+    });
+
+    updateCarouselPosition();
+  }
+
+  function updateCarouselPosition() {
+    const cards = trackEl.querySelectorAll(".block-card");
+    const dots = dotsEl.querySelectorAll(".dot-ind");
+
+    cards.forEach((c, i) => c.classList.toggle("active", i === state.blockIndex));
+    dots.forEach((d, i) => d.classList.toggle("active", i === state.blockIndex));
+
+    const cardWidth = 440;
+    const gap = 36;
+    const offset = (cardWidth / 2) + state.blockIndex * (cardWidth + gap);
+    trackEl.style.transform = `translateX(-${offset}px)`;
+  }
+
+  function moveBlock(delta) {
+    state.blockIndex = (state.blockIndex + delta + GROUPS.length) % GROUPS.length;
+    saveState();
+    updateCarouselPosition();
+  }
+
+  function openFullscreen(blockIdx) {
+    state.blockIndex = blockIdx;
+    state.fsOpen = true;
+    saveState();
+    updateCarouselPosition();
+    renderFullscreenPhoto();
+    document.getElementById("fs-modal").classList.add("open");
+  }
+
+  function closeFullscreen() {
+    state.fsOpen = false;
+    saveState();
+    document.getElementById("fs-modal").classList.remove("open");
+  }
+
+  function renderFullscreenPhoto() {
+    const group = GROUPS[state.blockIndex];
+    const total = group.photos.length;
+    let pIdx = state.photoIndices[group.id] || 0;
+    if (total > 0 && (pIdx >= total || pIdx < 0)) {
+      pIdx = 0;
+      state.photoIndices[group.id] = 0;
+    }
+
+    document.getElementById("fs-block-title").innerText = group.title;
+    const imgEl = document.getElementById("fs-image");
+    const counterEl = document.getElementById("fs-photo-counter");
+
+    if (total > 0) {
+      imgEl.src = group.photos[pIdx];
+      counterEl.innerText = `${pIdx + 1} / ${total}`;
+    } else {
+      imgEl.src = makePlaceholderSvg(group.title, group.prefixes[0]);
+      counterEl.innerText = `0 fotos detectadas`;
+    }
+  }
+
+  function moveFsPhoto(delta) {
+    const group = GROUPS[state.blockIndex];
+    const total = group.photos.length;
+    if (total <= 1) return;
+    let pIdx = state.photoIndices[group.id] || 0;
+    pIdx = (pIdx + delta + total) % total;
+    state.photoIndices[group.id] = pIdx;
+    saveState();
+    renderFullscreenPhoto();
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (state.fsOpen) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeFullscreen();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        moveFsPhoto(1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        moveFsPhoto(-1);
+      }
+    } else {
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        moveBlock(1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        moveBlock(-1);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        openFullscreen(state.blockIndex);
+      }
+    }
+  });
+
+  async function initGallery() {
+    renderCarouselDOM();
+    await Promise.all(GROUPS.map(discoverGroupPhotos));
+    GROUPS.forEach((g) => {
+      const imgEl = document.getElementById(`cover-img-${g.id}`);
+      const badgeEl = document.getElementById(`count-badge-${g.id}`);
+      if (imgEl && g.photos.length > 0) {
+        imgEl.src = g.photos[0];
+      }
+      if (badgeEl) {
+        badgeEl.innerText = g.photos.length > 0
+          ? `${g.photos.length} foto${g.photos.length === 1 ? "" : "s"}`
+          : `${g.prefixes[0]}_1...`;
+      }
+    });
+    if (state.fsOpen) {
+      openFullscreen(state.blockIndex);
+    }
+  }
+
+  initGallery();
+</script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Gráfica 3 - Crisol del Sur Escandinavo (Raincloud / Violín KDE + Boxplot - 3 Filas)</title>
+<script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+<script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<style>
+  html, body {
+    background-color: #0e1117;
+    color: #f0f6fc;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .main-wrapper {
+    width: 94vw;
+    max-width: 1450px;
+    margin: 14px auto 28px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .header-banner {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin: 0;
+  }
+  .mode-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-mode {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-mode:hover {
+    background: #30363d;
+    color: #ffffff;
+  }
+  .btn-mode.active {
+    background: rgba(56, 139, 253, 0.22);
+    color: #58a6ff;
+    border-color: #58a6ff;
+  }
+  .legend-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-top: 6px;
+    border-top: 1px solid #21262d;
+    font-size: 12.5px;
+    color: #c9d1d9;
+  }
+  .legend-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .dot-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .rows-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+  }
+  .chart-row {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 10px 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  }
+  .main-wrapper.solo-mode {
+    min-height: calc(100vh - 28px);
+    justify-content: center;
+    margin: 10px auto;
+  }
+  .main-wrapper.solo-mode .legend-bar {
+    display: none !important;
+  }
+  .chart-row.hidden-card {
+    display: none !important;
+  }
+  .row-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 4px;
+    padding: 0 6px;
+  }
+  .badge-note {
+    font-size: 12.5px;
+    color: #8b949e;
+  }
+  .solo-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-solo {
+    background: rgba(56, 139, 253, 0.14);
+    color: #58a6ff;
+    border: 1px solid rgba(88, 166, 255, 0.45);
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-solo:hover {
+    background: rgba(56, 139, 253, 0.28);
+    color: #ffffff;
+    border-color: #58a6ff;
+  }
+  .btn-solo.back-btn {
+    background: rgba(234, 179, 8, 0.18);
+    color: #fde047;
+    border-color: #eab308;
+  }
+  .btn-solo.back-btn:hover {
+    background: rgba(234, 179, 8, 0.32);
+    color: #ffffff;
+  }
+  .solo-nav-pill {
+    display: none;
+    background: #21262d;
+    color: #8b949e;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .solo-nav-pill:hover {
+    color: #ffffff;
+    border-color: #58a6ff;
+  }
+  .solo-nav-pill.active-pill {
+    background: rgba(56, 139, 253, 0.22);
+    color: #58a6ff;
+    border-color: #58a6ff;
+  }
+  .main-wrapper.solo-mode .solo-nav-pill {
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+  <div class="main-wrapper" id="main_wrapper">
+    <div class="header-banner">
+      <div class="header-top">
+        <h2 class="header-title">
+          ⚓ Hipótesis Secundaria 2: Enclaves Costeros del Sur y Báltico (Naranja) vs. Interior y Norte (Azul)
+        </h2>
+        <div class="mode-selector">
+          <button id="btn_raincloud" class="btn-mode active" onclick="setChartMode('raincloud')">
+            🌧️ Raincloud Plot (Medio Violín KDE + Caja + Lluvia Separada)
+          </button>
+          <button id="btn_violin" class="btn-mode" onclick="setChartMode('violin')">
+            🎻 Violín Simétrico KDE + Caja + Jitter
+          </button>
+          <button id="btn_box" class="btn-mode" onclick="setChartMode('box')">
+            📦 Boxplot Clásico + Strip Plot
+          </button>
+        </div>
+      </div>
+
+      <div class="legend-bar">
+        <div class="legend-group">
+          <div class="legend-item">
+            <span class="swatch" style="background: rgba(249, 115, 22, 0.75); border: 1.5px solid #fb923c;"></span>
+            <span><b>Enclaves Costeros e Islas Mercantiles (Sur / Báltico):</b> Gotland, Öland, Jutlandia, Langeland, Fionia, Selandia</span>
+          </div>
+          <div class="legend-item">
+            <span class="swatch" style="background: rgba(59, 130, 246, 0.75); border: 1.5px solid #60a5fa;"></span>
+            <span><b>Interior y Norte Escandinavo:</b> Skara (Interior SE), Noruega Sur, Centro y Norte</span>
+          </div>
+        </div>
+        <div class="legend-group">
+          <div class="legend-item">
+            <span class="dot-swatch" style="background: #ffffff; border: 1px solid #111;"></span>
+            <span>Genoma (Total Foráneo)</span>
+          </div>
+          <div class="legend-item">
+            <span class="dot-swatch" style="background: #10b981; border: 1px solid #064e3b;"></span>
+            <span>Aporte Sur Europa</span>
+          </div>
+          <div class="legend-item">
+            <span class="dot-swatch" style="background: #ec4899; border: 1px solid #831843;"></span>
+            <span>Aporte Eslavo / Báltico</span>
+          </div>
+          <div class="legend-item">
+            <span style="color:#8b949e; font-size:11.5px;">💡 <b>Silueta Curva (Nube):</b> Densidad KDE real (evita solapamiento) | <b>Caja interna:</b> Rango Q1-Q3 y Mediana | <b>Línea punteada:</b> Media</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rows-stack">
+      <!-- FILA 1: % Total de Ascendencia Foránea -->
+      <div class="chart-row" id="card_0">
+        <div class="row-header-bar">
+          <span class="badge-note">🌊 <b>3A. Mezcla Foránea Total:</b> Compara la distribución global de ADN no escandinavo entre islas mercantiles y el interior.</span>
+          <div class="solo-controls">
+            <button class="solo-nav-pill active-pill" onclick="toggleSolo(0)">3A</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(1)">3B</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(2)">3C</button>
+            <button id="solo_btn_0" class="btn-solo" onclick="toggleSolo(0)">🔍 Ver sola a pantalla completa</button>
+          </div>
+        </div>
+        <div id="grafica3_fila1" style="height:450px; width:100%;"></div>
+      </div>
+      <!-- FILA 2: % Aporte del Sur de Europa -->
+      <div class="chart-row" id="card_1">
+        <div class="row-header-bar">
+          <span class="badge-note">☀️ <b>3B. Flujo Sur de Europa:</b> Aporte mediterráneo/continental concentrado en puertos daneses y del sur báltico.</span>
+          <div class="solo-controls">
+            <button class="solo-nav-pill" onclick="toggleSolo(0)">3A</button>
+            <button class="solo-nav-pill active-pill" onclick="toggleSolo(1)">3B</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(2)">3C</button>
+            <button id="solo_btn_1" class="btn-solo" onclick="toggleSolo(1)">🔍 Ver sola a pantalla completa</button>
+          </div>
+        </div>
+        <div id="grafica3_fila2" style="height:450px; width:100%;"></div>
+      </div>
+      <!-- FILA 3: % Aporte Eslavo y Fino-Báltico (Explicación del pico de Gotland y Öland) -->
+      <div class="chart-row" id="card_2">
+        <div class="row-header-bar">
+          <span class="badge-note">⚓ <b>3C. Flujo Eslavo y Fino-Báltico:</b> Explica el pico bimodal del 67,6% de mezcla foránea en Gotland y el 52,2% en Öland.</span>
+          <div class="solo-controls">
+            <button class="solo-nav-pill" onclick="toggleSolo(0)">3A</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(1)">3B</button>
+            <button class="solo-nav-pill active-pill" onclick="toggleSolo(2)">3C</button>
+            <button id="solo_btn_2" class="btn-solo" onclick="toggleSolo(2)">🔍 Ver sola a pantalla completa</button>
+          </div>
+        </div>
+        <div id="grafica3_fila3" style="height:450px; width:100%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    const rawData = [{"region": "Noruega Norte", "is_south": false, "n": 14, "text": ["VK388 (Male)", "VK418 (Male)", "VK419 (Male)", "VK514 (Male)", "VK515 (Male)", "VK520 (Female)", "VK524 (Male)", "VK525 (Female)", "VK526 (Female)", "VK528 (Male)", "VK529 (Male)", "VK530 (Female)", "VK531 (Male)", "VK547 (Male)"], "x_foraneo": [1.9, 7.6, 12.0, 15.8, 43.9, 0.0, 3.7, 97.3, 41.3, 98.4, 7.5, 82.9, 74.7, 0.4], "x_sureur": [0.1, 0.3, 0.0, 1.4, 6.9, 0.0, 0.4, 3.2, 13.1, 0.6, 0.0, 15.2, 6.5, 0.0], "x_eslavo": [1.7, 7.3, 12.0, 14.4, 11.9, 0.0, 2.9, 0.2, 3.6, 1.3, 7.5, 3.2, 44.9, 0.4], "x_uk": [0.1, 0.0, 0.0, 0.0, 25.1, 0.0, 0.4, 93.9, 24.6, 96.5, 0.0, 64.5, 23.3, 0.0], "custom": [[1.9, 0.1, 1.7, 0.1, "Nor_North"], [7.6, 0.3, 7.3, 0.0, "Nor_North"], [12.0, 0.0, 12.0, 0.0, "Nor_North"], [15.8, 1.4, 14.4, 0.0, "Nor_North"], [43.9, 6.9, 11.9, 25.1, "Nor_North"], [0.0, 0.0, 0.0, 0.0, "Nor_North"], [3.7, 0.4, 2.9, 0.4, "Nor_North"], [97.3, 3.2, 0.2, 93.9, "Nor_North"], [41.3, 13.1, 3.6, 24.6, "Nor_North"], [98.4, 0.6, 1.3, 96.5, "Nor_North"], [7.5, 0.0, 7.5, 0.0, "Nor_North"], [82.9, 15.2, 3.2, 64.5, "Nor_North"], [74.7, 6.5, 44.9, 23.3, "Nor_North"], [0.4, 0.0, 0.4, 0.0, "Nor_North"]]}, {"region": "Noruega Centro", "is_south": false, "n": 4, "text": ["VK118 (Female)", "VK516 (Male)", "VK523 (Female)", "VK548 (Female)"], "x_foraneo": [41.8, 7.0, 18.7, 5.0], "x_sureur": [17.3, 0.0, 1.6, 0.2], "x_eslavo": [0.0, 6.9, 0.9, 4.7], "x_uk": [24.5, 0.1, 16.2, 0.1], "custom": [[41.8, 17.3, 0.0, 24.5, "Nor_Mid"], [7.0, 0.0, 6.9, 0.1, "Nor_Mid"], [18.7, 1.6, 0.9, 16.2, "Nor_Mid"], [5.0, 0.2, 4.7, 0.1, "Nor_Mid"]]}, {"region": "Noruega Sur", "is_south": false, "n": 13, "text": ["VK386 (Male)", "VK387 (Female)", "VK389 (Male)", "VK390 (Male)", "VK392 (Female)", "VK393 (Female)", "VK394 (Male)", "VK414 (Male)", "VK415 (Female)", "VK417 (Female)", "VK420 (Male)", "VK422 (Male)", "VK448 (Female)"], "x_foraneo": [94.3, 24.2, 25.1, 0.0, 0.4, 0.7, 25.4, 4.8, 3.3, 2.0, 48.1, 37.4, 60.8], "x_sureur": [0.1, 0.2, 9.7, 0.0, 0.0, 0.0, 2.4, 3.1, 0.2, 0.0, 11.8, 0.8, 29.2], "x_eslavo": [5.5, 1.2, 11.2, 0.0, 0.4, 0.2, 14.8, 1.6, 2.7, 2.0, 3.7, 2.2, 0.0], "x_uk": [88.7, 22.8, 4.2, 0.0, 0.0, 0.5, 8.2, 0.1, 0.4, 0.0, 32.6, 34.4, 31.6], "custom": [[94.3, 0.1, 5.5, 88.7, "Nor_South"], [24.2, 0.2, 1.2, 22.8, "Nor_South"], [25.1, 9.7, 11.2, 4.2, "Nor_South"], [0.0, 0.0, 0.0, 0.0, "Nor_South"], [0.4, 0.0, 0.4, 0.0, "Nor_South"], [0.7, 0.0, 0.2, 0.5, "Nor_South"], [25.4, 2.4, 14.8, 8.2, "Nor_South"], [4.8, 3.1, 1.6, 0.1, "Nor_South"], [3.3, 0.2, 2.7, 0.4, "Nor_South"], [2.0, 0.0, 2.0, 0.0, "Nor_South"], [48.1, 11.8, 3.7, 32.6, "Nor_South"], [37.4, 0.8, 2.2, 34.4, "Nor_South"], [60.8, 29.2, 0.0, 31.6, "Nor_South"]]}, {"region": "Skara (Interior SE)", "is_south": false, "n": 22, "text": ["VK29 (Male)", "VK30 (Male)", "VK33 (Female)", "VK34 (Male)", "VK35 (Male)", "VK40 (Male)", "VK42 (Male)", "VK303 (Female)", "VK306 (Male)", "VK308 (Male)", "VK395 (Male)", "VK396 (Male)", "VK397 (Male)", "VK398 (Male)", "VK399 (Male)", "VK400 (Male)", "VK401 (Male)", "VK402 (Female)", "VK403 (Male)", "VK404 (Male)", "VK405 (Male)", "VK406 (Male)"], "x_foraneo": [24.6, 24.7, 24.8, 10.4, 4.0, 26.1, 43.5, 30.5, 15.9, 18.7, 99.9, 58.0, 65.5, 61.9, 18.5, 28.1, 22.2, 51.6, 69.0, 34.6, 83.0, 21.9], "x_sureur": [0.8, 13.1, 7.6, 3.7, 1.7, 5.5, 19.7, 15.3, 3.6, 11.5, 0.0, 39.1, 0.1, 38.6, 7.1, 7.5, 6.0, 21.7, 32.1, 1.8, 0.8, 13.9], "x_eslavo": [7.5, 1.4, 12.8, 0.8, 1.6, 0.1, 0.3, 1.8, 10.5, 0.3, 99.9, 0.2, 65.4, 11.0, 11.4, 2.0, 9.8, 1.3, 0.2, 30.4, 2.2, 6.4], "x_uk": [16.3, 10.2, 4.4, 5.9, 0.7, 20.5, 23.5, 13.4, 1.8, 6.9, 0.0, 18.7, 0.0, 12.3, 0.0, 18.6, 6.4, 28.6, 36.7, 2.4, 80.0, 1.6], "custom": [[24.6, 0.8, 7.5, 16.3, "Skara"], [24.7, 13.1, 1.4, 10.2, "Skara"], [24.8, 7.6, 12.8, 4.4, "Skara"], [10.4, 3.7, 0.8, 5.9, "Skara"], [4.0, 1.7, 1.6, 0.7, "Skara"], [26.1, 5.5, 0.1, 20.5, "Skara"], [43.5, 19.7, 0.3, 23.5, "Skara"], [30.5, 15.3, 1.8, 13.4, "Skara"], [15.9, 3.6, 10.5, 1.8, "Skara"], [18.7, 11.5, 0.3, 6.9, "Skara"], [99.9, 0.0, 99.9, 0.0, "Skara"], [58.0, 39.1, 0.2, 18.7, "Skara"], [65.5, 0.1, 65.4, 0.0, "Skara"], [61.9, 38.6, 11.0, 12.3, "Skara"], [18.5, 7.1, 11.4, 0.0, "Skara"], [28.1, 7.5, 2.0, 18.6, "Skara"], [22.2, 6.0, 9.8, 6.4, "Skara"], [51.6, 21.7, 1.3, 28.6, "Skara"], [69.0, 32.1, 0.2, 36.7, "Skara"], [34.6, 1.8, 30.4, 2.4, "Skara"], [83.0, 0.8, 2.2, 80.0, "Skara"], [21.9, 13.9, 6.4, 1.6, "Skara"]]}, {"region": "Selandia (Isla DK)", "is_south": true, "n": 13, "text": ["VK65 (Female)", "VK69 (Female)", "VK70 (Male)", "VK281 (Male)", "VK284 (Female)", "VK294 (Female)", "VK297 (Male)", "VK315 (Male)", "VK369 (Male)", "VK385 (Female)", "VK445 (Male)", "VK521 (Male)", "VK532 (Male)"], "x_foraneo": [60.5, 28.5, 61.3, 11.7, 11.5, 22.3, 34.8, 29.2, 59.1, 60.0, 15.0, 6.8, 7.2], "x_sureur": [30.2, 11.6, 3.4, 6.0, 9.6, 6.2, 9.5, 18.1, 53.4, 48.5, 4.3, 0.5, 0.4], "x_eslavo": [2.1, 0.0, 5.6, 4.8, 1.9, 11.2, 22.4, 0.0, 2.2, 3.0, 6.5, 5.7, 6.8], "x_uk": [28.2, 16.9, 52.3, 0.9, 0.0, 4.9, 2.9, 11.1, 3.5, 8.5, 4.2, 0.6, 0.0], "custom": [[60.5, 30.2, 2.1, 28.2, "Sealand"], [28.5, 11.6, 0.0, 16.9, "Sealand"], [61.3, 3.4, 5.6, 52.3, "Sealand"], [11.7, 6.0, 4.8, 0.9, "Sealand"], [11.5, 9.6, 1.9, 0.0, "Sealand"], [22.3, 6.2, 11.2, 4.9, "Sealand"], [34.8, 9.5, 22.4, 2.9, "Sealand"], [29.2, 18.1, 0.0, 11.1, "Sealand"], [59.1, 53.4, 2.2, 3.5, "Sealand"], [60.0, 48.5, 3.0, 8.5, "Sealand"], [15.0, 4.3, 6.5, 4.2, "Sealand"], [6.8, 0.5, 5.7, 0.6, "Sealand"], [7.2, 0.4, 6.8, 0.0, "Sealand"]]}, {"region": "Fionia (Isla DK)", "is_south": true, "n": 14, "text": ["VK134 (Male)", "VK139 (Male)", "VK141 (Female)", "VK278 (Female)", "VK279 (Male)", "VK295 (Male)", "VK301 (Male)", "VK316 (Male)", "VK319 (Female)", "VK370 (Female)", "VK371 (Female)", "VK372 (Female)", "VK373 (Male)", "VK446 (Male)"], "x_foraneo": [27.1, 99.7, 2.9, 59.5, 2.4, 11.6, 56.5, 2.9, 65.4, 6.4, 58.9, 6.3, 30.1, 21.0], "x_sureur": [19.7, 1.2, 0.1, 48.1, 0.3, 2.7, 45.5, 0.1, 44.3, 1.9, 11.4, 5.2, 22.9, 1.6], "x_eslavo": [6.2, 97.0, 2.8, 0.0, 0.1, 7.2, 2.5, 2.8, 6.0, 2.8, 47.3, 0.2, 0.3, 0.8], "x_uk": [1.2, 1.5, 0.0, 11.4, 2.0, 1.7, 8.5, 0.0, 15.1, 1.7, 0.2, 0.9, 6.9, 18.6], "custom": [[27.1, 19.7, 6.2, 1.2, "Funen"], [99.7, 1.2, 97.0, 1.5, "Funen"], [2.9, 0.1, 2.8, 0.0, "Funen"], [59.5, 48.1, 0.0, 11.4, "Funen"], [2.4, 0.3, 0.1, 2.0, "Funen"], [11.6, 2.7, 7.2, 1.7, "Funen"], [56.5, 45.5, 2.5, 8.5, "Funen"], [2.9, 0.1, 2.8, 0.0, "Funen"], [65.4, 44.3, 6.0, 15.1, "Funen"], [6.4, 1.9, 2.8, 1.7, "Funen"], [58.9, 11.4, 47.3, 0.2, "Funen"], [6.3, 5.2, 0.2, 0.9, "Funen"], [30.1, 22.9, 0.3, 6.9, "Funen"], [21.0, 1.6, 0.8, 18.6, "Funen"]]}, {"region": "Langeland (Isla DK)", "is_south": true, "n": 18, "text": ["VK274 (Male)", "VK285 (Female)", "VK286 (Male)", "VK288 (Female)", "VK289 (Male)", "VK290 (Male)", "VK291 (Male)", "VK317 (Male)", "VK320 (Male)", "VK338 (Male)", "VK361 (Female)", "VK362 (Male)", "VK363 (Male)", "VK364 (Female)", "VK365 (Male)", "VK366 (Female)", "VK367 (Male)", "VK368 (Female)"], "x_foraneo": [86.6, 35.7, 74.1, 13.8, 17.9, 1.2, 10.3, 72.0, 5.2, 22.7, 33.8, 78.0, 59.2, 24.9, 82.0, 20.9, 51.7, 55.8], "x_sureur": [24.5, 16.0, 63.4, 5.0, 0.2, 0.4, 5.6, 58.8, 0.3, 17.3, 10.6, 34.6, 21.7, 20.5, 72.4, 13.2, 0.4, 17.9], "x_eslavo": [61.0, 0.4, 2.2, 0.7, 0.0, 0.6, 4.6, 0.8, 0.2, 0.1, 0.2, 38.9, 18.5, 2.5, 3.0, 6.1, 51.3, 1.9], "x_uk": [1.1, 19.3, 8.5, 8.1, 17.7, 0.2, 0.1, 12.4, 4.7, 5.3, 23.0, 4.5, 19.0, 1.9, 6.6, 1.6, 0.0, 36.0], "custom": [[86.6, 24.5, 61.0, 1.1, "Langeland"], [35.7, 16.0, 0.4, 19.3, "Langeland"], [74.1, 63.4, 2.2, 8.5, "Langeland"], [13.8, 5.0, 0.7, 8.1, "Langeland"], [17.9, 0.2, 0.0, 17.7, "Langeland"], [1.2, 0.4, 0.6, 0.2, "Langeland"], [10.3, 5.6, 4.6, 0.1, "Langeland"], [72.0, 58.8, 0.8, 12.4, "Langeland"], [5.2, 0.3, 0.2, 4.7, "Langeland"], [22.7, 17.3, 0.1, 5.3, "Langeland"], [33.8, 10.6, 0.2, 23.0, "Langeland"], [78.0, 34.6, 38.9, 4.5, "Langeland"], [59.2, 21.7, 18.5, 19.0, "Langeland"], [24.9, 20.5, 2.5, 1.9, "Langeland"], [82.0, 72.4, 3.0, 6.6, "Langeland"], [20.9, 13.2, 6.1, 1.6, "Langeland"], [51.7, 0.4, 51.3, 0.0, "Langeland"], [55.8, 17.9, 1.9, 36.0, "Langeland"]]}, {"region": "Jutlandia (DK)", "is_south": true, "n": 14, "text": ["VK84 (Female)", "VK87 (Male)", "VK300 (Female)", "VK322 (Female)", "VK323 (Male)", "VK324 (Male)", "VK325 (Female)", "VK326 (Male)", "VK327 (Male)", "VK328 (Female)", "VK329 (Male)", "VK330 (Female)", "VK340 (Female)", "VK384 (Male)"], "x_foraneo": [70.0, 59.9, 38.3, 84.6, 28.9, 20.5, 7.4, 43.1, 22.7, 38.5, 50.8, 74.1, 98.8, 18.0], "x_sureur": [36.3, 18.5, 18.3, 25.9, 6.0, 15.2, 0.2, 30.9, 0.5, 26.2, 28.6, 21.5, 0.2, 5.2], "x_eslavo": [8.0, 0.3, 0.8, 8.8, 0.0, 1.3, 0.5, 0.5, 3.1, 2.0, 2.8, 11.2, 97.6, 0.7], "x_uk": [25.7, 41.1, 19.2, 49.9, 22.9, 4.0, 6.7, 11.7, 19.1, 10.3, 19.4, 41.4, 1.0, 12.1], "custom": [[70.0, 36.3, 8.0, 25.7, "Jutland"], [59.9, 18.5, 0.3, 41.1, "Jutland"], [38.3, 18.3, 0.8, 19.2, "Jutland"], [84.6, 25.9, 8.8, 49.9, "Jutland"], [28.9, 6.0, 0.0, 22.9, "Jutland"], [20.5, 15.2, 1.3, 4.0, "Jutland"], [7.4, 0.2, 0.5, 6.7, "Jutland"], [43.1, 30.9, 0.5, 11.7, "Jutland"], [22.7, 0.5, 3.1, 19.1, "Jutland"], [38.5, 26.2, 2.0, 10.3, "Jutland"], [50.8, 28.6, 2.8, 19.4, "Jutland"], [74.1, 21.5, 11.2, 41.4, "Jutland"], [98.8, 0.2, 97.6, 1.0, "Jutland"], [18.0, 5.2, 0.7, 12.1, "Jutland"]]}, {"region": "Öland (Isla SE)", "is_south": true, "n": 25, "text": ["VK332 (Male)", "VK333 (Male)", "VK334 (Female)", "VK335 (Male)", "VK336 (Male)", "VK337 (Male)", "VK342 (Male)", "VK343 (Male)", "VK344 (Male)", "VK345 (Male)", "VK346 (Male)", "VK348 (Male)", "VK349 (Male)", "VK350 (Female)", "VK352 (Male)", "VK353 (Female)", "VK354 (Male)", "VK355 (Male)", "VK357 (Male)", "VK358 (Female)", "VK442 (Female)", "VK443 (Male)", "VK444 (Male)", "VK522 (Female)", "VK533 (Male)"], "x_foraneo": [41.3, 44.4, 57.6, 34.9, 75.3, 34.1, 44.5, 1.6, 48.0, 84.4, 64.7, 30.8, 84.9, 79.4, 32.4, 56.5, 57.7, 47.4, 74.0, 26.5, 89.2, 75.1, 64.8, 0.6, 53.7], "x_sureur": [24.4, 32.2, 13.5, 23.9, 51.3, 15.1, 1.6, 0.3, 4.8, 55.3, 20.7, 5.5, 1.6, 56.2, 2.6, 27.1, 5.0, 33.7, 52.4, 0.0, 59.1, 0.0, 32.5, 0.0, 5.2], "x_eslavo": [1.5, 1.1, 32.5, 1.9, 4.3, 0.0, 41.7, 1.0, 17.2, 2.7, 19.2, 23.0, 5.7, 2.3, 18.3, 0.4, 43.5, 0.3, 1.6, 26.5, 12.5, 74.9, 0.2, 0.6, 45.5], "x_uk": [15.4, 11.1, 11.6, 9.1, 19.7, 19.0, 1.2, 0.3, 26.0, 26.4, 24.8, 2.3, 77.6, 20.9, 11.5, 29.0, 9.2, 13.4, 20.0, 0.0, 17.6, 0.2, 32.1, 0.0, 3.0], "custom": [[41.3, 24.4, 1.5, 15.4, "Oland"], [44.4, 32.2, 1.1, 11.1, "Oland"], [57.6, 13.5, 32.5, 11.6, "Oland"], [34.9, 23.9, 1.9, 9.1, "Oland"], [75.3, 51.3, 4.3, 19.7, "Oland"], [34.1, 15.1, 0.0, 19.0, "Oland"], [44.5, 1.6, 41.7, 1.2, "Oland"], [1.6, 0.3, 1.0, 0.3, "Oland"], [48.0, 4.8, 17.2, 26.0, "Oland"], [84.4, 55.3, 2.7, 26.4, "Oland"], [64.7, 20.7, 19.2, 24.8, "Oland"], [30.8, 5.5, 23.0, 2.3, "Oland"], [84.9, 1.6, 5.7, 77.6, "Oland"], [79.4, 56.2, 2.3, 20.9, "Oland"], [32.4, 2.6, 18.3, 11.5, "Oland"], [56.5, 27.1, 0.4, 29.0, "Oland"], [57.7, 5.0, 43.5, 9.2, "Oland"], [47.4, 33.7, 0.3, 13.4, "Oland"], [74.0, 52.4, 1.6, 20.0, "Oland"], [26.5, 0.0, 26.5, 0.0, "Oland"], [89.2, 59.1, 12.5, 17.6, "Oland"], [75.1, 0.0, 74.9, 0.2, "Oland"], [64.8, 32.5, 0.2, 32.1, "Oland"], [0.6, 0.0, 0.6, 0.0, "Oland"], [53.7, 5.2, 45.5, 3.0, "Oland"]]}, {"region": "Gotland (Isla SE)", "is_south": true, "n": 18, "text": ["VK50 (Male)", "VK51 (Male)", "VK53 (Male)", "VK56 (Female)", "VK58 (Female)", "VK60 (Male)", "VK64 (Male)", "VK429 (Female)", "VK433 (Female)", "VK455 (Female)", "VK456 (Female)", "VK468 (Male)", "VK473 (Male)", "VK474 (Male)", "VK475 (Male)", "VK477 (Female)", "VK478 (Female)", "VK479 (Male)"], "x_foraneo": [22.0, 99.8, 97.6, 99.7, 28.5, 100.0, 98.0, 45.4, 26.5, 7.3, 99.6, 34.2, 84.4, 99.2, 99.9, 51.2, 99.9, 22.8], "x_sureur": [0.1, 0.2, 6.8, 0.1, 1.5, 5.8, 3.2, 33.4, 21.7, 0.0, 3.3, 23.5, 4.5, 0.6, 0.0, 40.3, 0.0, 1.5], "x_eslavo": [21.9, 99.2, 84.2, 99.6, 4.9, 94.2, 71.0, 2.5, 2.3, 0.0, 0.4, 2.9, 76.8, 98.6, 99.9, 1.8, 99.9, 3.5], "x_uk": [0.0, 0.4, 6.6, 0.0, 22.1, 0.0, 23.8, 9.5, 2.5, 7.3, 95.9, 7.8, 3.1, 0.0, 0.0, 9.1, 0.0, 17.8], "custom": [[22.0, 0.1, 21.9, 0.0, "Gotland"], [99.8, 0.2, 99.2, 0.4, "Gotland"], [97.6, 6.8, 84.2, 6.6, "Gotland"], [99.7, 0.1, 99.6, 0.0, "Gotland"], [28.5, 1.5, 4.9, 22.1, "Gotland"], [100.0, 5.8, 94.2, 0.0, "Gotland"], [98.0, 3.2, 71.0, 23.8, "Gotland"], [45.4, 33.4, 2.5, 9.5, "Gotland"], [26.5, 21.7, 2.3, 2.5, "Gotland"], [7.3, 0.0, 0.0, 7.3, "Gotland"], [99.6, 3.3, 0.4, 95.9, "Gotland"], [34.2, 23.5, 2.9, 7.8, "Gotland"], [84.4, 4.5, 76.8, 3.1, "Gotland"], [99.2, 0.6, 98.6, 0.0, "Gotland"], [99.9, 0.0, 99.9, 0.0, "Gotland"], [51.2, 40.3, 1.8, 9.1, "Gotland"], [99.9, 0.0, 99.9, 0.0, "Gotland"], [22.8, 1.5, 3.5, 17.8, "Gotland"]]}];
+
+    const commonLayout = {
+      font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+      paper_bgcolor: "#161b22",
+      plot_bgcolor: "#161b22",
+      margin: { t: 55, b: 50, l: 155, r: 35 },
+      hovermode: "closest",
+      hoverlabel: { font: { size: 13 }, bgcolor: "#1f2937", bordercolor: "#fb923c" },
+      violinmode: "overlay",
+      boxmode: "overlay",
+      height: 450,
+      yaxis: {
+        automargin: true,
+        gridcolor: "#283442",
+        linecolor: "#506784",
+        zerolinecolor: "#283442",
+        tickfont: { size: 12.5 }
+      }
+    };
+
+    function buildTraces(metricKey, dotColor, dotBorder, metricLabel, mode) {
+      return rawData.map(reg => {
+        const xVals = reg[metricKey];
+        const yVals = Array(reg.n).fill(reg.region);
+        const isSouth = reg.is_south;
+
+        const fillC = isSouth ? "rgba(249, 115, 22, 0.50)" : "rgba(59, 130, 246, 0.50)";
+        const lineC = isSouth ? "#fb923c" : "#60a5fa";
+
+        const hoverTpl =
+          "<b>Región:</b> %{y}<br>" +
+          "<b>Individuo:</b> %{text}<br>" +
+          "<b>Yacimiento:</b> %{customdata[4]}<br>" +
+          "<b>" + metricLabel + ":</b> <b>%{x:.1f}%</b><br>" +
+          "<span style='font-size:11.5px; color:#cbd5e1;'>↳ Desglose Foráneo Total: %{customdata[0]}% (Sur Eur: %{customdata[1]}% | Eslavo/Fin: %{customdata[2]}% | UK: %{customdata[3]}%)</span>" +
+          "<extra>" + (isSouth ? "Crisol Costero / Isla" : "Interior / Norte") + "</extra>";
+
+        if (mode === "box") {
+          return {
+            type: "box",
+            orientation: "h",
+            name: reg.region,
+            x: xVals,
+            y: yVals,
+            text: reg.text,
+            customdata: reg.custom,
+            hovertemplate: hoverTpl,
+            boxmean: true,
+            boxpoints: "all",
+            pointpos: 0,
+            jitter: 0.38,
+            width: 0.68,
+            fillcolor: fillC,
+            line: { color: lineC, width: 2 },
+            marker: {
+              color: dotColor,
+              size: 6.5,
+              opacity: 0.88,
+              line: { color: dotBorder, width: 1 }
+            },
+            showlegend: false
+          };
+        }
+
+        // Raincloud ('positive' half-violin + lower rain drops) or Symmetric Violin ('both')
+        const isRain = (mode === "raincloud");
+        return {
+          type: "violin",
+          orientation: "h",
+          name: reg.region,
+          x: xVals,
+          y: yVals,
+          text: reg.text,
+          customdata: reg.custom,
+          hovertemplate: hoverTpl,
+          side: isRain ? "positive" : "both",
+          spanmode: "hard",
+          bandwidth: metricKey === "x_sureur" ? 6.5 : 10,
+          width: isRain ? 0.85 : 0.78,
+          points: "all",
+          pointpos: isRain ? -0.32 : 0,
+          jitter: isRain ? 0.22 : 0.35,
+          box: {
+            visible: true,
+            width: isRain ? 0.28 : 0.32,
+            fillcolor: "rgba(15, 23, 42, 0.78)",
+            line: { color: "#f8fafc", width: 1.6 }
+          },
+          meanline: {
+            visible: true,
+            color: "#fde047",
+            width: 2
+          },
+          fillcolor: fillC,
+          line: { color: lineC, width: 2 },
+          marker: {
+            color: dotColor,
+            size: 6.5,
+            opacity: 0.88,
+            line: { color: dotBorder, width: 1 }
+          },
+          showlegend: false
+        };
+      });
+    }
+
+    let currentMode = "raincloud";
+
+    function renderAllRows(mode) {
+      const traces1 = buildTraces("x_foraneo", "#ffffff", "#111827", "% ADN Foráneo Total", mode);
+      const traces2 = buildTraces("x_sureur", "#10b981", "#064e3b", "% ADN Sur de Europa", mode);
+      const traces3 = buildTraces("x_eslavo", "#ec4899", "#831843", "% ADN Eslavo / Fino-Báltico", mode);
+
+      Plotly.react("grafica3_fila1", traces1, {
+        ...commonLayout,
+        title: {
+          text: "<b>3A) % Total de Ascendencia Foránea por Región (UK + Sur de Europa + Eslavo + Finés)</b>",
+          font: { size: 15 },
+          x: 0.02
+        },
+        xaxis: {
+          title: { text: "% ADN No Escandinavo (Silueta = Densidad KDE | Caja blanca = Mediana y Q1-Q3 | Línea amarilla = Media)" },
+          range: [-3, 104],
+          gridcolor: "#283442",
+          linecolor: "#506784",
+          zerolinecolor: "#283442"
+        },
+        shapes: [{
+          type: "line", x0: 30, x1: 30, xref: "x", y0: 0, y1: 1, yref: "paper",
+          line: { color: "#ff3366", dash: "dash", width: 2.5 }
+        }],
+        annotations: [{
+          x: 30.8, y: 0.98, xref: "x", yref: "paper", xanchor: "left", yanchor: "top",
+          text: "<b>Umbral >30% ADN Foráneo</b> (Gotland 67,6% | Öland 52,2%)",
+          showarrow: false, font: { size: 12, color: "#ffccd5" }
+        }]
+      }, { responsive: true });
+
+      Plotly.react("grafica3_fila2", traces2, {
+        ...commonLayout,
+        title: {
+          text: "<b>3B) % Aporte del Sur de Europa ('Southern European-like' / Mediterráneo) — Crisol Comercial</b>",
+          font: { size: 15 },
+          x: 0.02
+        },
+        xaxis: {
+          title: { text: "% ADN Sur de Europa / Mediterráneo (Concentración en islas danesas y suecas: Langeland 21,3%, Öland 21,0%)" },
+          range: [-2, 76],
+          gridcolor: "#283442",
+          linecolor: "#506784",
+          zerolinecolor: "#283442"
+        }
+      }, { responsive: true });
+
+      Plotly.react("grafica3_fila3", traces3, {
+        ...commonLayout,
+        title: {
+          text: "<b>3C) % Aporte Eslavo y Fino-Báltico ('Polish-like' + 'Finnish-like') — Conexión Báltica en Gotland y Öland</b>",
+          font: { size: 15 },
+          x: 0.02
+        },
+        xaxis: {
+          title: { text: "% ADN Eslavo + Fino-Báltico (Explica la distribución bimodal de Gotland con media del 48,0% y pico en 95-100%)" },
+          range: [-3, 104],
+          gridcolor: "#283442",
+          linecolor: "#506784",
+          zerolinecolor: "#283442"
+        }
+      }, { responsive: true });
+    }
+
+    function setChartMode(mode) {
+      currentMode = mode;
+      document.getElementById("btn_raincloud").classList.toggle("active", mode === "raincloud");
+      document.getElementById("btn_violin").classList.toggle("active", mode === "violin");
+      document.getElementById("btn_box").classList.toggle("active", mode === "box");
+      renderAllRows(mode);
+      if (typeof currentSolo !== "undefined" && currentSolo !== null) {
+        const soloH = Math.max(480, Math.min(640, window.innerHeight - 160));
+        const pid = plotIds[currentSolo];
+        document.getElementById(pid).style.height = soloH + "px";
+        Plotly.relayout(pid, { height: soloH });
+      }
+    }
+
+    renderAllRows("raincloud");
+
+    let currentSolo = null;
+    const plotIds = ["grafica3_fila1", "grafica3_fila2", "grafica3_fila3"];
+
+    function toggleSolo(idx) {
+      const wrapper = document.getElementById("main_wrapper");
+      if (currentSolo === idx || idx === null) {
+        currentSolo = null;
+        wrapper.classList.remove("solo-mode");
+        [0, 1, 2].forEach(i => {
+          document.getElementById("card_" + i).classList.remove("hidden-card");
+          const btn = document.getElementById("solo_btn_" + i);
+          btn.innerHTML = "🔍 Ver sola a pantalla completa";
+          btn.classList.remove("back-btn");
+          const plotEl = document.getElementById(plotIds[i]);
+          plotEl.style.height = "450px";
+          Plotly.relayout(plotIds[i], { height: 450 });
+        });
+      } else {
+        currentSolo = idx;
+        wrapper.classList.add("solo-mode");
+        const soloH = Math.max(480, Math.min(640, window.innerHeight - 160));
+        [0, 1, 2].forEach(i => {
+          const card = document.getElementById("card_" + i);
+          const btn = document.getElementById("solo_btn_" + i);
+          if (i === idx) {
+            card.classList.remove("hidden-card");
+            btn.innerHTML = "🔙 Volver a ver todas (ESC)";
+            btn.classList.add("back-btn");
+            const plotEl = document.getElementById(plotIds[i]);
+            plotEl.style.height = soloH + "px";
+            Plotly.relayout(plotIds[i], { height: soloH });
+          } else {
+            card.classList.add("hidden-card");
+          }
+        });
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && currentSolo !== null) {
+        e.preventDefault();
+        toggleSolo(null);
+      }
+    });
+  </script>
+</body>
+</html>

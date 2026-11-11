@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+<meta charset="utf-8" />
+<title>Resumen Ejecutivo | Hipótesis del EDA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  }
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .card:hover {
+    border-color: #58a6ff;
+    transform: translateY(-2px);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+  <div class="container space-y-6">
+    <!-- Header Card -->
+    <div class="card bg-gradient-to-r from-blue-950/40 via-[#161b22] to-purple-950/40 border-blue-500/30">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="badge bg-blue-500/20 text-[#58a6ff] border border-blue-500/30 mb-2">📋 Resumen Ejecutivo & Marco Teórico</span>
+          <h1 class="text-xl md:text-2xl font-extrabold text-white">Radiografía Genómica de la Era Vikinga (Margaryan et al., Nature 2020)</h1>
+          <p class="text-xs md:text-sm text-[#8b949e] mt-1">Contraste empírico entre el mito histórico de la homogeneidad nórdica, las rutas de expansión y la movilidad demográfica por género.</p>
+        </div>
+        <div class="flex items-center gap-3 bg-[#0d1117] px-4 py-3 rounded-xl border border-[#30363d] shrink-0">
+          <div class="text-2xl">🧬</div>
+          <div>
+            <div class="text-xs font-bold text-white">442 Genomas Analizados</div>
+            <div class="text-[10px] text-[#8b949e]">Dataset Científico Global</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Hypothesis Card -->
+    <div class="card border-l-4 border-l-[#00d4ff]">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-[#00d4ff] text-xl shrink-0">
+          <i class="fa-solid fa-bullseye"></i>
+        </div>
+        <div class="space-y-2 flex-1">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="badge bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Hipótesis Principal</span>
+            <span class="text-xs font-mono text-[#58a6ff] bg-blue-500/10 px-2.5 py-1 rounded border border-blue-500/25">Demostrado: 56.88% (n=91/160 en Escandinavia)</span>
+          </div>
+          <h2 class="text-base md:text-lg font-bold text-white">Refutando el Mito de la Homogeneidad y Pureza Nórdica</h2>
+          <p class="text-xs md:text-sm text-[#c9d1d9] leading-relaxed">
+            <b>¿Qué creíamos?</b> Que los vikingos eran una tribu aislada, cerrada y genéticamente rubia que salió por sorpresa de Escandinavia.<br>
+            <b>¿Qué dicen los datos?</b> Al cruzar los metadatos con <i>ChromoPainter</i>, vemos que <b>más del 56% de los individuos enterrados en la propia Escandinavia superan el 30% de ADN foráneo</b> (procedente de Gran Bretaña, el Báltico, Eslavia y el Mediterráneo). ¡Incluso hallamos escoceses enterrados con honores vikingos sin una sola gota de ADN nórdico! El mundo vikingo era una red transregional de mestizaje, no una raza cerrada.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Hypotheses Grid (3 cards) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Secondary 1 -->
+      <div class="card border-t-4 border-t-[#3b82f6] flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="badge bg-blue-500/20 text-blue-300 border border-blue-500/30">Hipótesis Secundaria 1</span>
+            <i class="fa-solid fa-compass text-blue-400"></i>
+          </div>
+          <h3 class="text-sm font-bold text-white">Direccionalidad Geográfica (Oeste vs. Este)</h3>
+          <p class="text-xs text-[#c9d1d9] leading-relaxed">
+            El mestizaje no fue aleatorio, sino guiado por las rutas marítimas:
+          </p>
+          <ul class="text-xs text-[#8b949e] space-y-1.5 pl-4 list-disc">
+            <li><b>Ruta Atlántica (Oeste):</b> Liderada por noruegos hacia Islandia (41,6% UK) e Irlanda (42,0% UK).</li>
+            <li><b>Ruta Oriental (Báltico/Rus):</b> Impulsada desde Suecia hacia Ucrania (59,1%) y Polonia (72,9% eslavo/finés).</li>
+          </ul>
+        </div>
+        <div class="mt-4 pt-3 border-t border-[#30363d] text-[11px] text-[#58a6ff] font-medium">
+          <i class="fa-solid fa-arrow-right mr-1"></i> Demostrado en Gráfica 2 (Barras & Curvas)
+        </div>
+      </div>
+
+      <!-- Secondary 2 -->
+      <div class="card border-t-4 border-t-[#f97316] flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="badge bg-orange-500/20 text-orange-300 border border-orange-500/30">Hipótesis Secundaria 2</span>
+            <i class="fa-solid fa-anchor text-orange-400"></i>
+          </div>
+          <h3 class="text-sm font-bold text-white">El Sur Escandinavo como Crisol Comercial</h3>
+          <p class="text-xs text-[#c9d1d9] leading-relaxed">
+            ¿Por qué tanta diversidad en Escandinavia? Los puertos e islas mercantiles actuaban como imanes comerciales:
+          </p>
+          <ul class="text-xs text-[#8b949e] space-y-1.5 pl-4 list-disc">
+            <li><b>Gotland y Öland:</b> Medias del 67,6% y 52,2% de mezcla con picos bálticos extremos.</li>
+            <li><b>Langeland y Selandia:</b> Fuerte concentración de aportes comerciales del Sur de Europa (hasta 21,3%).</li>
+          </ul>
+        </div>
+        <div class="mt-4 pt-3 border-t border-[#30363d] text-[11px] text-[#f97316] font-medium">
+          <i class="fa-solid fa-arrow-right mr-1"></i> Demostrado en Gráfica 3 (Raincloud Plots)
+        </div>
+      </div>
+
+      <!-- Secondary 3 -->
+      <div class="card border-t-4 border-t-[#ec4899] flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="badge bg-pink-500/20 text-pink-300 border border-pink-500/30">Hipótesis Secundaria 3</span>
+            <i class="fa-solid fa-users text-pink-400"></i>
+          </div>
+          <h3 class="text-sm font-bold text-white">Movilidad y Dinámica Demográfica por Género</h3>
+          <p class="text-xs text-[#c9d1d9] leading-relaxed">
+            La arqueología genética revela dos realidades humanas opuestas:
+          </p>
+          <ul class="text-xs text-[#8b949e] space-y-1.5 pl-4 list-disc">
+            <li><b>Incursiones Militares (Salme, Oxford):</b> 100% varones emparentados en clanes patrilineales guerreros.</li>
+            <li><b>Colonia Estable (Islandia, Groenlandia):</b> Paridad de género (50%) e integración de mujeres locales.</li>
+          </ul>
+        </div>
+        <div class="mt-4 pt-3 border-t border-[#30363d] text-[11px] text-[#ec4899] font-medium">
+          <i class="fa-solid fa-arrow-right mr-1"></i> Demostrado en Gráfica 4 (Linajes y Matriz)
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Hipótesis Secundaria 1 - Direccionalidad Oeste vs. Este (3 Filas)</title>
+<script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+<script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<style>
+  html, body {
+    background-color: #0e1117;
+    color: #f0f6fc;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .main-wrapper {
+    width: 94vw;
+    max-width: 1450px;
+    margin: 14px auto 28px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .chart-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  }
+  .card-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 6px;
+    padding: 0 6px;
+  }
+  .badge-note {
+    font-size: 12.5px;
+    color: #8b949e;
+  }
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-toggle {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-toggle:hover {
+    background: #30363d;
+    color: #ffffff;
+  }
+  .btn-toggle.active {
+    background: rgba(56, 139, 253, 0.22);
+    color: #58a6ff;
+    border-color: #58a6ff;
+  }
+  /* Smooth hover focus animation on bars and boxes */
+  .plotly g.trace.bars path {
+    transition: opacity 0.22s ease, filter 0.22s ease, stroke-width 0.22s ease;
+  }
+  .plotly g.trace.bars:hover path {
+    opacity: 0.55;
+  }
+  .plotly g.trace.bars path:hover {
+    opacity: 1.0 !important;
+    filter: brightness(1.25) drop-shadow(0 0 8px rgba(88, 166, 255, 0.85));
+    stroke: #ffffff !important;
+    stroke-width: 2px !important;
+    cursor: pointer;
+  }
+  .main-wrapper.solo-mode {
+    min-height: calc(100vh - 28px);
+    justify-content: center;
+    margin: 10px auto;
+  }
+  .chart-card.hidden-card {
+    display: none !important;
+  }
+  .solo-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-solo {
+    background: rgba(56, 139, 253, 0.14);
+    color: #58a6ff;
+    border: 1px solid rgba(88, 166, 255, 0.45);
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-solo:hover {
+    background: rgba(56, 139, 253, 0.28);
+    color: #ffffff;
+    border-color: #58a6ff;
+  }
+  .btn-solo.back-btn {
+    background: rgba(234, 179, 8, 0.18);
+    color: #fde047;
+    border-color: #eab308;
+  }
+  .btn-solo.back-btn:hover {
+    background: rgba(234, 179, 8, 0.32);
+    color: #ffffff;
+  }
+  .solo-nav-pill {
+    display: none;
+    background: #21262d;
+    color: #8b949e;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .solo-nav-pill:hover {
+    color: #ffffff;
+    border-color: #58a6ff;
+  }
+  .solo-nav-pill.active-pill {
+    background: rgba(56, 139, 253, 0.22);
+    color: #58a6ff;
+    border-color: #58a6ff;
+  }
+  .main-wrapper.solo-mode .solo-nav-pill {
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+  <div class="main-wrapper" id="main_wrapper">
+    <!-- FILA 1: GRÁFICA ORIGINAL INTACTA (Barras Apiladas 100%) -->
+    <div class="chart-card" id="card_0">
+      <div class="card-header-bar">
+        <span class="badge-note">
+          🧭 <b>2A. Composición Media por País (12 Países):</b> Contraste entre la Ruta Oeste (Atlántico Norte) y la Ruta Este (Báltico y Rus).
+        </span>
+        <div class="solo-controls">
+          <button class="solo-nav-pill active-pill" onclick="toggleSolo(0)">2A</button>
+          <button class="solo-nav-pill" onclick="toggleSolo(1)">2B</button>
+          <button class="solo-nav-pill" onclick="toggleSolo(2)">2C</button>
+          <button id="solo_btn_0" class="btn-solo" onclick="toggleSolo(0)">🔍 Ver sola a pantalla completa</button>
+        </div>
+      </div>
+      <div id="grafica2_fila1" class="plotly-graph-div" style="height:620px; width:100%;"></div>
+    </div>
+
+    <!-- FILA 2: GRADIENTE CONTINUO OESTE -> NÚCLEO -> ESTE (Curvas de Transición con los mismos 7 colores) -->
+    <div class="chart-card" id="card_1">
+      <div class="card-header-bar">
+        <span class="badge-note">
+          📈 <b>Lectura del Gradiente Longitudinal:</b> Muestra el cruce exacto de pendientes desde el dominio Noruego+Británico en el Atlántico hasta el dominio Sueco+Eslavo/Finés en el Este.
+        </span>
+        <div class="btn-group" style="align-items:center;">
+          <button id="btn_grad_7" class="btn-toggle active" onclick="renderFila2('all7')">
+            Ver los 7 Componentes (Colores Idénticos)
+          </button>
+          <button id="btn_grad_blocks" class="btn-toggle" onclick="renderFila2('blocks')">
+            Ver Agrupado por 3 Grandes Bloques (Oeste vs. Núcleo/Sur vs. Este)
+          </button>
+          <div class="solo-controls" style="margin-left:4px;">
+            <button class="solo-nav-pill" onclick="toggleSolo(0)">2A</button>
+            <button class="solo-nav-pill active-pill" onclick="toggleSolo(1)">2B</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(2)">2C</button>
+            <button id="solo_btn_1" class="btn-solo" onclick="toggleSolo(1)">🔍 Ver sola a pantalla completa</button>
+          </div>
+        </div>
+      </div>
+      <div id="grafica2_fila2" class="plotly-graph-div" style="height:480px; width:100%;"></div>
+    </div>
+
+    <!-- FILA 3: LOS 283 GENOMAS INDIVIDUALES COLOREADOS POR SU COMPONENTE DOMINANTE -->
+    <div class="chart-card" id="card_2">
+      <div class="card-header-bar">
+        <span class="badge-note">
+          🧬 <b>Nivel Genoma Individual (n=283 en los 12 países):</b> Cada punto es un individuo real coloreado según su componente genético mayoritario (pasa el ratón para ver su ficha completa).
+        </span>
+        <div class="btn-group" style="align-items:center;">
+          <button id="btn_ind_country" class="btn-toggle active" onclick="renderFila3('by_country')">
+            Vista 3A: Distribución Individual por País y Ruta (n=283)
+          </button>
+          <button id="btn_ind_cluster" class="btn-toggle" onclick="renderFila3('polar_cluster')">
+            Vista 3B: Mapa de Separación 2D (Eje Atlántico vs. Eje Báltico/Rus)
+          </button>
+          <div class="solo-controls" style="margin-left:4px;">
+            <button class="solo-nav-pill" onclick="toggleSolo(0)">2A</button>
+            <button class="solo-nav-pill" onclick="toggleSolo(1)">2B</button>
+            <button class="solo-nav-pill active-pill" onclick="toggleSolo(2)">2C</button>
+            <button id="solo_btn_2" class="btn-solo" onclick="toggleSolo(2)">🔍 Ver sola a pantalla completa</button>
+          </div>
+        </div>
+      </div>
+      <div id="grafica2_fila3" class="plotly-graph-div" style="height:540px; width:100%;"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    const countries = ["Greenland","Iceland","Ireland","Faroes","UK","Norway","Denmark","Sweden","Estonia","Russia","Ukraine","Poland"];
+
+    const compMeta = [
+      { key: "NO", name: "Noruega (Norwegian-like)", color: "#3b82f6", y: [54.0,37.9,45.9,22.5,13.7,51.1,4.9,7.1,2.5,3.4,17.8,0.4] },
+      { key: "UK", name: "Atlántico Norte / UK", color: "#06b6d4", y: [21.5,41.6,42.0,32.8,30.9,19.1,11.2,13.8,0.5,7.9,0.8,0.0] },
+      { key: "DK", name: "Dinamarca (Danish-like)", color: "#eab308", y: [11.4,5.5,2.3,24.5,28.8,8.9,45.2,26.1,2.6,15.6,0.8,5.0] },
+      { key: "SE", name: "Suecia (Swedish-like)", color: "#8b5cf6", y: [0.9,2.2,2.0,2.3,8.5,11.4,11.7,14.9,77.4,17.8,15.1,20.2] },
+      { key: "PL", name: "Eslavo / Polonia", color: "#ec4899", y: [2.0,1.3,0.8,1.3,2.4,1.2,7.4,10.6,2.5,26.6,45.3,54.1] },
+      { key: "FI", name: "Fino-Báltico / Finlandia", color: "#f43f5e", y: [1.8,2.7,1.9,1.9,3.3,4.3,2.4,12.5,13.1,18.3,13.8,18.8] },
+      { key: "IT", name: "Sur de Europa / Italia", color: "#10b981", y: [8.5,8.8,5.1,14.8,12.4,4.0,17.3,15.1,1.3,10.5,6.4,1.5] }
+    ];
+
+    const colorMap = {
+      "Norway": "#3b82f6",
+      "UK": "#06b6d4",
+      "Denmark": "#eab308",
+      "Sweden": "#8b5cf6",
+      "Poland": "#ec4899",
+      "Finland": "#f43f5e",
+      "Italy": "#10b981"
+    };
+
+    const labelMap = {
+      "Norway": "Noruega (Norwegian-like)",
+      "UK": "Atlántico Norte / UK",
+      "Denmark": "Dinamarca (Danish-like)",
+      "Sweden": "Suecia (Swedish-like)",
+      "Poland": "Eslavo / Polonia",
+      "Finland": "Fino-Báltico / Finlandia",
+      "Italy": "Sur de Europa / Italia"
+    };
+
+    const indivData = [{"id": "VK1", "sex": "Female", "country": "Greenland", "site": "Eastern Settlement", "NO": 69.9, "UK": 26.8, "DK": 0.0, "SE": 0.0, "PL": 0.6, "FI": 0.2, "IT": 2.5, "dom": "Norway", "dom_val": 69.9, "west": 96.7, "east": 0.8, "south": 2.5}, {"id": "VK6", "sex": "Female", "country": "Greenland", "site": "Eastern Settlement", "NO": 0.1, "UK": 7.0, "DK": 75.5, "SE": 0.7, "PL": 0.7, "FI": 0.2, "IT": 15.7, "dom": "Denmark", "dom_val": 75.5, "west": 7.1, "east": 1.6, "south": 91.2}, {"id": "VK15", "sex": "Female", "country": "Russia", "site": "Ladoga", "NO": 5.5, "UK": 0.0, "DK": 24.7, "SE": 60.6, "PL": 2.8, "FI": 4.7, "IT": 1.7, "dom": "Sweden", "dom_val": 60.6, "west": 5.5, "east": 68.1, "south": 26.4}, {"id": "VK17", "sex": "Male", "country": "Russia", "site": "Ladoga", "NO": 0.2, "UK": 0.1, "DK": 2.1, "SE": 41.0, "PL": 6.5, "FI": 47.8, "IT": 2.3, "dom": "Finland", "dom_val": 47.8, "west": 0.3, "east": 95.3, "south": 4.4}, {"id": "VK18", "sex": "Male", "country": "Russia", "site": "Ladoga", "NO": 1.1, "UK": 1.4, "DK": 0.7, "SE": 38.2, "PL": 2.2, "FI": 52.6, "IT": 3.8, "dom": "Finland", "dom_val": 52.6, "west": 2.5, "east": 93.0, "south": 4.5}, {"id": "VK19", "sex": "Female", "country": "Russia", "site": "Ladoga", "NO": 2.7, "UK": 1.2, "DK": 4.5, "SE": 3.6, "PL": 40.0, "FI": 22.0, "IT": 26.1, "dom": "Poland", "dom_val": 40.0, "west": 3.9, "east": 65.6, "south": 30.6}, {"id": "VK25", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 2.3, "UK": 48.2, "DK": 28.6, "SE": 13.6, "PL": 0.8, "FI": 2.7, "IT": 3.9, "dom": "UK", "dom_val": 48.2, "west": 50.5, "east": 17.1, "south": 32.5}, {"id": "VK29", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 9.9, "UK": 16.3, "DK": 37.4, "SE": 28.1, "PL": 0.3, "FI": 7.2, "IT": 0.8, "dom": "Denmark", "dom_val": 37.4, "west": 26.2, "east": 35.6, "south": 38.2}, {"id": "VK30", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 0.6, "UK": 10.2, "DK": 74.6, "SE": 0.1, "PL": 1.4, "FI": 0.0, "IT": 13.1, "dom": "Denmark", "dom_val": 74.6, "west": 10.8, "east": 1.5, "south": 87.7}, {"id": "VK33", "sex": "Female", "country": "Sweden", "site": "Skara", "NO": 4.8, "UK": 4.4, "DK": 26.5, "SE": 43.9, "PL": 2.5, "FI": 10.3, "IT": 7.6, "dom": "Sweden", "dom_val": 43.9, "west": 9.2, "east": 56.7, "south": 34.1}, {"id": "VK34", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 0.0, "UK": 5.9, "DK": 89.5, "SE": 0.0, "PL": 0.7, "FI": 0.1, "IT": 3.7, "dom": "Denmark", "dom_val": 89.5, "west": 5.9, "east": 0.8, "south": 93.2}, {"id": "VK35", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 18.7, "UK": 0.7, "DK": 72.3, "SE": 5.0, "PL": 0.1, "FI": 1.5, "IT": 1.7, "dom": "Denmark", "dom_val": 72.3, "west": 19.4, "east": 6.6, "south": 74.0}, {"id": "VK40", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 3.2, "UK": 20.5, "DK": 66.8, "SE": 3.8, "PL": 0.1, "FI": 0.0, "IT": 5.5, "dom": "Denmark", "dom_val": 66.8, "west": 23.7, "east": 3.9, "south": 72.3}, {"id": "VK42", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 3.0, "UK": 23.5, "DK": 53.3, "SE": 0.2, "PL": 0.2, "FI": 0.1, "IT": 19.7, "dom": "Denmark", "dom_val": 53.3, "west": 26.5, "east": 0.5, "south": 73.0}, {"id": "VK46", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 45.9, "UK": 41.8, "DK": 1.7, "SE": 1.8, "PL": 0.0, "FI": 0.0, "IT": 8.8, "dom": "Norway", "dom_val": 45.9, "west": 87.7, "east": 1.8, "south": 10.5}, {"id": "VK50", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.2, "UK": 0.0, "DK": 0.0, "SE": 77.8, "PL": 4.0, "FI": 17.9, "IT": 0.1, "dom": "Sweden", "dom_val": 77.8, "west": 0.2, "east": 99.7, "south": 0.1}, {"id": "VK51", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.0, "UK": 0.4, "DK": 0.0, "SE": 0.1, "PL": 7.5, "FI": 91.7, "IT": 0.2, "dom": "Finland", "dom_val": 91.7, "west": 0.4, "east": 99.3, "south": 0.2}, {"id": "VK53", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 1.8, "UK": 6.6, "DK": 0.2, "SE": 0.4, "PL": 63.5, "FI": 20.7, "IT": 6.8, "dom": "Poland", "dom_val": 63.5, "west": 8.4, "east": 84.6, "south": 7.0}, {"id": "VK56", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.3, "PL": 0.0, "FI": 99.6, "IT": 0.1, "dom": "Finland", "dom_val": 99.6, "west": 0.0, "east": 99.9, "south": 0.1}, {"id": "VK58", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 3.0, "UK": 22.1, "DK": 67.4, "SE": 1.1, "PL": 4.3, "FI": 0.6, "IT": 1.5, "dom": "Denmark", "dom_val": 67.4, "west": 25.1, "east": 6.0, "south": 68.9}, {"id": "VK60", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.0, "PL": 28.5, "FI": 65.7, "IT": 5.8, "dom": "Finland", "dom_val": 65.7, "west": 0.0, "east": 94.2, "south": 5.8}, {"id": "VK64", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.9, "UK": 23.8, "DK": 0.8, "SE": 0.4, "PL": 24.4, "FI": 46.6, "IT": 3.2, "dom": "Finland", "dom_val": 46.6, "west": 24.7, "east": 71.4, "south": 4.0}, {"id": "VK65", "sex": "Female", "country": "Denmark", "site": "Sealand", "NO": 0.1, "UK": 28.2, "DK": 39.4, "SE": 0.0, "PL": 2.1, "FI": 0.0, "IT": 30.2, "dom": "Denmark", "dom_val": 39.4, "west": 28.3, "east": 2.1, "south": 69.6}, {"id": "VK69", "sex": "Female", "country": "Denmark", "site": "Sealand", "NO": 0.1, "UK": 16.9, "DK": 71.3, "SE": 0.0, "PL": 0.0, "FI": 0.0, "IT": 11.6, "dom": "Denmark", "dom_val": 71.3, "west": 17.0, "east": 0.0, "south": 82.9}, {"id": "VK70", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 1.0, "UK": 52.3, "DK": 6.8, "SE": 30.8, "PL": 1.4, "FI": 4.2, "IT": 3.4, "dom": "UK", "dom_val": 52.3, "west": 53.3, "east": 36.4, "south": 10.2}, {"id": "VK84", "sex": "Female", "country": "Denmark", "site": "Jutland", "NO": 0.5, "UK": 25.7, "DK": 29.0, "SE": 0.5, "PL": 4.5, "FI": 3.5, "IT": 36.3, "dom": "Italy", "dom_val": 36.3, "west": 26.2, "east": 8.5, "south": 65.3}, {"id": "VK87", "sex": "Male", "country": "Denmark", "site": "Jutland", "NO": 2.5, "UK": 41.1, "DK": 29.1, "SE": 8.6, "PL": 0.1, "FI": 0.2, "IT": 18.5, "dom": "UK", "dom_val": 41.1, "west": 43.6, "east": 8.9, "south": 47.6}, {"id": "VK95", "sex": "Male", "country": "Iceland", "site": "Hofstadir", "NO": 0.4, "UK": 74.0, "DK": 11.9, "SE": 5.4, "PL": 3.2, "FI": 3.8, "IT": 1.4, "dom": "UK", "dom_val": 74.0, "west": 74.4, "east": 12.4, "south": 13.3}, {"id": "VK98", "sex": "Male", "country": "Iceland", "site": "Hofstadir", "NO": 71.4, "UK": 19.2, "DK": 3.9, "SE": 1.8, "PL": 0.4, "FI": 0.6, "IT": 2.7, "dom": "Norway", "dom_val": 71.4, "west": 90.6, "east": 2.8, "south": 6.6}, {"id": "VK99", "sex": "Female", "country": "Iceland", "site": "Hofstadir", "NO": 28.7, "UK": 50.1, "DK": 0.1, "SE": 3.8, "PL": 0.0, "FI": 3.8, "IT": 13.6, "dom": "UK", "dom_val": 50.1, "west": 78.8, "east": 7.6, "south": 13.7}, {"id": "VK101", "sex": "Male", "country": "Iceland", "site": "Hofstadir", "NO": 50.6, "UK": 40.3, "DK": 0.6, "SE": 0.2, "PL": 1.4, "FI": 0.2, "IT": 6.6, "dom": "Norway", "dom_val": 50.6, "west": 90.9, "east": 1.8, "south": 7.2}, {"id": "VK102", "sex": "Male", "country": "Iceland", "site": "Hofstadir", "NO": 44.6, "UK": 36.5, "DK": 9.9, "SE": 2.3, "PL": 0.4, "FI": 1.4, "IT": 4.8, "dom": "Norway", "dom_val": 44.6, "west": 81.1, "east": 4.1, "south": 14.7}, {"id": "VK108", "sex": "Female", "country": "Sweden", "site": "Malmo", "NO": 20.7, "UK": 15.2, "DK": 39.0, "SE": 8.9, "PL": 5.6, "FI": 0.8, "IT": 9.9, "dom": "Denmark", "dom_val": 39.0, "west": 35.9, "east": 15.3, "south": 48.9}, {"id": "VK110", "sex": "Male", "country": "Iceland", "site": "Hofstadir", "NO": 23.5, "UK": 63.3, "DK": 1.5, "SE": 6.0, "PL": 0.4, "FI": 3.1, "IT": 2.2, "dom": "UK", "dom_val": 63.3, "west": 86.8, "east": 9.5, "south": 3.7}, {"id": "VK111", "sex": "Female", "country": "Iceland", "site": "Hofstadir", "NO": 0.0, "UK": 78.7, "DK": 2.2, "SE": 0.0, "PL": 1.4, "FI": 3.2, "IT": 14.5, "dom": "UK", "dom_val": 78.7, "west": 78.7, "east": 4.6, "south": 16.7}, {"id": "VK118", "sex": "Female", "country": "Norway", "site": "Nor_Mid", "NO": 23.3, "UK": 24.5, "DK": 32.1, "SE": 2.8, "PL": 0.0, "FI": 0.0, "IT": 17.3, "dom": "Denmark", "dom_val": 32.1, "west": 47.8, "east": 2.8, "south": 49.4}, {"id": "VK122", "sex": "Female", "country": "Iceland", "site": "Hofstadir", "NO": 75.6, "UK": 22.3, "DK": 0.1, "SE": 0.1, "PL": 0.2, "FI": 0.1, "IT": 1.6, "dom": "Norway", "dom_val": 75.6, "west": 97.9, "east": 0.4, "south": 1.7}, {"id": "VK123", "sex": "Male", "country": "Iceland", "site": "Hofstadir", "NO": 4.6, "UK": 61.2, "DK": 14.3, "SE": 0.7, "PL": 2.0, "FI": 0.3, "IT": 17.1, "dom": "UK", "dom_val": 61.2, "west": 65.8, "east": 3.0, "south": 31.4}, {"id": "VK127", "sex": "Male", "country": "Iceland", "site": "Hringsdalur", "NO": 41.5, "UK": 37.4, "DK": 1.6, "SE": 0.0, "PL": 2.5, "FI": 4.9, "IT": 12.2, "dom": "Norway", "dom_val": 41.5, "west": 78.9, "east": 7.4, "south": 13.8}, {"id": "VK128", "sex": "Female", "country": "Iceland", "site": "Hringsdalur", "NO": 45.7, "UK": 49.5, "DK": 0.6, "SE": 0.1, "PL": 0.0, "FI": 1.8, "IT": 2.3, "dom": "UK", "dom_val": 49.5, "west": 95.2, "east": 1.9, "south": 2.9}, {"id": "VK129", "sex": "Male", "country": "Iceland", "site": "Ingiridarstadir", "NO": 68.0, "UK": 1.4, "DK": 2.6, "SE": 12.1, "PL": 0.9, "FI": 14.9, "IT": 0.1, "dom": "Norway", "dom_val": 68.0, "west": 69.4, "east": 27.9, "south": 2.7}, {"id": "VK134", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 0.8, "UK": 1.2, "DK": 50.5, "SE": 21.7, "PL": 1.2, "FI": 5.0, "IT": 19.7, "dom": "Denmark", "dom_val": 50.5, "west": 2.0, "east": 27.9, "south": 70.2}, {"id": "VK139", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 0.0, "UK": 1.5, "DK": 0.1, "SE": 0.2, "PL": 96.8, "FI": 0.2, "IT": 1.2, "dom": "Poland", "dom_val": 96.8, "west": 1.5, "east": 97.2, "south": 1.3}, {"id": "VK141", "sex": "Female", "country": "Denmark", "site": "Funen", "NO": 4.2, "UK": 0.0, "DK": 63.9, "SE": 29.0, "PL": 0.2, "FI": 2.6, "IT": 0.1, "dom": "Denmark", "dom_val": 63.9, "west": 4.2, "east": 31.8, "south": 64.0}, {"id": "VK143", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 9.5, "UK": 12.4, "DK": 67.2, "SE": 0.0, "PL": 2.2, "FI": 8.7, "IT": 0.0, "dom": "Denmark", "dom_val": 67.2, "west": 21.9, "east": 10.9, "south": 67.2}, {"id": "VK145", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 3.9, "UK": 0.3, "DK": 45.5, "SE": 3.1, "PL": 11.2, "FI": 23.7, "IT": 12.2, "dom": "Denmark", "dom_val": 45.5, "west": 4.2, "east": 38.0, "south": 57.7}, {"id": "VK146", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 3.4, "UK": 22.1, "DK": 14.5, "SE": 5.8, "PL": 2.6, "FI": 0.7, "IT": 50.9, "dom": "Italy", "dom_val": 50.9, "west": 25.5, "east": 9.1, "south": 65.4}, {"id": "VK147", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 17.6, "UK": 9.6, "DK": 48.3, "SE": 7.4, "PL": 6.8, "FI": 1.5, "IT": 8.7, "dom": "Denmark", "dom_val": 48.3, "west": 27.2, "east": 15.7, "south": 57.0}, {"id": "VK150", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 9.2, "UK": 25.6, "DK": 34.2, "SE": 0.1, "PL": 0.6, "FI": 0.0, "IT": 30.2, "dom": "Denmark", "dom_val": 34.2, "west": 34.8, "east": 0.7, "south": 64.4}, {"id": "VK151", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 10.7, "UK": 0.1, "DK": 45.3, "SE": 26.9, "PL": 0.3, "FI": 0.9, "IT": 16.0, "dom": "Denmark", "dom_val": 45.3, "west": 10.8, "east": 28.1, "south": 61.3}, {"id": "VK154", "sex": "Female", "country": "Poland", "site": "Bodzia", "NO": 1.0, "UK": 0.0, "DK": 10.1, "SE": 26.8, "PL": 50.6, "FI": 11.5, "IT": 0.0, "dom": "Poland", "dom_val": 50.6, "west": 1.0, "east": 88.9, "south": 10.1}, {"id": "VK156", "sex": "Male", "country": "Poland", "site": "Bodzia", "NO": 0.1, "UK": 0.1, "DK": 1.3, "SE": 20.9, "PL": 51.3, "FI": 25.8, "IT": 0.6, "dom": "Poland", "dom_val": 51.3, "west": 0.2, "east": 98.0, "south": 1.9}, {"id": "VK157", "sex": "Male", "country": "Poland", "site": "Bodzia", "NO": 0.0, "UK": 0.0, "DK": 3.6, "SE": 12.9, "PL": 60.5, "FI": 19.1, "IT": 3.9, "dom": "Poland", "dom_val": 60.5, "west": 0.0, "east": 92.5, "south": 7.5}, {"id": "VK160", "sex": "Male", "country": "Russia", "site": "Kurevanikha", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.0, "PL": 98.2, "FI": 1.8, "IT": 0.0, "dom": "Poland", "dom_val": 98.2, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK165", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 2.4, "UK": 0.3, "DK": 88.0, "SE": 6.5, "PL": 0.3, "FI": 0.2, "IT": 2.3, "dom": "Denmark", "dom_val": 88.0, "west": 2.7, "east": 7.0, "south": 90.3}, {"id": "VK166", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 0.0, "UK": 23.5, "DK": 26.8, "SE": 8.2, "PL": 0.3, "FI": 9.2, "IT": 32.0, "dom": "Italy", "dom_val": 32.0, "west": 23.5, "east": 17.7, "south": 58.8}, {"id": "VK167", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 10.6, "UK": 0.0, "DK": 66.1, "SE": 15.1, "PL": 0.0, "FI": 4.4, "IT": 3.6, "dom": "Denmark", "dom_val": 66.1, "west": 10.6, "east": 19.5, "south": 69.7}, {"id": "VK168", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 2.7, "UK": 1.4, "DK": 52.4, "SE": 26.7, "PL": 0.5, "FI": 0.5, "IT": 15.8, "dom": "Denmark", "dom_val": 52.4, "west": 4.1, "east": 27.7, "south": 68.2}, {"id": "VK172", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 76.3, "UK": 17.9, "DK": 0.8, "SE": 2.4, "PL": 0.9, "FI": 1.2, "IT": 0.4, "dom": "Norway", "dom_val": 76.3, "west": 94.2, "east": 4.5, "south": 1.2}, {"id": "VK173", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 0.2, "UK": 33.3, "DK": 51.2, "SE": 0.0, "PL": 1.0, "FI": 0.8, "IT": 13.5, "dom": "Denmark", "dom_val": 51.2, "west": 33.5, "east": 1.8, "south": 64.7}, {"id": "VK174", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 0.8, "UK": 0.5, "DK": 17.2, "SE": 61.4, "PL": 7.9, "FI": 1.3, "IT": 10.9, "dom": "Sweden", "dom_val": 61.4, "west": 1.3, "east": 70.6, "south": 28.1}, {"id": "VK175", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 0.2, "UK": 0.3, "DK": 47.5, "SE": 31.2, "PL": 8.1, "FI": 12.2, "IT": 0.5, "dom": "Denmark", "dom_val": 47.5, "west": 0.5, "east": 51.5, "south": 48.0}, {"id": "VK176", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 23.8, "UK": 0.3, "DK": 44.1, "SE": 21.6, "PL": 3.4, "FI": 5.4, "IT": 1.4, "dom": "Denmark", "dom_val": 44.1, "west": 24.1, "east": 30.4, "south": 45.5}, {"id": "VK177", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 2.3, "UK": 27.7, "DK": 35.6, "SE": 0.9, "PL": 0.8, "FI": 0.3, "IT": 32.5, "dom": "Denmark", "dom_val": 35.6, "west": 30.0, "east": 2.0, "south": 68.1}, {"id": "VK178", "sex": "Male", "country": "UK", "site": "Oxford, England", "NO": 0.1, "UK": 32.6, "DK": 49.5, "SE": 0.0, "PL": 2.8, "FI": 0.3, "IT": 14.6, "dom": "Denmark", "dom_val": 49.5, "west": 32.7, "east": 3.1, "south": 64.1}, {"id": "VK179", "sex": "Male", "country": "Greenland", "site": "Eastern Settlement", "NO": 61.2, "UK": 20.5, "DK": 6.5, "SE": 3.8, "PL": 3.7, "FI": 2.1, "IT": 2.1, "dom": "Norway", "dom_val": 61.2, "west": 81.7, "east": 9.6, "south": 8.6}, {"id": "VK183", "sex": "Male", "country": "Greenland", "site": "Eastern Settlement", "NO": 39.5, "UK": 38.0, "DK": 5.5, "SE": 1.0, "PL": 0.9, "FI": 2.0, "IT": 13.2, "dom": "Norway", "dom_val": 39.5, "west": 77.5, "east": 3.9, "south": 18.7}, {"id": "VK184", "sex": "Male", "country": "Greenland", "site": "Eastern Settlement", "NO": 83.0, "UK": 3.5, "DK": 0.1, "SE": 0.0, "PL": 0.2, "FI": 4.4, "IT": 8.8, "dom": "Norway", "dom_val": 83.0, "west": 86.5, "east": 4.6, "south": 8.9}, {"id": "VK186", "sex": "Male", "country": "Greenland", "site": "Eastern Settlement", "NO": 38.2, "UK": 41.7, "DK": 4.7, "SE": 2.4, "PL": 0.1, "FI": 2.7, "IT": 10.2, "dom": "UK", "dom_val": 41.7, "west": 79.9, "east": 5.2, "south": 14.9}, {"id": "VK187", "sex": "Female", "country": "Greenland", "site": "Eastern Settlement", "NO": 48.4, "UK": 10.1, "DK": 9.4, "SE": 0.1, "PL": 7.8, "FI": 3.7, "IT": 20.6, "dom": "Norway", "dom_val": 48.4, "west": 58.5, "east": 11.6, "south": 30.0}, {"id": "VK190", "sex": "Male", "country": "Greenland", "site": "Eastern Settlement", "NO": 52.7, "UK": 38.3, "DK": 0.7, "SE": 0.0, "PL": 4.1, "FI": 0.9, "IT": 3.2, "dom": "Norway", "dom_val": 52.7, "west": 91.0, "east": 5.0, "south": 3.9}, {"id": "VK201", "sex": "Male", "country": "UK", "site": "Orkney, Scotland", "NO": 1.0, "UK": 93.9, "DK": 1.6, "SE": 0.0, "PL": 0.2, "FI": 0.5, "IT": 2.9, "dom": "UK", "dom_val": 93.9, "west": 94.9, "east": 0.7, "south": 4.5}, {"id": "VK202", "sex": "Male", "country": "UK", "site": "Orkney, Scotland", "NO": 2.0, "UK": 85.4, "DK": 6.5, "SE": 1.8, "PL": 1.9, "FI": 1.1, "IT": 1.3, "dom": "UK", "dom_val": 85.4, "west": 87.4, "east": 4.8, "south": 7.8}, {"id": "VK203", "sex": "Male", "country": "UK", "site": "Orkney, Scotland", "NO": 0.0, "UK": 92.6, "DK": 2.8, "SE": 0.0, "PL": 0.6, "FI": 0.3, "IT": 3.6, "dom": "UK", "dom_val": 92.6, "west": 92.6, "east": 0.9, "south": 6.4}, {"id": "VK204", "sex": "Male_(XXY?)", "country": "UK", "site": "Orkney, Scotland", "NO": 55.2, "UK": 41.0, "DK": 1.6, "SE": 1.0, "PL": 0.8, "FI": 0.2, "IT": 0.1, "dom": "Norway", "dom_val": 55.2, "west": 96.2, "east": 2.0, "south": 1.7}, {"id": "VK205", "sex": "Male", "country": "UK", "site": "Orkney, Scotland", "NO": 1.9, "UK": 54.9, "DK": 18.7, "SE": 10.0, "PL": 0.2, "FI": 1.9, "IT": 12.3, "dom": "UK", "dom_val": 54.9, "west": 56.8, "east": 12.1, "south": 31.0}, {"id": "VK207", "sex": "Female", "country": "UK", "site": "Orkney, Scotland", "NO": 0.0, "UK": 90.9, "DK": 0.0, "SE": 0.0, "PL": 5.7, "FI": 0.5, "IT": 2.8, "dom": "UK", "dom_val": 90.9, "west": 90.9, "east": 6.2, "south": 2.8}, {"id": "VK218", "sex": "Male", "country": "Russia", "site": "Ladoga", "NO": 0.0, "UK": 66.1, "DK": 13.0, "SE": 0.0, "PL": 10.5, "FI": 1.2, "IT": 9.2, "dom": "UK", "dom_val": 66.1, "west": 66.1, "east": 11.7, "south": 22.2}, {"id": "VK219", "sex": "Male", "country": "Russia", "site": "Ladoga", "NO": 1.4, "UK": 2.9, "DK": 28.0, "SE": 29.0, "PL": 10.1, "FI": 9.6, "IT": 19.0, "dom": "Sweden", "dom_val": 29.0, "west": 4.3, "east": 48.7, "south": 47.0}, {"id": "VK220", "sex": "Male", "country": "Russia", "site": "Ladoga", "NO": 15.2, "UK": 4.6, "DK": 18.8, "SE": 16.5, "PL": 4.9, "FI": 34.8, "IT": 5.1, "dom": "Finland", "dom_val": 34.8, "west": 19.8, "east": 56.2, "south": 23.9}, {"id": "VK221", "sex": "Male", "country": "Russia", "site": "Ladoga", "NO": 6.9, "UK": 0.2, "DK": 40.3, "SE": 3.4, "PL": 11.8, "FI": 21.0, "IT": 16.4, "dom": "Denmark", "dom_val": 40.3, "west": 7.1, "east": 36.2, "south": 56.7}, {"id": "VK225", "sex": "Male", "country": "Iceland", "site": "Hofstadir", "NO": 33.4, "UK": 9.0, "DK": 33.0, "SE": 0.0, "PL": 2.2, "FI": 0.5, "IT": 22.0, "dom": "Norway", "dom_val": 33.4, "west": 42.4, "east": 2.7, "south": 55.0}, {"id": "VK227", "sex": "Female", "country": "Iceland", "site": "Hofstadir", "NO": 51.0, "UK": 20.4, "DK": 0.2, "SE": 0.0, "PL": 4.4, "FI": 0.9, "IT": 23.0, "dom": "Norway", "dom_val": 51.0, "west": 71.4, "east": 5.3, "south": 23.2}, {"id": "VK230", "sex": "Female", "country": "Iceland", "site": "Hofstadir", "NO": 30.2, "UK": 60.0, "DK": 0.4, "SE": 0.0, "PL": 0.4, "FI": 0.3, "IT": 8.6, "dom": "UK", "dom_val": 60.0, "west": 90.2, "east": 0.7, "south": 9.0}, {"id": "VK234", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 11.4, "UK": 31.2, "DK": 40.8, "SE": 0.3, "PL": 0.2, "FI": 5.9, "IT": 10.2, "dom": "Denmark", "dom_val": 40.8, "west": 42.6, "east": 6.4, "south": 51.0}, {"id": "VK236", "sex": "Female", "country": "Faroes", "site": "Faroes", "NO": 6.6, "UK": 30.0, "DK": 44.9, "SE": 4.1, "PL": 0.1, "FI": 2.9, "IT": 11.4, "dom": "Denmark", "dom_val": 44.9, "west": 36.6, "east": 7.1, "south": 56.3}, {"id": "VK237", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 26.5, "UK": 41.1, "DK": 19.1, "SE": 1.2, "PL": 0.1, "FI": 1.6, "IT": 10.4, "dom": "UK", "dom_val": 41.1, "west": 67.6, "east": 2.9, "south": 29.5}, {"id": "VK238", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 13.0, "UK": 13.5, "DK": 55.1, "SE": 0.0, "PL": 4.1, "FI": 0.2, "IT": 14.0, "dom": "Denmark", "dom_val": 55.1, "west": 26.5, "east": 4.3, "south": 69.1}, {"id": "VK240", "sex": "Female", "country": "Faroes", "site": "Faroes", "NO": 18.7, "UK": 8.6, "DK": 44.5, "SE": 0.0, "PL": 0.7, "FI": 0.8, "IT": 26.8, "dom": "Denmark", "dom_val": 44.5, "west": 27.3, "east": 1.5, "south": 71.3}, {"id": "VK241", "sex": "Female", "country": "Faroes", "site": "Faroes", "NO": 23.4, "UK": 45.0, "DK": 7.8, "SE": 0.1, "PL": 1.0, "FI": 0.0, "IT": 22.7, "dom": "UK", "dom_val": 45.0, "west": 68.4, "east": 1.1, "south": 30.5}, {"id": "VK242", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 29.7, "UK": 33.5, "DK": 4.8, "SE": 1.3, "PL": 0.1, "FI": 0.1, "IT": 30.4, "dom": "UK", "dom_val": 33.5, "west": 63.2, "east": 1.5, "south": 35.2}, {"id": "VK244", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 31.6, "UK": 33.2, "DK": 10.9, "SE": 1.8, "PL": 2.5, "FI": 2.1, "IT": 17.8, "dom": "UK", "dom_val": 33.2, "west": 64.8, "east": 6.4, "south": 28.7}, {"id": "VK245", "sex": "Male", "country": "Faroes", "site": "Faroes", "NO": 38.1, "UK": 34.4, "DK": 10.8, "SE": 0.7, "PL": 4.6, "FI": 4.8, "IT": 6.7, "dom": "Norway", "dom_val": 38.1, "west": 72.5, "east": 10.1, "south": 17.5}, {"id": "VK254", "sex": "Female", "country": "Russia", "site": "Gnezdovo", "NO": 2.1, "UK": 6.9, "DK": 3.2, "SE": 2.7, "PL": 55.0, "FI": 4.0, "IT": 26.1, "dom": "Poland", "dom_val": 55.0, "west": 9.0, "east": 61.7, "south": 29.3}, {"id": "VK256", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 24.4, "UK": 32.1, "DK": 32.4, "SE": 0.8, "PL": 0.7, "FI": 0.0, "IT": 9.5, "dom": "Denmark", "dom_val": 32.4, "west": 56.5, "east": 1.5, "south": 41.9}, {"id": "VK257", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 34.6, "UK": 33.0, "DK": 3.2, "SE": 0.3, "PL": 2.8, "FI": 11.6, "IT": 14.6, "dom": "Norway", "dom_val": 34.6, "west": 67.6, "east": 14.7, "south": 17.8}, {"id": "VK258", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 14.7, "UK": 62.5, "DK": 12.6, "SE": 5.2, "PL": 0.1, "FI": 1.5, "IT": 3.5, "dom": "UK", "dom_val": 62.5, "west": 77.2, "east": 6.8, "south": 16.1}, {"id": "VK259", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 31.3, "UK": 48.0, "DK": 1.1, "SE": 0.3, "PL": 2.0, "FI": 11.0, "IT": 6.3, "dom": "UK", "dom_val": 48.0, "west": 79.3, "east": 13.3, "south": 7.4}, {"id": "VK260", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 9.4, "UK": 25.8, "DK": 22.1, "SE": 8.0, "PL": 0.9, "FI": 1.6, "IT": 32.2, "dom": "Italy", "dom_val": 32.2, "west": 35.2, "east": 10.5, "south": 54.3}, {"id": "VK261", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 3.9, "UK": 35.4, "DK": 32.1, "SE": 0.5, "PL": 2.6, "FI": 0.9, "IT": 24.6, "dom": "UK", "dom_val": 35.4, "west": 39.3, "east": 4.0, "south": 56.7}, {"id": "VK262", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 15.1, "UK": 30.5, "DK": 24.6, "SE": 5.4, "PL": 1.7, "FI": 4.3, "IT": 18.3, "dom": "UK", "dom_val": 30.5, "west": 45.6, "east": 11.4, "south": 42.9}, {"id": "VK263", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 38.3, "UK": 35.5, "DK": 5.6, "SE": 3.6, "PL": 5.1, "FI": 1.9, "IT": 10.0, "dom": "Norway", "dom_val": 38.3, "west": 73.8, "east": 10.6, "south": 15.6}, {"id": "VK264", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 24.4, "UK": 11.7, "DK": 26.7, "SE": 14.6, "PL": 1.0, "FI": 0.6, "IT": 21.0, "dom": "Denmark", "dom_val": 26.7, "west": 36.1, "east": 16.2, "south": 47.7}, {"id": "VK265", "sex": "Female", "country": "Sweden", "site": "Karda", "NO": 6.1, "UK": 23.0, "DK": 10.8, "SE": 0.3, "PL": 2.6, "FI": 1.0, "IT": 56.2, "dom": "Italy", "dom_val": 56.2, "west": 29.1, "east": 3.9, "south": 67.0}, {"id": "VK266", "sex": "Female", "country": "Sweden", "site": "Karda", "NO": 0.5, "UK": 8.2, "DK": 39.6, "SE": 0.3, "PL": 4.9, "FI": 3.2, "IT": 43.3, "dom": "Italy", "dom_val": 43.3, "west": 8.7, "east": 8.4, "south": 82.9}, {"id": "VK273", "sex": "Male", "country": "Russia", "site": "Gnezdovo", "NO": 2.2, "UK": 3.3, "DK": 36.0, "SE": 0.5, "PL": 50.1, "FI": 1.8, "IT": 6.2, "dom": "Poland", "dom_val": 50.1, "west": 5.5, "east": 52.4, "south": 42.2}, {"id": "VK274", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 1.4, "UK": 1.1, "DK": 11.7, "SE": 0.2, "PL": 60.4, "FI": 0.6, "IT": 24.5, "dom": "Poland", "dom_val": 60.4, "west": 2.5, "east": 61.2, "south": 36.2}, {"id": "VK278", "sex": "Female", "country": "Denmark", "site": "Funen", "NO": 0.5, "UK": 11.4, "DK": 39.2, "SE": 0.7, "PL": 0.0, "FI": 0.0, "IT": 48.1, "dom": "Italy", "dom_val": 48.1, "west": 11.9, "east": 0.7, "south": 87.3}, {"id": "VK279", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 1.0, "UK": 2.0, "DK": 52.3, "SE": 44.2, "PL": 0.1, "FI": 0.0, "IT": 0.3, "dom": "Denmark", "dom_val": 52.3, "west": 3.0, "east": 44.3, "south": 52.6}, {"id": "VK281", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 0.1, "UK": 0.9, "DK": 26.9, "SE": 61.3, "PL": 0.8, "FI": 4.0, "IT": 6.0, "dom": "Sweden", "dom_val": 61.3, "west": 1.0, "east": 66.1, "south": 32.9}, {"id": "VK284", "sex": "Female", "country": "Denmark", "site": "Sealand", "NO": 19.7, "UK": 0.0, "DK": 63.4, "SE": 5.4, "PL": 1.4, "FI": 0.5, "IT": 9.6, "dom": "Denmark", "dom_val": 63.4, "west": 19.7, "east": 7.3, "south": 73.0}, {"id": "VK285", "sex": "Female", "country": "Denmark", "site": "Langeland", "NO": 4.9, "UK": 19.3, "DK": 59.1, "SE": 0.3, "PL": 0.4, "FI": 0.0, "IT": 16.0, "dom": "Denmark", "dom_val": 59.1, "west": 24.2, "east": 0.7, "south": 75.1}, {"id": "VK286", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 3.2, "UK": 8.5, "DK": 22.6, "SE": 0.1, "PL": 1.5, "FI": 0.7, "IT": 63.4, "dom": "Italy", "dom_val": 63.4, "west": 11.7, "east": 2.3, "south": 86.0}, {"id": "VK288", "sex": "Female", "country": "Denmark", "site": "Langeland", "NO": 1.6, "UK": 8.1, "DK": 15.6, "SE": 69.0, "PL": 0.1, "FI": 0.6, "IT": 5.0, "dom": "Sweden", "dom_val": 69.0, "west": 9.7, "east": 69.7, "south": 20.6}, {"id": "VK289", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 11.4, "UK": 17.7, "DK": 70.4, "SE": 0.3, "PL": 0.0, "FI": 0.0, "IT": 0.2, "dom": "Denmark", "dom_val": 70.4, "west": 29.1, "east": 0.3, "south": 70.6}, {"id": "VK290", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 43.1, "UK": 0.2, "DK": 6.2, "SE": 49.5, "PL": 0.5, "FI": 0.1, "IT": 0.4, "dom": "Sweden", "dom_val": 49.5, "west": 43.3, "east": 50.1, "south": 6.6}, {"id": "VK291", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 2.9, "UK": 0.1, "DK": 43.3, "SE": 43.5, "PL": 2.4, "FI": 2.2, "IT": 5.6, "dom": "Sweden", "dom_val": 43.5, "west": 3.0, "east": 48.1, "south": 48.9}, {"id": "VK294", "sex": "Female", "country": "Denmark", "site": "Sealand", "NO": 2.3, "UK": 4.9, "DK": 71.3, "SE": 4.1, "PL": 10.4, "FI": 0.8, "IT": 6.2, "dom": "Denmark", "dom_val": 71.3, "west": 7.2, "east": 15.3, "south": 77.5}, {"id": "VK295", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 1.6, "UK": 1.7, "DK": 76.3, "SE": 10.5, "PL": 0.2, "FI": 7.0, "IT": 2.7, "dom": "Denmark", "dom_val": 76.3, "west": 3.3, "east": 17.7, "south": 79.0}, {"id": "VK297", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 1.9, "UK": 2.9, "DK": 58.8, "SE": 4.5, "PL": 13.8, "FI": 8.6, "IT": 9.5, "dom": "Denmark", "dom_val": 58.8, "west": 4.8, "east": 26.9, "south": 68.3}, {"id": "VK300", "sex": "Female", "country": "Denmark", "site": "Jutland", "NO": 0.0, "UK": 19.2, "DK": 61.7, "SE": 0.0, "PL": 0.4, "FI": 0.4, "IT": 18.3, "dom": "Denmark", "dom_val": 61.7, "west": 19.2, "east": 0.8, "south": 80.0}, {"id": "VK301", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 0.9, "UK": 8.5, "DK": 42.5, "SE": 0.1, "PL": 1.0, "FI": 1.5, "IT": 45.5, "dom": "Italy", "dom_val": 45.5, "west": 9.4, "east": 2.6, "south": 88.0}, {"id": "VK303", "sex": "Female", "country": "Sweden", "site": "Skara", "NO": 25.6, "UK": 13.4, "DK": 17.9, "SE": 26.1, "PL": 1.5, "FI": 0.3, "IT": 15.3, "dom": "Sweden", "dom_val": 26.1, "west": 39.0, "east": 27.9, "south": 33.2}, {"id": "VK306", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 1.7, "UK": 1.8, "DK": 46.4, "SE": 35.9, "PL": 0.5, "FI": 10.0, "IT": 3.6, "dom": "Denmark", "dom_val": 46.4, "west": 3.5, "east": 46.4, "south": 50.0}, {"id": "VK308", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 27.4, "UK": 6.9, "DK": 47.2, "SE": 6.6, "PL": 0.3, "FI": 0.0, "IT": 11.5, "dom": "Denmark", "dom_val": 47.2, "west": 34.3, "east": 6.9, "south": 58.7}, {"id": "VK315", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 2.5, "UK": 11.1, "DK": 68.2, "SE": 0.0, "PL": 0.0, "FI": 0.0, "IT": 18.1, "dom": "Denmark", "dom_val": 68.2, "west": 13.6, "east": 0.0, "south": 86.3}, {"id": "VK316", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 9.8, "UK": 0.0, "DK": 85.3, "SE": 2.1, "PL": 2.5, "FI": 0.3, "IT": 0.1, "dom": "Denmark", "dom_val": 85.3, "west": 9.8, "east": 4.9, "south": 85.4}, {"id": "VK317", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 0.1, "UK": 12.4, "DK": 24.8, "SE": 3.0, "PL": 0.0, "FI": 0.8, "IT": 58.8, "dom": "Italy", "dom_val": 58.8, "west": 12.5, "east": 3.8, "south": 83.6}, {"id": "VK319", "sex": "Female", "country": "Denmark", "site": "Funen", "NO": 2.0, "UK": 15.1, "DK": 32.4, "SE": 0.2, "PL": 2.6, "FI": 3.4, "IT": 44.3, "dom": "Italy", "dom_val": 44.3, "west": 17.1, "east": 6.2, "south": 76.7}, {"id": "VK320", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 5.7, "UK": 4.7, "DK": 64.8, "SE": 24.2, "PL": 0.1, "FI": 0.1, "IT": 0.3, "dom": "Denmark", "dom_val": 64.8, "west": 10.4, "east": 24.4, "south": 65.1}, {"id": "VK322", "sex": "Female", "country": "Denmark", "site": "Jutland", "NO": 2.0, "UK": 49.9, "DK": 13.5, "SE": 0.0, "PL": 8.8, "FI": 0.0, "IT": 25.9, "dom": "UK", "dom_val": 49.9, "west": 51.9, "east": 8.8, "south": 39.4}, {"id": "VK323", "sex": "Male", "country": "Denmark", "site": "Jutland", "NO": 0.1, "UK": 22.9, "DK": 70.9, "SE": 0.0, "PL": 0.0, "FI": 0.0, "IT": 6.0, "dom": "Denmark", "dom_val": 70.9, "west": 23.0, "east": 0.0, "south": 76.9}, {"id": "VK324", "sex": "Male", "country": "Denmark", "site": "Jutland", "NO": 4.4, "UK": 4.0, "DK": 74.2, "SE": 0.9, "PL": 0.3, "FI": 1.0, "IT": 15.2, "dom": "Denmark", "dom_val": 74.2, "west": 8.4, "east": 2.2, "south": 89.4}, {"id": "VK325", "sex": "Female", "country": "Denmark", "site": "Jutland", "NO": 3.0, "UK": 6.7, "DK": 89.5, "SE": 0.1, "PL": 0.5, "FI": 0.0, "IT": 0.2, "dom": "Denmark", "dom_val": 89.5, "west": 9.7, "east": 0.6, "south": 89.7}, {"id": "VK326", "sex": "Male", "country": "Denmark", "site": "Jutland", "NO": 0.2, "UK": 11.7, "DK": 56.3, "SE": 0.5, "PL": 0.1, "FI": 0.4, "IT": 30.9, "dom": "Denmark", "dom_val": 56.3, "west": 11.9, "east": 1.0, "south": 87.2}, {"id": "VK327", "sex": "Male", "country": "Denmark", "site": "Jutland", "NO": 0.1, "UK": 19.1, "DK": 76.0, "SE": 1.2, "PL": 2.9, "FI": 0.2, "IT": 0.5, "dom": "Denmark", "dom_val": 76.0, "west": 19.2, "east": 4.3, "south": 76.5}, {"id": "VK328", "sex": "Female", "country": "Denmark", "site": "Jutland", "NO": 1.8, "UK": 10.3, "DK": 59.7, "SE": 0.0, "PL": 2.0, "FI": 0.0, "IT": 26.2, "dom": "Denmark", "dom_val": 59.7, "west": 12.1, "east": 2.0, "south": 85.9}, {"id": "VK329", "sex": "Male", "country": "Denmark", "site": "Jutland", "NO": 2.8, "UK": 19.4, "DK": 46.4, "SE": 0.0, "PL": 2.0, "FI": 0.8, "IT": 28.6, "dom": "Denmark", "dom_val": 46.4, "west": 22.2, "east": 2.8, "south": 75.0}, {"id": "VK330", "sex": "Female", "country": "Denmark", "site": "Jutland", "NO": 4.1, "UK": 41.4, "DK": 21.3, "SE": 0.4, "PL": 3.6, "FI": 7.6, "IT": 21.5, "dom": "UK", "dom_val": 41.4, "west": 45.5, "east": 11.6, "south": 42.8}, {"id": "VK332", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 4.9, "UK": 15.4, "DK": 52.4, "SE": 1.3, "PL": 1.1, "FI": 0.4, "IT": 24.4, "dom": "Denmark", "dom_val": 52.4, "west": 20.3, "east": 2.8, "south": 76.8}, {"id": "VK333", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 8.6, "UK": 11.1, "DK": 46.3, "SE": 0.7, "PL": 0.9, "FI": 0.2, "IT": 32.2, "dom": "Denmark", "dom_val": 46.3, "west": 19.7, "east": 1.8, "south": 78.5}, {"id": "VK334", "sex": "Female", "country": "Sweden", "site": "Oland", "NO": 1.0, "UK": 11.6, "DK": 2.6, "SE": 38.9, "PL": 14.7, "FI": 17.8, "IT": 13.5, "dom": "Sweden", "dom_val": 38.9, "west": 12.6, "east": 71.4, "south": 16.1}, {"id": "VK335", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 1.7, "UK": 9.1, "DK": 61.0, "SE": 2.5, "PL": 0.8, "FI": 1.1, "IT": 23.9, "dom": "Denmark", "dom_val": 61.0, "west": 10.8, "east": 4.4, "south": 84.9}, {"id": "VK336", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 0.4, "UK": 19.7, "DK": 24.3, "SE": 0.0, "PL": 4.2, "FI": 0.1, "IT": 51.3, "dom": "Italy", "dom_val": 51.3, "west": 20.1, "east": 4.3, "south": 75.6}, {"id": "VK337", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 6.8, "UK": 19.0, "DK": 56.9, "SE": 2.2, "PL": 0.0, "FI": 0.0, "IT": 15.1, "dom": "Denmark", "dom_val": 56.9, "west": 25.8, "east": 2.2, "south": 72.0}, {"id": "VK338", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 0.2, "UK": 5.3, "DK": 77.0, "SE": 0.0, "PL": 0.1, "FI": 0.0, "IT": 17.3, "dom": "Denmark", "dom_val": 77.0, "west": 5.5, "east": 0.1, "south": 94.3}, {"id": "VK340", "sex": "Female", "country": "Denmark", "site": "Jutland", "NO": 1.0, "UK": 1.0, "DK": 0.2, "SE": 0.1, "PL": 85.8, "FI": 11.8, "IT": 0.2, "dom": "Poland", "dom_val": 85.8, "west": 2.0, "east": 97.7, "south": 0.4}, {"id": "VK342", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 13.3, "UK": 1.2, "DK": 0.3, "SE": 41.9, "PL": 21.8, "FI": 19.9, "IT": 1.6, "dom": "Sweden", "dom_val": 41.9, "west": 14.5, "east": 83.6, "south": 1.9}, {"id": "VK343", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 0.8, "UK": 0.3, "DK": 1.5, "SE": 96.1, "PL": 0.3, "FI": 0.7, "IT": 0.3, "dom": "Sweden", "dom_val": 96.1, "west": 1.1, "east": 97.1, "south": 1.8}, {"id": "VK344", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 4.2, "UK": 26.0, "DK": 47.4, "SE": 0.3, "PL": 9.5, "FI": 7.7, "IT": 4.8, "dom": "Denmark", "dom_val": 47.4, "west": 30.2, "east": 17.5, "south": 52.2}, {"id": "VK345", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 10.2, "UK": 26.4, "DK": 5.4, "SE": 0.0, "PL": 2.5, "FI": 0.2, "IT": 55.3, "dom": "Italy", "dom_val": 55.3, "west": 36.6, "east": 2.7, "south": 60.7}, {"id": "VK346", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 0.1, "UK": 24.8, "DK": 35.2, "SE": 0.0, "PL": 10.3, "FI": 8.9, "IT": 20.7, "dom": "Denmark", "dom_val": 35.2, "west": 24.9, "east": 19.2, "south": 55.9}, {"id": "VK348", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 22.4, "UK": 2.3, "DK": 4.2, "SE": 42.6, "PL": 5.2, "FI": 17.8, "IT": 5.5, "dom": "Sweden", "dom_val": 42.6, "west": 24.7, "east": 65.6, "south": 9.7}, {"id": "VK349", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 6.0, "UK": 77.6, "DK": 6.0, "SE": 3.2, "PL": 5.0, "FI": 0.7, "IT": 1.6, "dom": "UK", "dom_val": 77.6, "west": 83.6, "east": 8.9, "south": 7.6}, {"id": "VK350", "sex": "Female", "country": "Sweden", "site": "Oland", "NO": 4.6, "UK": 20.9, "DK": 9.8, "SE": 6.2, "PL": 0.8, "FI": 1.5, "IT": 56.2, "dom": "Italy", "dom_val": 56.2, "west": 25.5, "east": 8.5, "south": 66.0}, {"id": "VK352", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 9.2, "UK": 11.5, "DK": 42.2, "SE": 16.1, "PL": 3.5, "FI": 14.8, "IT": 2.6, "dom": "Denmark", "dom_val": 42.2, "west": 20.7, "east": 34.4, "south": 44.8}, {"id": "VK353", "sex": "Female", "country": "Sweden", "site": "Oland", "NO": 5.2, "UK": 29.0, "DK": 37.1, "SE": 1.2, "PL": 0.3, "FI": 0.1, "IT": 27.1, "dom": "Denmark", "dom_val": 37.1, "west": 34.2, "east": 1.6, "south": 64.2}, {"id": "VK354", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 4.5, "UK": 9.2, "DK": 0.7, "SE": 37.1, "PL": 32.9, "FI": 10.6, "IT": 5.0, "dom": "Sweden", "dom_val": 37.1, "west": 13.7, "east": 80.6, "south": 5.7}, {"id": "VK355", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 1.1, "UK": 13.4, "DK": 51.2, "SE": 0.3, "PL": 0.1, "FI": 0.2, "IT": 33.7, "dom": "Denmark", "dom_val": 51.2, "west": 14.5, "east": 0.6, "south": 84.9}, {"id": "VK357", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 1.5, "UK": 20.0, "DK": 23.0, "SE": 1.4, "PL": 1.5, "FI": 0.1, "IT": 52.4, "dom": "Italy", "dom_val": 52.4, "west": 21.5, "east": 3.0, "south": 75.4}, {"id": "VK358", "sex": "Female", "country": "Sweden", "site": "Oland", "NO": 0.0, "UK": 0.0, "DK": 0.1, "SE": 73.4, "PL": 1.1, "FI": 25.4, "IT": 0.0, "dom": "Sweden", "dom_val": 73.4, "west": 0.0, "east": 99.9, "south": 0.1}, {"id": "VK361", "sex": "Female", "country": "Denmark", "site": "Langeland", "NO": 0.3, "UK": 23.0, "DK": 65.5, "SE": 0.4, "PL": 0.0, "FI": 0.2, "IT": 10.6, "dom": "Denmark", "dom_val": 65.5, "west": 23.3, "east": 0.6, "south": 76.1}, {"id": "VK362", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 2.6, "UK": 4.5, "DK": 13.5, "SE": 6.0, "PL": 36.3, "FI": 2.6, "IT": 34.6, "dom": "Poland", "dom_val": 36.3, "west": 7.1, "east": 44.9, "south": 48.1}, {"id": "VK363", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 0.1, "UK": 19.0, "DK": 40.6, "SE": 0.1, "PL": 17.2, "FI": 1.3, "IT": 21.7, "dom": "Denmark", "dom_val": 40.6, "west": 19.1, "east": 18.6, "south": 62.3}, {"id": "VK364", "sex": "Female", "country": "Denmark", "site": "Langeland", "NO": 0.1, "UK": 1.9, "DK": 75.0, "SE": 0.0, "PL": 0.9, "FI": 1.6, "IT": 20.5, "dom": "Denmark", "dom_val": 75.0, "west": 2.0, "east": 2.5, "south": 95.5}, {"id": "VK365", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 6.6, "UK": 6.6, "DK": 10.7, "SE": 0.6, "PL": 2.9, "FI": 0.1, "IT": 72.4, "dom": "Italy", "dom_val": 72.4, "west": 13.2, "east": 3.6, "south": 83.1}, {"id": "VK366", "sex": "Female", "country": "Denmark", "site": "Langeland", "NO": 5.6, "UK": 1.6, "DK": 71.7, "SE": 1.9, "PL": 6.0, "FI": 0.1, "IT": 13.2, "dom": "Denmark", "dom_val": 71.7, "west": 7.2, "east": 8.0, "south": 84.9}, {"id": "VK367", "sex": "Male", "country": "Denmark", "site": "Langeland", "NO": 1.9, "UK": 0.0, "DK": 0.4, "SE": 46.0, "PL": 6.1, "FI": 45.2, "IT": 0.4, "dom": "Sweden", "dom_val": 46.0, "west": 1.9, "east": 97.3, "south": 0.8}, {"id": "VK368", "sex": "Female", "country": "Denmark", "site": "Langeland", "NO": 1.4, "UK": 36.0, "DK": 42.4, "SE": 0.3, "PL": 0.6, "FI": 1.3, "IT": 17.9, "dom": "Denmark", "dom_val": 42.4, "west": 37.4, "east": 2.2, "south": 60.3}, {"id": "VK369", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 0.0, "UK": 3.5, "DK": 40.7, "SE": 0.1, "PL": 1.1, "FI": 1.1, "IT": 53.4, "dom": "Italy", "dom_val": 53.4, "west": 3.5, "east": 2.3, "south": 94.1}, {"id": "VK370", "sex": "Female", "country": "Denmark", "site": "Funen", "NO": 2.9, "UK": 1.7, "DK": 63.7, "SE": 27.1, "PL": 0.3, "FI": 2.5, "IT": 1.9, "dom": "Denmark", "dom_val": 63.7, "west": 4.6, "east": 29.9, "south": 65.6}, {"id": "VK371", "sex": "Female", "country": "Denmark", "site": "Funen", "NO": 7.2, "UK": 0.2, "DK": 1.4, "SE": 32.4, "PL": 45.6, "FI": 1.7, "IT": 11.4, "dom": "Poland", "dom_val": 45.6, "west": 7.4, "east": 79.7, "south": 12.8}, {"id": "VK372", "sex": "Female", "country": "Denmark", "site": "Funen", "NO": 41.4, "UK": 0.9, "DK": 27.3, "SE": 25.0, "PL": 0.2, "FI": 0.0, "IT": 5.2, "dom": "Norway", "dom_val": 41.4, "west": 42.3, "east": 25.2, "south": 32.5}, {"id": "VK373", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 0.4, "UK": 6.9, "DK": 69.4, "SE": 0.1, "PL": 0.2, "FI": 0.1, "IT": 22.9, "dom": "Denmark", "dom_val": 69.4, "west": 7.3, "east": 0.4, "south": 92.3}, {"id": "VK384", "sex": "Male", "country": "Denmark", "site": "Jutland", "NO": 1.1, "UK": 12.1, "DK": 80.5, "SE": 0.3, "PL": 0.2, "FI": 0.5, "IT": 5.2, "dom": "Denmark", "dom_val": 80.5, "west": 13.2, "east": 1.0, "south": 85.7}, {"id": "VK385", "sex": "Female", "country": "Denmark", "site": "Sealand", "NO": 9.4, "UK": 8.5, "DK": 30.5, "SE": 0.3, "PL": 1.7, "FI": 1.3, "IT": 48.5, "dom": "Italy", "dom_val": 48.5, "west": 17.9, "east": 3.3, "south": 79.0}, {"id": "VK386", "sex": "Male", "country": "Norway", "site": "Nor_South", "NO": 5.6, "UK": 88.7, "DK": 0.1, "SE": 0.0, "PL": 0.7, "FI": 4.8, "IT": 0.1, "dom": "UK", "dom_val": 88.7, "west": 94.3, "east": 5.5, "south": 0.2}, {"id": "VK387", "sex": "Female", "country": "Norway", "site": "Nor_South", "NO": 69.4, "UK": 22.8, "DK": 5.5, "SE": 1.0, "PL": 0.7, "FI": 0.5, "IT": 0.2, "dom": "Norway", "dom_val": 69.4, "west": 92.2, "east": 2.2, "south": 5.7}, {"id": "VK388", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 70.1, "UK": 0.1, "DK": 2.5, "SE": 25.6, "PL": 0.4, "FI": 1.3, "IT": 0.1, "dom": "Norway", "dom_val": 70.1, "west": 70.2, "east": 27.3, "south": 2.6}, {"id": "VK389", "sex": "Male", "country": "Norway", "site": "Nor_South", "NO": 56.4, "UK": 4.2, "DK": 6.8, "SE": 11.8, "PL": 2.2, "FI": 9.0, "IT": 9.7, "dom": "Norway", "dom_val": 56.4, "west": 60.6, "east": 23.0, "south": 16.5}, {"id": "VK390", "sex": "Male", "country": "Norway", "site": "Nor_South", "NO": 98.9, "UK": 0.0, "DK": 0.0, "SE": 1.0, "PL": 0.0, "FI": 0.0, "IT": 0.0, "dom": "Norway", "dom_val": 98.9, "west": 98.9, "east": 1.0, "south": 0.0}, {"id": "VK392", "sex": "Female", "country": "Norway", "site": "Nor_South", "NO": 81.6, "UK": 0.0, "DK": 0.0, "SE": 17.9, "PL": 0.2, "FI": 0.2, "IT": 0.0, "dom": "Norway", "dom_val": 81.6, "west": 81.6, "east": 18.3, "south": 0.0}, {"id": "VK393", "sex": "Female", "country": "Norway", "site": "Nor_South", "NO": 78.1, "UK": 0.5, "DK": 1.4, "SE": 19.7, "PL": 0.0, "FI": 0.2, "IT": 0.0, "dom": "Norway", "dom_val": 78.1, "west": 78.6, "east": 19.9, "south": 1.4}, {"id": "VK394", "sex": "Male", "country": "Norway", "site": "Nor_South", "NO": 47.7, "UK": 8.2, "DK": 25.1, "SE": 1.8, "PL": 0.0, "FI": 14.8, "IT": 2.4, "dom": "Norway", "dom_val": 47.7, "west": 55.9, "east": 16.6, "south": 27.5}, {"id": "VK395", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.1, "PL": 15.4, "FI": 84.5, "IT": 0.0, "dom": "Finland", "dom_val": 84.5, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK396", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 0.5, "UK": 18.7, "DK": 41.2, "SE": 0.3, "PL": 0.0, "FI": 0.2, "IT": 39.1, "dom": "Denmark", "dom_val": 41.2, "west": 19.2, "east": 0.5, "south": 80.3}, {"id": "VK397", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 0.0, "UK": 0.0, "DK": 19.6, "SE": 14.8, "PL": 64.8, "FI": 0.6, "IT": 0.1, "dom": "Poland", "dom_val": 64.8, "west": 0.0, "east": 80.2, "south": 19.7}, {"id": "VK398", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 4.4, "UK": 12.3, "DK": 33.5, "SE": 0.3, "PL": 8.0, "FI": 3.0, "IT": 38.6, "dom": "Italy", "dom_val": 38.6, "west": 16.7, "east": 11.3, "south": 72.1}, {"id": "VK399", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 6.9, "UK": 0.0, "DK": 5.5, "SE": 69.2, "PL": 6.1, "FI": 5.3, "IT": 7.1, "dom": "Sweden", "dom_val": 69.2, "west": 6.9, "east": 80.6, "south": 12.6}, {"id": "VK400", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 71.5, "UK": 18.6, "DK": 0.4, "SE": 0.0, "PL": 0.8, "FI": 1.2, "IT": 7.5, "dom": "Norway", "dom_val": 71.5, "west": 90.1, "east": 2.0, "south": 7.9}, {"id": "VK401", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 48.5, "UK": 6.4, "DK": 28.4, "SE": 0.9, "PL": 0.2, "FI": 9.6, "IT": 6.0, "dom": "Norway", "dom_val": 48.5, "west": 54.9, "east": 10.7, "south": 34.4}, {"id": "VK402", "sex": "Female", "country": "Sweden", "site": "Skara", "NO": 11.8, "UK": 28.6, "DK": 36.2, "SE": 0.4, "PL": 1.1, "FI": 0.2, "IT": 21.7, "dom": "Denmark", "dom_val": 36.2, "west": 40.4, "east": 1.7, "south": 57.9}, {"id": "VK403", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 17.6, "UK": 36.7, "DK": 10.1, "SE": 3.3, "PL": 0.1, "FI": 0.1, "IT": 32.1, "dom": "UK", "dom_val": 36.7, "west": 54.3, "east": 3.5, "south": 42.2}, {"id": "VK404", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 13.9, "UK": 2.4, "DK": 4.0, "SE": 47.5, "PL": 10.4, "FI": 20.0, "IT": 1.8, "dom": "Sweden", "dom_val": 47.5, "west": 16.3, "east": 77.9, "south": 5.8}, {"id": "VK405", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 10.3, "UK": 80.0, "DK": 4.9, "SE": 1.8, "PL": 0.9, "FI": 1.3, "IT": 0.8, "dom": "UK", "dom_val": 80.0, "west": 90.3, "east": 4.0, "south": 5.7}, {"id": "VK406", "sex": "Male", "country": "Sweden", "site": "Skara", "NO": 22.1, "UK": 1.6, "DK": 5.1, "SE": 50.8, "PL": 0.2, "FI": 6.2, "IT": 13.9, "dom": "Sweden", "dom_val": 50.8, "west": 23.7, "east": 57.2, "south": 19.0}, {"id": "VK414", "sex": "Male", "country": "Norway", "site": "Nor_South", "NO": 94.0, "UK": 0.1, "DK": 0.6, "SE": 0.5, "PL": 0.2, "FI": 1.4, "IT": 3.1, "dom": "Norway", "dom_val": 94.0, "west": 94.1, "east": 2.1, "south": 3.7}, {"id": "VK415", "sex": "Female", "country": "Norway", "site": "Nor_South", "NO": 95.7, "UK": 0.4, "DK": 0.5, "SE": 0.4, "PL": 0.4, "FI": 2.3, "IT": 0.2, "dom": "Norway", "dom_val": 95.7, "west": 96.1, "east": 3.1, "south": 0.7}, {"id": "VK417", "sex": "Female", "country": "Norway", "site": "Nor_South", "NO": 68.0, "UK": 0.0, "DK": 0.1, "SE": 29.9, "PL": 0.0, "FI": 2.0, "IT": 0.0, "dom": "Norway", "dom_val": 68.0, "west": 68.0, "east": 31.9, "south": 0.1}, {"id": "VK418", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 47.3, "UK": 0.0, "DK": 0.7, "SE": 44.3, "PL": 0.0, "FI": 7.3, "IT": 0.3, "dom": "Norway", "dom_val": 47.3, "west": 47.3, "east": 51.6, "south": 1.0}, {"id": "VK419", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 36.8, "UK": 0.0, "DK": 0.8, "SE": 50.4, "PL": 0.1, "FI": 11.9, "IT": 0.0, "dom": "Sweden", "dom_val": 50.4, "west": 36.8, "east": 62.4, "south": 0.8}, {"id": "VK420", "sex": "Male", "country": "Norway", "site": "Nor_South", "NO": 5.7, "UK": 32.6, "DK": 45.9, "SE": 0.4, "PL": 0.2, "FI": 3.5, "IT": 11.8, "dom": "Denmark", "dom_val": 45.9, "west": 38.3, "east": 4.1, "south": 57.7}, {"id": "VK422", "sex": "Male", "country": "Norway", "site": "Nor_South", "NO": 35.8, "UK": 34.4, "DK": 18.2, "SE": 8.6, "PL": 2.2, "FI": 0.0, "IT": 0.8, "dom": "Norway", "dom_val": 35.8, "west": 70.2, "east": 10.8, "south": 19.0}, {"id": "VK429", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 9.6, "UK": 9.5, "DK": 43.8, "SE": 1.3, "PL": 0.9, "FI": 1.6, "IT": 33.4, "dom": "Denmark", "dom_val": 43.8, "west": 19.1, "east": 3.8, "south": 77.2}, {"id": "VK433", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 0.9, "UK": 2.5, "DK": 71.6, "SE": 0.9, "PL": 2.3, "FI": 0.0, "IT": 21.7, "dom": "Denmark", "dom_val": 71.6, "west": 3.4, "east": 3.2, "south": 93.3}, {"id": "VK442", "sex": "Female", "country": "Sweden", "site": "Oland", "NO": 2.9, "UK": 17.6, "DK": 8.0, "SE": 0.0, "PL": 4.4, "FI": 8.1, "IT": 59.1, "dom": "Italy", "dom_val": 59.1, "west": 20.5, "east": 12.5, "south": 67.1}, {"id": "VK443", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 0.1, "UK": 0.2, "DK": 0.8, "SE": 24.1, "PL": 31.9, "FI": 43.0, "IT": 0.0, "dom": "Finland", "dom_val": 43.0, "west": 0.3, "east": 99.0, "south": 0.8}, {"id": "VK444", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 5.8, "UK": 32.1, "DK": 28.2, "SE": 1.4, "PL": 0.2, "FI": 0.0, "IT": 32.5, "dom": "Italy", "dom_val": 32.5, "west": 37.9, "east": 1.6, "south": 60.7}, {"id": "VK445", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 43.0, "UK": 4.2, "DK": 32.0, "SE": 10.0, "PL": 5.9, "FI": 0.6, "IT": 4.3, "dom": "Norway", "dom_val": 43.0, "west": 47.2, "east": 16.5, "south": 36.3}, {"id": "VK446", "sex": "Male", "country": "Denmark", "site": "Funen", "NO": 5.2, "UK": 18.6, "DK": 73.7, "SE": 0.0, "PL": 0.7, "FI": 0.1, "IT": 1.6, "dom": "Denmark", "dom_val": 73.7, "west": 23.8, "east": 0.8, "south": 75.3}, {"id": "VK448", "sex": "Female", "country": "Norway", "site": "Nor_South", "NO": 0.9, "UK": 31.6, "DK": 37.8, "SE": 0.3, "PL": 0.0, "FI": 0.0, "IT": 29.2, "dom": "Denmark", "dom_val": 37.8, "west": 32.5, "east": 0.3, "south": 67.0}, {"id": "VK449", "sex": "Male", "country": "UK", "site": "Dorset, England", "NO": 23.1, "UK": 37.8, "DK": 24.6, "SE": 10.3, "PL": 2.7, "FI": 0.4, "IT": 1.1, "dom": "UK", "dom_val": 37.8, "west": 60.9, "east": 13.4, "south": 25.7}, {"id": "VK455", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 7.5, "UK": 7.3, "DK": 85.2, "SE": 0.0, "PL": 0.0, "FI": 0.0, "IT": 0.0, "dom": "Denmark", "dom_val": 85.2, "west": 14.8, "east": 0.0, "south": 85.2}, {"id": "VK456", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 0.4, "UK": 95.9, "DK": 0.0, "SE": 0.0, "PL": 0.1, "FI": 0.3, "IT": 3.3, "dom": "UK", "dom_val": 95.9, "west": 96.3, "east": 0.4, "south": 3.3}, {"id": "VK468", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 7.8, "UK": 7.8, "DK": 57.4, "SE": 0.7, "PL": 0.7, "FI": 2.2, "IT": 23.5, "dom": "Denmark", "dom_val": 57.4, "west": 15.6, "east": 3.6, "south": 80.9}, {"id": "VK473", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.2, "UK": 3.1, "DK": 15.3, "SE": 0.1, "PL": 70.6, "FI": 6.2, "IT": 4.5, "dom": "Poland", "dom_val": 70.6, "west": 3.3, "east": 76.9, "south": 19.8}, {"id": "VK474", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.0, "UK": 0.0, "DK": 0.6, "SE": 0.0, "PL": 98.4, "FI": 0.2, "IT": 0.6, "dom": "Poland", "dom_val": 98.4, "west": 0.0, "east": 98.6, "south": 1.2}, {"id": "VK475", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.1, "PL": 57.7, "FI": 42.2, "IT": 0.0, "dom": "Poland", "dom_val": 57.7, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK477", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 1.3, "UK": 9.1, "DK": 39.4, "SE": 8.1, "PL": 0.3, "FI": 1.5, "IT": 40.3, "dom": "Italy", "dom_val": 40.3, "west": 10.4, "east": 9.9, "south": 79.7}, {"id": "VK478", "sex": "Female", "country": "Sweden", "site": "Gotland", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 0.0, "PL": 69.3, "FI": 30.6, "IT": 0.0, "dom": "Poland", "dom_val": 69.3, "west": 0.0, "east": 99.9, "south": 0.0}, {"id": "VK479", "sex": "Male", "country": "Sweden", "site": "Gotland", "NO": 0.4, "UK": 17.8, "DK": 76.7, "SE": 0.0, "PL": 3.3, "FI": 0.2, "IT": 1.5, "dom": "Denmark", "dom_val": 76.7, "west": 18.2, "east": 3.5, "south": 78.2}, {"id": "VK480", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.6, "UK": 0.9, "DK": 0.1, "SE": 74.4, "PL": 8.1, "FI": 15.4, "IT": 0.5, "dom": "Sweden", "dom_val": 74.4, "west": 1.5, "east": 97.9, "south": 0.6}, {"id": "VK481", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.4, "UK": 0.0, "DK": 0.6, "SE": 53.3, "PL": 1.7, "FI": 42.7, "IT": 1.3, "dom": "Sweden", "dom_val": 53.3, "west": 0.4, "east": 97.7, "south": 1.9}, {"id": "VK482", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 99.7, "PL": 0.0, "FI": 0.2, "IT": 0.0, "dom": "Sweden", "dom_val": 99.7, "west": 0.0, "east": 99.9, "south": 0.0}, {"id": "VK483", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 88.4, "PL": 0.0, "FI": 11.6, "IT": 0.0, "dom": "Sweden", "dom_val": 88.4, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK484", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 93.6, "PL": 1.2, "FI": 5.0, "IT": 0.1, "dom": "Sweden", "dom_val": 93.6, "west": 0.0, "east": 99.8, "south": 0.1}, {"id": "VK485", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 72.9, "PL": 0.4, "FI": 26.7, "IT": 0.0, "dom": "Sweden", "dom_val": 72.9, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK486", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 2.0, "UK": 1.3, "DK": 0.0, "SE": 83.7, "PL": 0.2, "FI": 12.1, "IT": 0.7, "dom": "Sweden", "dom_val": 83.7, "west": 3.3, "east": 96.0, "south": 0.7}, {"id": "VK487", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.9, "UK": 0.0, "DK": 0.2, "SE": 84.9, "PL": 0.0, "FI": 13.9, "IT": 0.1, "dom": "Sweden", "dom_val": 84.9, "west": 0.9, "east": 98.8, "south": 0.3}, {"id": "VK488", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.2, "SE": 85.3, "PL": 0.0, "FI": 14.3, "IT": 0.2, "dom": "Sweden", "dom_val": 85.3, "west": 0.0, "east": 99.6, "south": 0.4}, {"id": "VK489", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 1.2, "UK": 0.0, "DK": 1.3, "SE": 96.7, "PL": 0.2, "FI": 0.1, "IT": 0.5, "dom": "Sweden", "dom_val": 96.7, "west": 1.2, "east": 97.0, "south": 1.8}, {"id": "VK490", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 85.7, "PL": 0.0, "FI": 14.3, "IT": 0.0, "dom": "Sweden", "dom_val": 85.7, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK491", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.2, "UK": 0.8, "DK": 0.2, "SE": 64.8, "PL": 0.3, "FI": 33.6, "IT": 0.1, "dom": "Sweden", "dom_val": 64.8, "west": 1.0, "east": 98.7, "south": 0.3}, {"id": "VK492", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.1, "DK": 0.1, "SE": 85.9, "PL": 0.4, "FI": 12.1, "IT": 1.4, "dom": "Sweden", "dom_val": 85.9, "west": 0.1, "east": 98.4, "south": 1.5}, {"id": "VK493", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.3, "UK": 0.3, "DK": 1.1, "SE": 80.8, "PL": 2.7, "FI": 11.7, "IT": 3.3, "dom": "Sweden", "dom_val": 80.8, "west": 0.6, "east": 95.2, "south": 4.4}, {"id": "VK495", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.3, "UK": 1.9, "DK": 4.0, "SE": 49.1, "PL": 3.4, "FI": 41.2, "IT": 0.1, "dom": "Sweden", "dom_val": 49.1, "west": 2.2, "east": 93.7, "south": 4.1}, {"id": "VK496", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 89.4, "PL": 0.3, "FI": 10.3, "IT": 0.0, "dom": "Sweden", "dom_val": 89.4, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK497", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 70.8, "PL": 0.0, "FI": 29.1, "IT": 0.0, "dom": "Sweden", "dom_val": 70.8, "west": 0.0, "east": 99.9, "south": 0.0}, {"id": "VK498", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.6, "DK": 1.5, "SE": 87.9, "PL": 1.6, "FI": 5.7, "IT": 2.7, "dom": "Sweden", "dom_val": 87.9, "west": 0.6, "east": 95.2, "south": 4.2}, {"id": "VK504", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 1.2, "UK": 0.5, "DK": 0.0, "SE": 59.5, "PL": 28.4, "FI": 9.8, "IT": 0.6, "dom": "Sweden", "dom_val": 59.5, "west": 1.7, "east": 97.7, "south": 0.6}, {"id": "VK505", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.6, "UK": 1.4, "DK": 1.2, "SE": 81.2, "PL": 1.6, "FI": 7.2, "IT": 6.7, "dom": "Sweden", "dom_val": 81.2, "west": 2.0, "east": 90.0, "south": 7.9}, {"id": "VK506", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.0, "UK": 0.1, "DK": 0.2, "SE": 89.0, "PL": 2.8, "FI": 7.8, "IT": 0.1, "dom": "Sweden", "dom_val": 89.0, "west": 0.1, "east": 99.6, "south": 0.3}, {"id": "VK507", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 14.2, "UK": 0.1, "DK": 0.2, "SE": 69.1, "PL": 0.5, "FI": 15.4, "IT": 0.7, "dom": "Sweden", "dom_val": 69.1, "west": 14.3, "east": 85.0, "south": 0.9}, {"id": "VK508", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.7, "UK": 1.9, "DK": 0.1, "SE": 75.0, "PL": 2.0, "FI": 18.8, "IT": 1.6, "dom": "Sweden", "dom_val": 75.0, "west": 2.6, "east": 95.8, "south": 1.7}, {"id": "VK509", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 5.3, "UK": 2.6, "DK": 0.4, "SE": 58.9, "PL": 4.5, "FI": 9.9, "IT": 18.5, "dom": "Sweden", "dom_val": 58.9, "west": 7.9, "east": 73.3, "south": 18.9}, {"id": "VK510", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.4, "UK": 0.2, "DK": 2.7, "SE": 93.7, "PL": 1.0, "FI": 1.6, "IT": 0.4, "dom": "Sweden", "dom_val": 93.7, "west": 0.6, "east": 96.3, "south": 3.1}, {"id": "VK511", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.2, "UK": 0.9, "DK": 0.4, "SE": 85.1, "PL": 2.5, "FI": 9.8, "IT": 0.9, "dom": "Sweden", "dom_val": 85.1, "west": 1.1, "east": 97.4, "south": 1.3}, {"id": "VK512", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 2.7, "UK": 0.0, "DK": 7.5, "SE": 89.3, "PL": 0.4, "FI": 0.0, "IT": 0.0, "dom": "Sweden", "dom_val": 89.3, "west": 2.7, "east": 89.7, "south": 7.5}, {"id": "VK513", "sex": "Male", "country": "Greenland", "site": "East_Settlement", "NO": 92.6, "UK": 7.2, "DK": 0.1, "SE": 0.0, "PL": 0.0, "FI": 0.0, "IT": 0.2, "dom": "Norway", "dom_val": 92.6, "west": 99.8, "east": 0.0, "south": 0.3}, {"id": "VK514", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 73.4, "UK": 0.0, "DK": 2.5, "SE": 8.3, "PL": 0.1, "FI": 14.3, "IT": 1.4, "dom": "Norway", "dom_val": 73.4, "west": 73.4, "east": 22.7, "south": 3.9}, {"id": "VK515", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 54.9, "UK": 25.1, "DK": 0.5, "SE": 0.7, "PL": 2.2, "FI": 9.7, "IT": 6.9, "dom": "Norway", "dom_val": 54.9, "west": 80.0, "east": 12.6, "south": 7.4}, {"id": "VK516", "sex": "Male", "country": "Norway", "site": "Nor_Mid", "NO": 48.4, "UK": 0.1, "DK": 0.9, "SE": 43.7, "PL": 0.2, "FI": 6.7, "IT": 0.0, "dom": "Norway", "dom_val": 48.4, "west": 48.5, "east": 50.6, "south": 0.9}, {"id": "VK517", "sex": "Male", "country": "Sweden", "site": "Uppsala", "NO": 5.4, "UK": 1.4, "DK": 0.9, "SE": 32.2, "PL": 5.5, "FI": 39.0, "IT": 15.7, "dom": "Finland", "dom_val": 39.0, "west": 6.8, "east": 76.7, "south": 16.6}, {"id": "VK520", "sex": "Female", "country": "Norway", "site": "Nor_North", "NO": 98.5, "UK": 0.0, "DK": 0.4, "SE": 1.1, "PL": 0.0, "FI": 0.0, "IT": 0.0, "dom": "Norway", "dom_val": 98.5, "west": 98.5, "east": 1.1, "south": 0.4}, {"id": "VK521", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 10.0, "UK": 0.6, "DK": 53.1, "SE": 30.2, "PL": 0.8, "FI": 4.9, "IT": 0.5, "dom": "Denmark", "dom_val": 53.1, "west": 10.6, "east": 35.9, "south": 53.6}, {"id": "VK522", "sex": "Female", "country": "Sweden", "site": "Oland", "NO": 0.0, "UK": 0.0, "DK": 0.0, "SE": 99.4, "PL": 0.0, "FI": 0.6, "IT": 0.0, "dom": "Sweden", "dom_val": 99.4, "west": 0.0, "east": 100.0, "south": 0.0}, {"id": "VK523", "sex": "Female", "country": "Norway", "site": "Nor_Mid", "NO": 68.9, "UK": 16.2, "DK": 10.1, "SE": 2.2, "PL": 0.0, "FI": 0.9, "IT": 1.6, "dom": "Norway", "dom_val": 68.9, "west": 85.1, "east": 3.1, "south": 11.7}, {"id": "VK524", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 69.6, "UK": 0.4, "DK": 5.1, "SE": 21.5, "PL": 0.1, "FI": 2.8, "IT": 0.4, "dom": "Norway", "dom_val": 69.6, "west": 70.0, "east": 24.4, "south": 5.5}, {"id": "VK525", "sex": "Female", "country": "Norway", "site": "Nor_North", "NO": 1.9, "UK": 93.9, "DK": 0.7, "SE": 0.1, "PL": 0.2, "FI": 0.0, "IT": 3.2, "dom": "UK", "dom_val": 93.9, "west": 95.8, "east": 0.3, "south": 3.9}, {"id": "VK526", "sex": "Female", "country": "Norway", "site": "Nor_North", "NO": 0.2, "UK": 24.6, "DK": 57.8, "SE": 0.6, "PL": 2.0, "FI": 1.6, "IT": 13.1, "dom": "Denmark", "dom_val": 57.8, "west": 24.8, "east": 4.2, "south": 70.9}, {"id": "VK527", "sex": "Female", "country": "Sweden", "site": "Uppsala", "NO": 3.4, "UK": 0.2, "DK": 7.9, "SE": 43.8, "PL": 17.3, "FI": 18.7, "IT": 8.7, "dom": "Sweden", "dom_val": 43.8, "west": 3.6, "east": 79.8, "south": 16.6}, {"id": "VK528", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 0.5, "UK": 96.5, "DK": 0.9, "SE": 0.1, "PL": 0.3, "FI": 1.0, "IT": 0.6, "dom": "UK", "dom_val": 96.5, "west": 97.0, "east": 1.4, "south": 1.5}, {"id": "VK529", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 89.4, "UK": 0.0, "DK": 0.0, "SE": 3.1, "PL": 0.0, "FI": 7.5, "IT": 0.0, "dom": "Norway", "dom_val": 89.4, "west": 89.4, "east": 10.6, "south": 0.0}, {"id": "VK530", "sex": "Female", "country": "Norway", "site": "Nor_North", "NO": 10.5, "UK": 64.5, "DK": 0.8, "SE": 5.9, "PL": 0.7, "FI": 2.5, "IT": 15.2, "dom": "UK", "dom_val": 64.5, "west": 75.0, "east": 9.1, "south": 16.0}, {"id": "VK531", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 10.0, "UK": 23.3, "DK": 14.5, "SE": 0.7, "PL": 19.1, "FI": 25.8, "IT": 6.5, "dom": "Finland", "dom_val": 25.8, "west": 33.3, "east": 45.6, "south": 21.0}, {"id": "VK532", "sex": "Male", "country": "Denmark", "site": "Sealand", "NO": 2.0, "UK": 0.0, "DK": 0.9, "SE": 89.8, "PL": 0.3, "FI": 6.5, "IT": 0.4, "dom": "Sweden", "dom_val": 89.8, "west": 2.0, "east": 96.6, "south": 1.3}, {"id": "VK533", "sex": "Male", "country": "Sweden", "site": "Oland", "NO": 7.4, "UK": 3.0, "DK": 5.0, "SE": 33.9, "PL": 3.3, "FI": 42.2, "IT": 5.2, "dom": "Finland", "dom_val": 42.2, "west": 10.4, "east": 79.4, "south": 10.2}, {"id": "VK539", "sex": "Male", "country": "Ukraine", "site": "Shestovitsa", "NO": 29.9, "UK": 0.3, "DK": 0.6, "SE": 34.8, "PL": 0.9, "FI": 33.3, "IT": 0.2, "dom": "Sweden", "dom_val": 34.8, "west": 30.2, "east": 69.0, "south": 0.8}, {"id": "VK540", "sex": "Female", "country": "Ukraine", "site": "Shestovitsa", "NO": 41.0, "UK": 0.1, "DK": 2.3, "SE": 25.3, "PL": 14.0, "FI": 16.7, "IT": 0.6, "dom": "Norway", "dom_val": 41.0, "west": 41.1, "east": 56.0, "south": 2.9}, {"id": "VK541", "sex": "Male", "country": "Ukraine", "site": "Lutsk", "NO": 0.0, "UK": 0.6, "DK": 0.0, "SE": 0.0, "PL": 95.2, "FI": 4.0, "IT": 0.1, "dom": "Poland", "dom_val": 95.2, "west": 0.6, "east": 99.2, "south": 0.1}, {"id": "VK542", "sex": "Male", "country": "Ukraine", "site": "Chernigov", "NO": 0.1, "UK": 2.3, "DK": 0.4, "SE": 0.4, "PL": 71.1, "FI": 1.0, "IT": 24.6, "dom": "Poland", "dom_val": 71.1, "west": 2.4, "east": 72.5, "south": 25.0}, {"id": "VK543", "sex": "Male", "country": "Ireland", "site": "Eyrephort", "NO": 54.9, "UK": 34.9, "DK": 1.1, "SE": 1.0, "PL": 2.0, "FI": 0.1, "IT": 6.0, "dom": "Norway", "dom_val": 54.9, "west": 89.8, "east": 3.1, "south": 7.1}, {"id": "VK544", "sex": "Female", "country": "Ireland", "site": "Dublin", "NO": 80.3, "UK": 7.7, "DK": 2.6, "SE": 1.1, "PL": 0.0, "FI": 0.1, "IT": 8.2, "dom": "Norway", "dom_val": 80.3, "west": 88.0, "east": 1.2, "south": 10.8}, {"id": "VK545", "sex": "Male", "country": "Ireland", "site": "Dublin", "NO": 2.5, "UK": 83.4, "DK": 3.1, "SE": 4.0, "PL": 0.3, "FI": 5.5, "IT": 1.2, "dom": "UK", "dom_val": 83.4, "west": 85.9, "east": 9.8, "south": 4.3}, {"id": "VK547", "sex": "Male", "country": "Norway", "site": "Nor_North", "NO": 86.5, "UK": 0.0, "DK": 0.0, "SE": 13.0, "PL": 0.0, "FI": 0.4, "IT": 0.0, "dom": "Norway", "dom_val": 86.5, "west": 86.5, "east": 13.4, "south": 0.0}, {"id": "VK548", "sex": "Female", "country": "Norway", "site": "Nor_Mid", "NO": 54.8, "UK": 0.1, "DK": 4.4, "SE": 35.8, "PL": 3.6, "FI": 1.1, "IT": 0.2, "dom": "Norway", "dom_val": 54.8, "west": 54.9, "east": 40.5, "south": 4.6}, {"id": "VK549", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 11.3, "UK": 0.0, "DK": 0.5, "SE": 87.4, "PL": 0.2, "FI": 0.0, "IT": 0.6, "dom": "Sweden", "dom_val": 87.4, "west": 11.3, "east": 87.6, "south": 1.1}, {"id": "VK550", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 0.9, "UK": 0.0, "DK": 0.6, "SE": 67.2, "PL": 2.1, "FI": 29.1, "IT": 0.1, "dom": "Sweden", "dom_val": 67.2, "west": 0.9, "east": 98.4, "south": 0.7}, {"id": "VK551", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 4.4, "UK": 1.0, "DK": 8.7, "SE": 67.8, "PL": 3.2, "FI": 15.0, "IT": 0.0, "dom": "Sweden", "dom_val": 67.8, "west": 5.4, "east": 86.0, "south": 8.7}, {"id": "VK552", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 29.2, "UK": 0.0, "DK": 41.3, "SE": 27.1, "PL": 0.0, "FI": 2.2, "IT": 0.3, "dom": "Denmark", "dom_val": 41.3, "west": 29.2, "east": 29.3, "south": 41.6}, {"id": "VK553", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 1.3, "UK": 1.8, "DK": 11.7, "SE": 84.2, "PL": 0.0, "FI": 0.9, "IT": 0.1, "dom": "Sweden", "dom_val": 84.2, "west": 3.1, "east": 85.1, "south": 11.8}, {"id": "VK554", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 4.7, "UK": 0.9, "DK": 1.2, "SE": 70.0, "PL": 8.7, "FI": 10.9, "IT": 3.8, "dom": "Sweden", "dom_val": 70.0, "west": 5.6, "east": 89.6, "south": 5.0}, {"id": "VK555", "sex": "Male", "country": "Estonia", "site": "Saaremaa", "NO": 1.3, "UK": 0.7, "DK": 2.3, "SE": 79.3, "PL": 7.5, "FI": 8.6, "IT": 0.4, "dom": "Sweden", "dom_val": 79.3, "west": 2.0, "east": 95.4, "south": 2.7}];
+
+    // =========================================================================
+    // FILA 1: GRÁFICA ORIGINAL EXACTA (100% INTACTA)
+    // =========================================================================
+    const tracesFila1 = compMeta.map(c => ({
+      type: "bar",
+      name: c.name,
+      x: countries,
+      y: c.y,
+      marker: { color: c.color, line: { color: "rgb(17,17,17)", width: 0.5 } },
+      hovertemplate: "<b>País / Ruta:</b> %{x}<br><b>Componente:</b> " + c.name + "<br><b>Proporción Media:</b> %{y:.1f}%<extra></extra>"
+    }));
+
+    const layoutFila1 = {
+      barmode: "stack",
+      paper_bgcolor: "#161b22",
+      plot_bgcolor: "#161b22",
+      height: 620,
+      font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+      title: {
+        text: "<b>Hipótesis Secundaria 1: Direccionalidad del Mestizaje según Ruta (Oeste vs. Este)</b>",
+        x: 0.04,
+        y: 0.95
+      },
+      xaxis: {
+        automargin: true,
+        gridcolor: "#283442",
+        linecolor: "#506784",
+        zerolinecolor: "#283442"
+      },
+      yaxis: {
+        range: [0, 115],
+        title: { text: "Proporción Media de Ancestría (%)", standoff: 15 },
+        gridcolor: "#283442",
+        linecolor: "#506784",
+        zerolinecolor: "#283442"
+      },
+      shapes: [
+        { type: "line", x0: 4.5, x1: 4.5, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "white", dash: "dash", width: 1.8 } },
+        { type: "line", x0: 7.5, x1: 7.5, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "white", dash: "dash", width: 1.8 } }
+      ],
+      annotations: [
+        { x: 2.0, y: 106, text: "<b>RUTA OESTE (ATLÁNTICO)</b><br>Noruego + Británico (>41%)", showarrow: false, font: { color: "#06b6d4", size: 12 } },
+        { x: 6.0, y: 106, text: "<b>ESCANDINAVIA</b><br>(Núcleo)", showarrow: false, font: { color: "#eab308", size: 12 } },
+        { x: 9.5, y: 106, text: "<b>RUTA ESTE (BÁLTICO / RUS)</b><br>Sueco + Eslavo/Finés (>54%)", showarrow: false, font: { color: "#f43f5e", size: 12 } }
+      ],
+      legend: { orientation: "h", yanchor: "bottom", y: -0.22, xanchor: "center", x: 0.5 },
+      margin: { t: 75, b: 115, l: 60, r: 40 },
+      hoverlabel: { font: { size: 13 }, bgcolor: "#1f2937", bordercolor: "#ffffff" }
+    };
+
+    Plotly.newPlot("grafica2_fila1", tracesFila1, layoutFila1, { responsive: true });
+
+    // =========================================================================
+    // FILA 2: PERFIL DE TRANSICIÓN LONGITUDINAL (OESTE -> NÚCLEO -> ESTE)
+    // =========================================================================
+    function renderFila2(mode) {
+      document.getElementById("btn_grad_7").classList.toggle("active", mode === "all7");
+      document.getElementById("btn_grad_blocks").classList.toggle("active", mode === "blocks");
+
+      let traces2 = [];
+      let yMax = 88;
+
+      if (mode === "all7") {
+        traces2 = compMeta.map(c => ({
+          type: "scatter",
+          mode: "lines+markers",
+          name: c.name,
+          x: countries,
+          y: c.y,
+          line: { color: c.color, width: 3, shape: "spline", smoothing: 0.65 },
+          marker: { color: c.color, size: 9, line: { color: "#0e1117", width: 1.5 } },
+          hovertemplate: "<b>País / Ruta:</b> %{x}<br><b>Componente:</b> " + c.name + "<br><b>Proporción Media:</b> <b>%{y:.1f}%</b><extra></extra>"
+        }));
+        yMax = 88;
+      } else {
+        const yWest = countries.map((_, i) => +(compMeta[0].y[i] + compMeta[1].y[i]).toFixed(1));
+        const yCoreSouth = countries.map((_, i) => +(compMeta[2].y[i] + compMeta[6].y[i]).toFixed(1));
+        const yEast = countries.map((_, i) => +(compMeta[3].y[i] + compMeta[4].y[i] + compMeta[5].y[i]).toFixed(1));
+
+        traces2 = [
+          {
+            type: "scatter", mode: "lines+markers",
+            name: "Bloque Occidental (Noruega + Atlántico Norte/UK)",
+            x: countries, y: yWest,
+            fill: "tozeroy", fillcolor: "rgba(6, 182, 212, 0.14)",
+            line: { color: "#06b6d4", width: 3.5, shape: "spline", smoothing: 0.6 },
+            marker: { color: "#3b82f6", size: 10, line: { color: "#ffffff", width: 1.5 } },
+            hovertemplate: "<b>País:</b> %{x}<br><b>Bloque Atlántico (NO + UK):</b> <b>%{y:.1f}%</b><extra></extra>"
+          },
+          {
+            type: "scatter", mode: "lines+markers",
+            name: "Bloque Continental / Sur (Dinamarca + Sur de Europa)",
+            x: countries, y: yCoreSouth,
+            fill: "tozeroy", fillcolor: "rgba(234, 179, 8, 0.12)",
+            line: { color: "#eab308", width: 3, dash: "dot", shape: "spline", smoothing: 0.6 },
+            marker: { color: "#eab308", size: 9, line: { color: "#0e1117", width: 1.5 } },
+            hovertemplate: "<b>País:</b> %{x}<br><b>Bloque Danés + Sur Europa:</b> <b>%{y:.1f}%</b><extra></extra>"
+          },
+          {
+            type: "scatter", mode: "lines+markers",
+            name: "Bloque Oriental (Suecia + Eslavo/Polonia + Fino-Báltico)",
+            x: countries, y: yEast,
+            fill: "tozeroy", fillcolor: "rgba(236, 72, 153, 0.14)",
+            line: { color: "#ec4899", width: 3.5, shape: "spline", smoothing: 0.6 },
+            marker: { color: "#8b5cf6", size: 10, line: { color: "#ffffff", width: 1.5 } },
+            hovertemplate: "<b>País:</b> %{x}<br><b>Bloque Oriental (SE + PL + FI):</b> <b>%{y:.1f}%</b><extra></extra>"
+          }
+        ];
+        yMax = 105;
+      }
+
+      const layoutFila2 = {
+        paper_bgcolor: "#161b22",
+        plot_bgcolor: "#161b22",
+        height: 480,
+        font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+        title: {
+          text: "<b>2B. Gradiente Longitudinal de Ancestralidad: Cruce de Curvas del Atlántico Norte al Báltico y Rus</b>",
+          x: 0.03,
+          y: 0.95,
+          font: { size: 15 }
+        },
+        xaxis: {
+          automargin: true,
+          gridcolor: "#283442",
+          linecolor: "#506784",
+          zerolinecolor: "#283442"
+        },
+        yaxis: {
+          range: [0, yMax],
+          title: { text: "Proporción Media (%)", standoff: 12 },
+          gridcolor: "#283442",
+          linecolor: "#506784",
+          zerolinecolor: "#283442"
+        },
+        shapes: [
+          { type: "line", x0: 4.5, x1: 4.5, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "white", dash: "dash", width: 1.6 } },
+          { type: "line", x0: 7.5, x1: 7.5, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "white", dash: "dash", width: 1.6 } }
+        ],
+        annotations: [
+          { x: 2.0, y: yMax * 0.93, text: "<b>DOMINIO NORUEGO-BRITÁNICO</b>", showarrow: false, font: { color: "#06b6d4", size: 11.5 } },
+          { x: 6.0, y: yMax * 0.93, text: "<b>PUNTO DE INFLEXIÓN (ESCANDINAVIA)</b>", showarrow: false, font: { color: "#eab308", size: 11.5 } },
+          { x: 9.5, y: yMax * 0.93, text: "<b>DOMINIO SUECO-ESLAVO-FINÉS</b>", showarrow: false, font: { color: "#f43f5e", size: 11.5 } }
+        ],
+        legend: { orientation: "h", yanchor: "bottom", y: -0.26, xanchor: "center", x: 0.5 },
+        margin: { t: 60, b: 105, l: 60, r: 40 },
+        hovermode: "x unified",
+        hoverlabel: { font: { size: 12.5 }, bgcolor: "#1f2937", bordercolor: "#58a6ff" }
+      };
+
+      Plotly.react("grafica2_fila2", traces2, layoutFila2, { responsive: true });
+    }
+
+    // =========================================================================
+    // FILA 3: LOS 283 GENOMAS INDIVIDUALES CON LOS MISMOS 7 COLORES
+    // =========================================================================
+    function seededJitter(strId, scale) {
+      let h = 2166136261;
+      for (let i = 0; i < strId.length; i++) {
+        h ^= strId.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      const norm = ((h >>> 0) % 1000) / 1000 - 0.5;
+      return norm * scale;
+    }
+
+    function renderFila3(mode) {
+      document.getElementById("btn_ind_country").classList.toggle("active", mode === "by_country");
+      document.getElementById("btn_ind_cluster").classList.toggle("active", mode === "polar_cluster");
+
+      const domKeys = ["Norway", "UK", "Denmark", "Sweden", "Poland", "Finland", "Italy"];
+
+      if (mode === "by_country") {
+        // Index of country 0..11 + deterministic jitter on X so points don't overlap, Y = West vs East Balance (-100% West to +100% East) or Dominant %
+        const countryIdx = {};
+        countries.forEach((c, i) => countryIdx[c] = i);
+
+        const traces3 = domKeys.map(dKey => {
+          const pts = indivData.filter(d => d.dom === dKey);
+          return {
+            type: "scatter",
+            mode: "markers",
+            name: labelMap[dKey],
+            x: pts.map(p => countryIdx[p.country] + seededJitter(p.id, 0.42)),
+            y: pts.map(p => +(p.east - p.west).toFixed(1)),
+            text: pts.map(p => p.id + " (" + p.sex + ")"),
+            customdata: pts.map(p => [
+              p.country, p.site, labelMap[p.dom], p.dom_val,
+              p.NO, p.UK, p.DK, p.SE, p.PL, p.FI, p.IT, p.west, p.east
+            ]),
+            marker: {
+              color: colorMap[dKey],
+              size: 9.5,
+              opacity: 0.9,
+              line: { color: "#ffffff", width: 1 }
+            },
+            hovertemplate:
+              "<b>Individuo:</b> %{text}<br>" +
+              "<b>País / Yacimiento:</b> %{customdata[0]} — %{customdata[1]}<br>" +
+              "<b>Componente Mayoritario:</b> %{customdata[2]} (<b>%{customdata[3]}%</b>)<br>" +
+              "<b>Balance Direccional:</b> %{y:+.1f}% (Oeste: %{customdata[11]}% vs. Este: %{customdata[12]}%)<br>" +
+              "<span style='font-size:11.5px; color:#cbd5e1;'>↳ NO: %{customdata[4]}% | UK: %{customdata[5]}% | DK: %{customdata[6]}% | SE: %{customdata[7]}% | PL: %{customdata[8]}% | FI: %{customdata[9]}% | IT: %{customdata[10]}%</span>" +
+              "<extra></extra>"
+          };
+        });
+
+        const layout3A = {
+          paper_bgcolor: "#161b22",
+          plot_bgcolor: "#161b22",
+          height: 540,
+          font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+          title: {
+            text: "<b>2C. Polarización de los 283 Genomas Individuales por País y Origen Dominante (Índice Eje Este − Eje Oeste)</b>",
+            x: 0.03,
+            y: 0.95,
+            font: { size: 15 }
+          },
+          xaxis: {
+            tickmode: "array",
+            tickvals: [0,1,2,3,4,5,6,7,8,9,10,11],
+            ticktext: countries,
+            range: [-0.6, 11.6],
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zeroline: false
+          },
+          yaxis: {
+            range: [-110, 115],
+            title: { text: "Índice Direccional: -100% (Puro Atlántico) a +100% (Puro Oriental)", standoff: 12 },
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zeroline: true,
+            zerolinecolor: "#94a3b8",
+            zerolinewidth: 1.5
+          },
+          shapes: [
+            { type: "line", x0: 4.5, x1: 4.5, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "white", dash: "dash", width: 1.8 } },
+            { type: "line", x0: 7.5, x1: 7.5, xref: "x", y0: 0, y1: 1, yref: "y domain", line: { color: "white", dash: "dash", width: 1.8 } },
+            { type: "rect", x0: -0.6, x1: 11.6, xref: "x", y0: 25, y1: 105, yref: "y", fillcolor: "#ec4899", opacity: 0.05, line: { width: 0 } },
+            { type: "rect", x0: -0.6, x1: 11.6, xref: "x", y0: -105, y1: -25, yref: "y", fillcolor: "#06b6d4", opacity: 0.05, line: { width: 0 } }
+          ],
+          annotations: [
+            { x: 0.2, y: 96, xref: "x", yref: "y", xanchor: "left", text: "⬆️ <b>Polo Oriental (+100% = 100% Sueco/Eslavo/Finés)</b>", showarrow: false, font: { color: "#f43f5e", size: 11.5 } },
+            { x: 0.2, y: -96, xref: "x", yref: "y", xanchor: "left", text: "⬇️ <b>Polo Occidental (-100% = 100% Noruego/Británico)</b>", showarrow: false, font: { color: "#06b6d4", size: 11.5 } }
+          ],
+          legend: { orientation: "h", yanchor: "bottom", y: -0.24, xanchor: "center", x: 0.5 },
+          margin: { t: 60, b: 110, l: 70, r: 40 },
+          hovermode: "closest",
+          hoverlabel: { font: { size: 12.5 }, bgcolor: "#1f2937", bordercolor: "#ffffff" }
+        };
+
+        Plotly.react("grafica2_fila3", traces3, layout3A, { responsive: true });
+      } else {
+        // Vista 3B: 2D Scatter Cluster (X = Eje Atlántico NO+UK %, Y = Eje Oriental SE+PL+FI %, size proportional to South/DK or fixed with jitter)
+        const traces3B = domKeys.map(dKey => {
+          const pts = indivData.filter(d => d.dom === dKey);
+          return {
+            type: "scatter",
+            mode: "markers",
+            name: labelMap[dKey],
+            x: pts.map(p => +(p.west + seededJitter(p.id, 1.2)).toFixed(1)),
+            y: pts.map(p => +(p.east + seededJitter(p.id + "y", 1.2)).toFixed(1)),
+            text: pts.map(p => p.id + " (" + p.country + ")"),
+            customdata: pts.map(p => [
+              p.country, p.site, labelMap[p.dom], p.dom_val,
+              p.NO, p.UK, p.DK, p.SE, p.PL, p.FI, p.IT, p.west, p.east, p.south
+            ]),
+            marker: {
+              color: colorMap[dKey],
+              size: 10,
+              opacity: 0.88,
+              line: { color: "#ffffff", width: 1 }
+            },
+            hovertemplate:
+              "<b>Individuo:</b> %{text}<br>" +
+              "<b>Yacimiento:</b> %{customdata[1]} (%{customdata[0]})<br>" +
+              "<b>Componente Mayoritario:</b> %{customdata[2]} (<b>%{customdata[3]}%</b>)<br>" +
+              "<b>Eje Atlántico (NO+UK):</b> %{customdata[11]}% | <b>Eje Oriental (SE+PL+FI):</b> %{customdata[12]}%<br>" +
+              "<b>Eje Danés/Sur (DK+IT):</b> %{customdata[13]}%<br>" +
+              "<span style='font-size:11.5px; color:#cbd5e1;'>↳ NO: %{customdata[4]}% | UK: %{customdata[5]}% | DK: %{customdata[6]}% | SE: %{customdata[7]}% | PL: %{customdata[8]}% | FI: %{customdata[9]}% | IT: %{customdata[10]}%</span>" +
+              "<extra></extra>"
+          };
+        });
+
+        const layout3B = {
+          paper_bgcolor: "#161b22",
+          plot_bgcolor: "#161b22",
+          height: 540,
+          font: { color: "#f2f5fa", family: "Segoe UI, Roboto, sans-serif" },
+          title: {
+            text: "<b>2C. Mapa de Separación Genómica 2D (n=283): Eje Atlántico (NO+UK) vs. Eje Oriental (SE+PL+FI)</b>",
+            x: 0.03,
+            y: 0.95,
+            font: { size: 15 }
+          },
+          xaxis: {
+            range: [-4, 105],
+            title: { text: "% Ancestralidad Eje Atlántico Occidental (Noruega + Islas Británicas / UK)" },
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zerolinecolor: "#283442"
+          },
+          yaxis: {
+            range: [-4, 105],
+            title: { text: "% Ancestralidad Eje Oriental (Suecia + Eslavo/Polonia + Fino-Báltico)" },
+            gridcolor: "#283442",
+            linecolor: "#506784",
+            zerolinecolor: "#283442"
+          },
+          shapes: [
+            { type: "line", x0: 0, y0: 100, x1: 100, y1: 0, xref: "x", yref: "y", line: { color: "#475569", dash: "dot", width: 1.5 } }
+          ],
+          annotations: [
+            { x: 82, y: 12, text: "<b>CLÚSTER ATLÁNTICO</b><br>(Islandia, Groenlandia,<br>Irlanda, Noruega)", showarrow: false, font: { color: "#06b6d4", size: 12 } },
+            { x: 14, y: 86, text: "<b>CLÚSTER BÁLTICO / RUS</b><br>(Salme, Ladoga, Gnezdovo,<br>Ucrania, Polonia, Gotland)", showarrow: false, font: { color: "#ec4899", size: 12 } },
+            { x: 15, y: 15, text: "<b>CLÚSTER SUR / DANÉS</b><br>(Alto % Dinamarca + Sur Europa<br>cerca del origen 0,0)", showarrow: false, font: { color: "#eab308", size: 11.5 } }
+          ],
+          legend: { orientation: "h", yanchor: "bottom", y: -0.24, xanchor: "center", x: 0.5 },
+          margin: { t: 60, b: 110, l: 70, r: 40 },
+          hovermode: "closest",
+          hoverlabel: { font: { size: 12.5 }, bgcolor: "#1f2937", bordercolor: "#ffffff" }
+        };
+
+        Plotly.react("grafica2_fila3", traces3B, layout3B, { responsive: true });
+      }
+    }
+
+    renderFila2("all7");
+    renderFila3("by_country");
+
+    let currentSolo = null;
+    const plotIds = ["grafica2_fila1", "grafica2_fila2", "grafica2_fila3"];
+
+    function toggleSolo(idx) {
+      const wrapper = document.getElementById("main_wrapper");
+      if (currentSolo === idx || idx === null) {
+        currentSolo = null;
+        wrapper.classList.remove("solo-mode");
+        [0, 1, 2].forEach(i => {
+          document.getElementById("card_" + i).classList.remove("hidden-card");
+          const btn = document.getElementById("solo_btn_" + i);
+          btn.innerHTML = "🔍 Ver sola a pantalla completa";
+          btn.classList.remove("back-btn");
+          Plotly.Plots.resize(document.getElementById(plotIds[i]));
+        });
+      } else {
+        currentSolo = idx;
+        wrapper.classList.add("solo-mode");
+        [0, 1, 2].forEach(i => {
+          const card = document.getElementById("card_" + i);
+          const btn = document.getElementById("solo_btn_" + i);
+          if (i === idx) {
+            card.classList.remove("hidden-card");
+            btn.innerHTML = "🔙 Volver a ver todas (ESC)";
+            btn.classList.add("back-btn");
+            Plotly.Plots.resize(document.getElementById(plotIds[i]));
+          } else {
+            card.classList.add("hidden-card");
+          }
+        });
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && currentSolo !== null) {
+        e.preventDefault();
+        toggleSolo(null);
+      }
+    });
+  </script>
+</body>
+</html>

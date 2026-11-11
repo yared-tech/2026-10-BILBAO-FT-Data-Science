@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiografía Genómica Vikinga | Presentación EDA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Smooth transition for sidebar collapsing */
+        aside {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+        }
+        aside.collapsed {
+            width: 0 !important;
+            min-width: 0 !important;
+            overflow: hidden;
+            border-right: none !important;
+            padding: 0 !important;
+        }
+
+        /* 5-Block Photo Carousel Styles (Slide 6) */
+        .carousel-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #0e1117;
+            user-select: none;
+        }
+        .carousel-track {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            transition: transform 0.42s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+            position: absolute;
+            left: 50%;
+        }
+        .block-card {
+            width: 440px;
+            height: 64vh;
+            max-height: 540px;
+            min-height: 340px;
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.75);
+            cursor: pointer;
+            transition: transform 0.42s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.42s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            opacity: 0.42;
+            transform: scale(0.82);
+            flex-shrink: 0;
+        }
+        .block-card.active {
+            opacity: 1;
+            transform: scale(1.06);
+            border-color: #58a6ff;
+            box-shadow: 0 25px 65px rgba(88, 166, 255, 0.32);
+            z-index: 20;
+        }
+        .block-img-wrap {
+            width: 100%;
+            flex: 1;
+            background: #0d1117;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .block-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+        .block-card.active:hover .block-img-wrap img {
+            transform: scale(1.04);
+        }
+        .block-footer {
+            padding: 16px 20px;
+            background: #161b22;
+            border-top: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .block-title {
+            font-size: 15.5px;
+            font-weight: 700;
+            color: #f0f6fc;
+            margin: 0;
+            line-height: 1.25;
+        }
+        .block-count {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #58a6ff;
+            background: rgba(56, 139, 253, 0.15);
+            border: 1px solid rgba(88, 166, 255, 0.35);
+            padding: 4px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(22, 27, 34, 0.9);
+            color: #f0f6fc;
+            border: 1px solid #30363d;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 40;
+            font-size: 20px;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        }
+        .nav-arrow:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+            color: #58a6ff;
+            transform: translateY(-50%) scale(1.08);
+        }
+        .nav-arrow.left { left: 26px; }
+        .nav-arrow.right { right: 26px; }
+
+        .dots-bar {
+            position: absolute;
+            bottom: 18px;
+            display: flex;
+            gap: 10px;
+            z-index: 30;
+        }
+        .dot-ind {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: #30363d;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .dot-ind.active {
+            width: 28px;
+            background: #58a6ff;
+        }
+
+        /* Fullscreen Modal for Block Photos */
+        #fs-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 11, 16, 0.97);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        #fs-modal.open {
+            display: flex;
+        }
+        .fs-topbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, rgba(14,17,23,0.92), transparent);
+            z-index: 10020;
+            pointer-events: none;
+        }
+        .fs-topbar > * {
+            pointer-events: auto;
+        }
+        .fs-click-zone {
+            position: absolute;
+            top: 64px;
+            bottom: 0;
+            width: 50%;
+            z-index: 10005;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .fs-click-zone.left {
+            left: 0;
+            justify-content: flex-start;
+            padding-left: 28px;
+        }
+        .fs-click-zone.right {
+            right: 0;
+            justify-content: flex-end;
+            padding-right: 28px;
+        }
+        .fs-zone-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: rgba(22, 27, 34, 0.78);
+            border: 1px solid #30363d;
+            color: #f0f6fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            opacity: 0.65;
+            transition: all 0.2s ease;
+        }
+        .fs-click-zone:hover .fs-zone-btn {
+            opacity: 1;
+            border-color: #58a6ff;
+            color: #58a6ff;
+            transform: scale(1.08);
+            background: rgba(33, 38, 45, 0.95);
+        }
+        #fs-image {
+            max-width: 90vw;
+            max-height: 84vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.85);
+            z-index: 10001;
+        }
+    </style>
+</head>
+<body class="bg-[#0e1117] text-[#f0f6fc] font-sans antialiased h-screen flex flex-col md:flex-row overflow-hidden">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="w-full md:w-80 bg-[#161b22] border-r border-[#30363d] flex flex-col justify-between shrink-0 select-none z-30 h-auto md:h-screen">
+        <div class="flex flex-col h-full overflow-y-auto">
+            <div class="p-5 border-b border-[#30363d] flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-[#58a6ff] text-xl">⚔️</div>
+                    <div>
+                        <h1 class="font-bold text-sm text-white leading-tight">Genómica Vikinga</h1>
+                        <span class="text-xs text-[#8b949e]">Presentación EDA (Nature 2020)</span>
+                    </div>
+                </div>
+                <!-- Close Button on Sidebar -->
+                <button onclick="toggleSidebar()" class="md:hidden text-[#8b949e] hover:text-white p-2 text-sm" title="Ocultar Menú">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-4 space-y-1.5 flex-1" id="nav-list">
+                <div class="text-[11px] font-semibold text-[#8b949e] uppercase tracking-wider px-1 mb-1">Bloques (10 Min)</div>
+                <button onclick="switchSlide(0)" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between bg-blue-600/20 text-[#58a6ff] border border-blue-500/40">
+                    <span>0. Resumen Ejecutivo (Hipótesis)</span>
+                    <span class="text-[10px] opacity-75">Intro</span>
+                </button>
+                <button onclick="switchSlide(1)" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between text-[#8b949e] hover:bg-white/5 hover:text-white border border-transparent">
+                    <span>1. Mapa Interactivo & Contexto</span>
+                    <span class="text-[10px] opacity-75">0-2m</span>
+                </button>
+                <button onclick="switchSlide(2)" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between text-[#8b949e] hover:bg-white/5 hover:text-white border border-transparent">
+                    <span>2. Hipótesis Principal (Pureza)</span>
+                    <span class="text-[10px] opacity-75">2-4m</span>
+                </button>
+                <button onclick="switchSlide(3)" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between text-[#8b949e] hover:bg-white/5 hover:text-white border border-transparent">
+                    <span>3. Ruta Oeste vs. Este</span>
+                    <span class="text-[10px] opacity-75">4-6m</span>
+                </button>
+                <button onclick="switchSlide(4)" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between text-[#8b949e] hover:bg-white/5 hover:text-white border border-transparent">
+                    <span>4. Crisol del Sur</span>
+                    <span class="text-[10px] opacity-75">6-8m</span>
+                </button>
+                <button onclick="switchSlide(5)" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between text-[#8b949e] hover:bg-white/5 hover:text-white border border-transparent">
+                    <span>5. Género y Linajes</span>
+                    <span class="text-[10px] opacity-75">8-10m</span>
+                </button>
+                <button onclick="switchSlide(6)" class="nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between text-[#8b949e] hover:bg-white/5 hover:text-white border border-transparent">
+                    <span>6. Galería & Yacimientos (Fotos)</span>
+                    <span class="text-[10px] opacity-75">Visual</span>
+                </button>
+            </div>
+
+            <div class="p-4 border-t border-[#30363d] bg-[#0d1117] space-y-2">
+                <div class="text-[10px] text-[#8b949e] text-center font-mono">Usa las flechas ← / → para navegar</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="h-16 bg-[#161b22] border-b border-[#30363d] flex items-center justify-between px-6 shrink-0 z-20">
+            <div class="flex items-center gap-3">
+                <!-- Toggle Sidebar Button (Mandatory full width expansion) -->
+                <button onclick="toggleSidebar()" class="px-3 py-1.5 bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] rounded-lg text-xs font-semibold text-white transition flex items-center gap-1.5 shrink-0" title="Contraer/Expandir Menú lateral">
+                    <i class="fa-solid fa-bars" id="sidebar-icon"></i> <span class="hidden sm:inline">Menú</span>
+                </button>
+                <h2 id="slide-title" class="text-xs sm:text-sm md:text-base font-bold text-white truncate pr-2">📋 Resumen Ejecutivo | Marco de Hipótesis del EDA</h2>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleFullscreen()" class="px-3 py-1.5 bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] rounded-lg text-xs font-semibold text-white transition flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-expand"></i> <span class="hidden sm:inline">Pantalla Completa</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Viewer Container embedding local HTML files + Integrated 5-Block Gallery -->
+        <div class="flex-1 relative bg-[#0e1117] overflow-hidden" id="viewer-container">
+            <iframe id="slide-frame" src="Resumen_Hipotesis_EDA.html" class="w-full h-full border-0"></iframe>
+
+            <!-- Integrated 5-Block Photo Gallery (Visible on Slide 6, persistent in DOM) -->
+            <div id="gallery-view" class="w-full h-full hidden">
+                <div class="carousel-stage">
+                    <button class="nav-arrow left" onclick="moveBlock(-1)" title="Bloque Anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="carousel-track" id="blocks-track"></div>
+                    <button class="nav-arrow right" onclick="moveBlock(1)" title="Bloque Siguiente"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="dots-bar" id="blocks-dots"></div>
+                </div>
+            </div>
+
+            <!-- Fullscreen Modal for the selected block's photos -->
+            <div id="fs-modal">
+                <div class="fs-topbar">
+                    <div class="flex items-center gap-3">
+                        <span id="fs-block-title" class="text-base md:text-lg font-bold text-white"></span>
+                        <span id="fs-photo-counter" class="text-xs font-mono px-2.5 py-1 rounded-full bg-blue-500/20 text-[#58a6ff] border border-blue-500/30"></span>
+                    </div>
+                    <button onclick="closeFsModal()" class="w-10 h-10 rounded-full bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-white flex items-center justify-center text-lg transition" title="Cerrar (ESC)">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Left half screen click zone -->
+                <div class="fs-click-zone left" onclick="moveFsPhoto(-1)" title="Foto Anterior (Click Izquierda o Flecha ←)">
+                    <div class="fs-zone-btn"><i class="fa-solid fa-chevron-left"></i></div>
+                </div>
+
+                <!-- Center Fullscreen Image -->
+                <img id="fs-image" src="" alt="Foto del Bloque" />
+
+                <!-- Right half screen click zone -->
+                <div class="fs-click-zone right" onclick="moveFsPhoto(1)" title="Foto Siguiente (Click Derecha o Flecha →)">
+                    <div class="fs-zone-btn"><i class="fa-solid fa-chevron-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const slides = [
+            {
+                title: "📋 Resumen Ejecutivo | Marco de Hipótesis del EDA",
+                file: "Resumen_Hipotesis_EDA.html"
+            },
+            {
+                title: "🌍 Mapa Interactivo de los 442 Restos y Rutas de Expansión",
+                file: "Mapa_Interactivo_Genoma_Vikingo_442-v2.html"
+            },
+            {
+                title: "🧬 Hipótesis Principal: Refutando el Mito de la Homogeneidad Nórdica",
+                file: "Grafica_1_Centrada_Definitiva.html"
+            },
+            {
+                title: "🧭 Hipótesis Secundaria 1: Direccionalidad Geográfica (Oeste vs. Este)",
+                file: "Grafica_2_Centrada_Definitiva.html"
+            },
+            {
+                title: "⚓ Hipótesis Secundaria 2: El Sur Escandinavo como Crisol Comercial",
+                file: "Grafica_3_Centrada_Definitiva.html"
+            },
+            {
+                title: "⚔️ Hipótesis Secundaria 3: Movilidad por Género (Expediciones vs. Colonias)",
+                file: "Grafica_4_Centrada_Definitiva.html"
+            },
+            {
+                title: "📸 Galería de Yacimientos Arqueológicos y Contexto Histórico",
+                file: "Galeria_Yacimientos_Vikingos.html"
+            }
+        ];
+
+        let currentIndex = 0;
+
+        function switchSlide(index) {
+            currentIndex = index;
+            const slide = slides[index];
+            document.getElementById('slide-title').innerText = slide.title;
+
+            const iframeEl = document.getElementById('slide-frame');
+            const galleryEl = document.getElementById('gallery-view');
+
+            if (index === 6) {
+                iframeEl.classList.add('hidden');
+                galleryEl.classList.remove('hidden');
+                updateCarouselPosition();
+            } else {
+                galleryEl.classList.add('hidden');
+                iframeEl.classList.remove('hidden');
+                if (!iframeEl.getAttribute('src') || !iframeEl.getAttribute('src').endsWith(slide.file)) {
+                    iframeEl.src = slide.file;
+                }
+            }
+
+            const buttons = document.querySelectorAll('#nav-list button');
+            buttons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.className = "nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between bg-blue-600/20 text-[#58a6ff] border border-blue-500/40";
+                } else {
+                    btn.className = "nav-btn w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between text-[#8b949e] hover:bg-white/5 hover:text-white border border-transparent";
+                }
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('viewer-container');
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        // =====================================================================
+        // 5-BLOCK PHOTO GALLERY LOGIC (Slide 6)
+        // =====================================================================
+        const GROUPS = [
+            {
+                id: "vikings",
+                title: "Vikings (La Serie)",
+                prefixes: ["vikings", "vikins"],
+                photos: []
+            },
+            {
+                id: "valhalla",
+                title: "Eivor (Assassin's Creed Valhalla)",
+                prefixes: ["valhalla"],
+                photos: []
+            },
+            {
+                id: "salme",
+                title: "Barco Funerario de Salme",
+                prefixes: ["salme"],
+                photos: []
+            },
+            {
+                id: "dorset",
+                title: "Fosa Común de Dorset Hill",
+                prefixes: ["dorset"],
+                photos: []
+            },
+            {
+                id: "spillings",
+                title: "Tesoro de Spillings",
+                prefixes: ["spillings"],
+                photos: []
+            }
+        ];
+
+        const EXTENSIONS = ["jpg", "jpeg", "png", "webp", "avif", "JPG", "JPEG", "PNG", "WEBP"];
+        const MAX_INDEX_PROBE = 35;
+        const STORAGE_KEY = "viking_eda_gallery_state_v2";
+
+        let galleryState = {
+            blockIndex: 0,
+            fsOpen: false,
+            photoIndices: { vikings: 0, valhalla: 0, salme: 0, dorset: 0, spillings: 0 }
+        };
+
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (saved && typeof saved === "object") {
+                if (typeof saved.blockIndex === "number" && saved.blockIndex >= 0 && saved.blockIndex < GROUPS.length) {
+                    galleryState.blockIndex = saved.blockIndex;
+                }
+                if (typeof saved.fsOpen === "boolean") {
+                    galleryState.fsOpen = saved.fsOpen;
+                }
+                if (saved.photoIndices && typeof saved.photoIndices === "object") {
+                    galleryState.photoIndices = { ...galleryState.photoIndices, ...saved.photoIndices };
+                }
+            }
+        } catch (e) {}
+
+        function saveGalleryState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(galleryState));
+            } catch (e) {}
+        }
+
+        function makePlaceholderSvg(title, prefix) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+                <rect width="100%" height="100%" fill="#0d1117"/>
+                <circle cx="400" cy="240" r="54" fill="#161b22" stroke="#30363d" stroke-width="2"/>
+                <text x="400" y="255" text-anchor="middle" fill="#58a6ff" font-family="sans-serif" font-size="38">📷</text>
+                <text x="400" y="345" text-anchor="middle" fill="#f0f6fc" font-family="sans-serif" font-weight="bold" font-size="22">${title}</text>
+                <text x="400" y="385" text-anchor="middle" fill="#8b949e" font-family="monospace" font-size="15">images/${prefix}_1.jpg, ${prefix}_2.jpg...</text>
+            </svg>`;
+            return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+        }
+
+        function probeSingleImage(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(url);
+                img.onerror = () => resolve(null);
+                img.src = url;
+            });
+        }
+
+        async function findCandidateForIndex(prefixes, indexNum) {
+            const candidates = [];
+            for (const p of prefixes) {
+                for (const ext of EXTENSIONS) {
+                    if (indexNum === 0) {
+                        candidates.push(`images/${p}.${ext}`);
+                        candidates.push(`images/${p}_portada.${ext}`);
+                    } else {
+                        candidates.push(`images/${p}_${indexNum}.${ext}`);
+                        if (indexNum < 10) {
+                            candidates.push(`images/${p}_0${indexNum}.${ext}`);
+                        }
+                        candidates.push(`images/${p}${indexNum}.${ext}`);
+                        candidates.push(`images/${p}-${indexNum}.${ext}`);
+                    }
+                }
+            }
+            const results = await Promise.all(candidates.map(probeSingleImage));
+            return results.find(r => r !== null) || null;
+        }
+
+        async function discoverGroupPhotos(group) {
+            const indexPromises = [];
+            for (let i = 0; i <= MAX_INDEX_PROBE; i++) {
+                indexPromises.push(findCandidateForIndex(group.prefixes, i).then(url => ({ idx: i, url })));
+            }
+            const found = await Promise.all(indexPromises);
+            const valid = found.filter(item => item.url !== null).sort((a, b) => a.idx - b.idx);
+            const uniqueUrls = [];
+            for (const item of valid) {
+                if (!uniqueUrls.includes(item.url)) {
+                    uniqueUrls.push(item.url);
+                }
+            }
+            group.photos = uniqueUrls;
+        }
+
+        const trackEl = document.getElementById("blocks-track");
+        const dotsEl = document.getElementById("blocks-dots");
+
+        function renderCarouselDOM() {
+            trackEl.innerHTML = "";
+            dotsEl.innerHTML = "";
+
+            GROUPS.forEach((g, idx) => {
+                const coverSrc = g.photos.length > 0 ? g.photos[0] : makePlaceholderSvg(g.title, g.prefixes[0]);
+                const countText = g.photos.length > 0 ? `${g.photos.length} foto${g.photos.length === 1 ? "" : "s"}` : `${g.prefixes[0]}_1...`;
+
+                const card = document.createElement("div");
+                card.className = `block-card ${idx === galleryState.blockIndex ? "active" : ""}`;
+                card.onclick = () => {
+                    if (galleryState.blockIndex === idx) {
+                        openFsModal(idx);
+                    } else {
+                        galleryState.blockIndex = idx;
+                        saveGalleryState();
+                        updateCarouselPosition();
+                    }
+                };
+
+                card.innerHTML = `
+                    <div class="block-img-wrap">
+                        <img id="cover-img-${g.id}" src="${coverSrc}" alt="${g.title}">
+                    </div>
+                    <div class="block-footer">
+                        <h3 class="block-title">${g.title}</h3>
+                        <span class="block-count" id="count-badge-${g.id}">${countText}</span>
+                    </div>
+                `;
+                trackEl.appendChild(card);
+
+                const dot = document.createElement("div");
+                dot.className = `dot-ind ${idx === galleryState.blockIndex ? "active" : ""}`;
+                dot.onclick = () => {
+                    galleryState.blockIndex = idx;
+                    saveGalleryState();
+                    updateCarouselPosition();
+                };
+                dotsEl.appendChild(dot);
+            });
+
+            updateCarouselPosition();
+        }
+
+        function updateCarouselPosition() {
+            const cards = trackEl.querySelectorAll(".block-card");
+            const dots = dotsEl.querySelectorAll(".dot-ind");
+
+            cards.forEach((c, i) => c.classList.toggle("active", i === galleryState.blockIndex));
+            dots.forEach((d, i) => d.classList.toggle("active", i === galleryState.blockIndex));
+
+            const cardWidth = 440;
+            const gap = 36;
+            const offset = (cardWidth / 2) + galleryState.blockIndex * (cardWidth + gap);
+            trackEl.style.transform = `translateX(-${offset}px)`;
+        }
+
+        function moveBlock(delta) {
+            galleryState.blockIndex = (galleryState.blockIndex + delta + GROUPS.length) % GROUPS.length;
+            saveGalleryState();
+            updateCarouselPosition();
+        }
+
+        function openFsModal(blockIdx) {
+            galleryState.blockIndex = blockIdx;
+            galleryState.fsOpen = true;
+            saveGalleryState();
+            updateCarouselPosition();
+            renderFullscreenPhoto();
+            document.getElementById("fs-modal").classList.add("open");
+        }
+
+        function closeFsModal() {
+            galleryState.fsOpen = false;
+            saveGalleryState();
+            document.getElementById("fs-modal").classList.remove("open");
+        }
+
+        function renderFullscreenPhoto() {
+            const group = GROUPS[galleryState.blockIndex];
+            const total = group.photos.length;
+            let pIdx = galleryState.photoIndices[group.id] || 0;
+            if (total > 0 && (pIdx >= total || pIdx < 0)) {
+                pIdx = 0;
+                galleryState.photoIndices[group.id] = 0;
+            }
+
+            document.getElementById("fs-block-title").innerText = group.title;
+            const imgEl = document.getElementById("fs-image");
+            const counterEl = document.getElementById("fs-photo-counter");
+
+            if (total > 0) {
+                imgEl.src = group.photos[pIdx];
+                counterEl.innerText = `${pIdx + 1} / ${total}`;
+            } else {
+                imgEl.src = makePlaceholderSvg(group.title, group.prefixes[0]);
+                counterEl.innerText = `0 fotos detectadas`;
+            }
+        }
+
+        function moveFsPhoto(delta) {
+            const group = GROUPS[galleryState.blockIndex];
+            const total = group.photos.length;
+            if (total <= 1) return;
+            let pIdx = galleryState.photoIndices[group.id] || 0;
+            pIdx = (pIdx + delta + total) % total;
+            galleryState.photoIndices[group.id] = pIdx;
+            saveGalleryState();
+            renderFullscreenPhoto();
+        }
+
+        async function initGallery() {
+            renderCarouselDOM();
+            await Promise.all(GROUPS.map(discoverGroupPhotos));
+            GROUPS.forEach((g) => {
+                const imgEl = document.getElementById(`cover-img-${g.id}`);
+                const badgeEl = document.getElementById(`count-badge-${g.id}`);
+                if (imgEl && g.photos.length > 0) {
+                    imgEl.src = g.photos[0];
+                }
+                if (badgeEl) {
+                    badgeEl.innerText = g.photos.length > 0
+                        ? `${g.photos.length} foto${g.photos.length === 1 ? "" : "s"}`
+                        : `${g.prefixes[0]}_1...`;
+                }
+            });
+            if (galleryState.fsOpen) {
+                renderFullscreenPhoto();
+            }
+        }
+
+        initGallery();
+
+        document.addEventListener('keydown', (e) => {
+            if (currentIndex === 6) {
+                if (galleryState.fsOpen) {
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        closeFsModal();
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        moveFsPhoto(1);
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        moveFsPhoto(-1);
+                    }
+                    return;
+                } else {
+                    if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        moveBlock(1);
+                        return;
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        moveBlock(-1);
+                        return;
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        openFsModal(galleryState.blockIndex);
+                        return;
+                    }
+                }
+            }
+
+            if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+                if (currentIndex < slides.length - 1) switchSlide(currentIndex + 1);
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                if (currentIndex > 0) switchSlide(currentIndex - 1);
+            }
+        });
+    </script>
+</body>
+</html>
